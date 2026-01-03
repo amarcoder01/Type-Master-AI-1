@@ -28,6 +28,7 @@ import { CodeShareCard } from "@/components/CodeShareCard";
 import { CodeCertificate } from "@/components/CodeCertificate";
 import { keyboardSound } from "@/lib/keyboard-sounds";
 import { getCodePerformanceRating } from "@/lib/share-utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const PROGRAMMING_LANGUAGES = {
   javascript: { name: "JavaScript", prism: "javascript", category: "Popular" },
@@ -255,6 +256,7 @@ export default function CodeMode() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const isMobile = useIsMobile();
   
   const [language, setLanguage] = useState("javascript");
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("easy");
@@ -374,6 +376,21 @@ export default function CodeMode() {
   const isOnlineRef = useRef<boolean>(navigator.onLine);
   const testStartedWhileOfflineRef = useRef<boolean>(false);
   const lastFetchTimeRef = useRef<number>(0);
+
+  const [caretAnchor, setCaretAnchor] = useState<{ left: number; top: number; height: number }>({ left: 0, top: 0, height: 18 });
+  const syncCaretAnchor = useCallback(() => {
+    if (!isMobile || !containerRef.current || !codeDisplayRef.current) return;
+    const caretEl = codeDisplayRef.current.querySelector('[data-caret="true"]') as HTMLElement | null;
+    const container = containerRef.current;
+    if (caretEl) {
+      const caretRect = caretEl.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+      const left = Math.max(0, Math.round(caretRect.left - containerRect.left + 2));
+      const top = Math.max(0, Math.round(caretRect.top - containerRect.top));
+      const height = Math.max(14, Math.round(caretRect.height || 18));
+      setCaretAnchor({ left, top, height });
+    }
+  }, [isMobile]);
 
   // Anti-cheat constants
   const MIN_KEYSTROKE_INTERVAL_MS = 20; // Humanly impossible to type faster than 50 chars/second
@@ -574,6 +591,17 @@ export default function CodeMode() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (!isMobile) return;
+    const onResize = () => syncCaretAnchor();
+    window.addEventListener('resize', onResize);
+    window.addEventListener('orientationchange', onResize as any);
+    return () => {
+      window.removeEventListener('resize', onResize);
+      window.removeEventListener('orientationchange', onResize as any);
+    };
+  }, [isMobile, syncCaretAnchor]);
 
   // Tab visibility change detection - warn user if they switch tabs during timed test
   useEffect(() => {
@@ -1415,15 +1443,18 @@ export default function CodeMode() {
     if (now - lastCodeScrollTsRef.current < 32) return; // ~30 FPS
     lastCodeScrollTsRef.current = now;
     
-    // Calculate which line the cursor is on
-    const textBeforeCursor = codeSnippet.substring(0, userInput.length);
-    const currentLine = textBeforeCursor.split('\n').length;
-    
-    // Find the line element and scroll into view
-    const lineElement = codeDisplayRef.current.querySelector(`[data-line="${currentLine}"]`);
-    if (lineElement) {
-      lineElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const caretEl = codeDisplayRef.current.querySelector('[data-caret="true"]');
+    if (caretEl) {
+      (caretEl as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    } else {
+      const textBeforeCursor = codeSnippet.substring(0, userInput.length);
+      const currentLine = textBeforeCursor.split('\n').length;
+      const lineElement = codeDisplayRef.current.querySelector(`[data-line="${currentLine}"]`);
+      if (lineElement) {
+        (lineElement as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     }
+    syncCaretAnchor();
   }, [userInput.length, codeSnippet]);
 
   const applyCustomCode = () => {
@@ -1725,7 +1756,12 @@ export default function CodeMode() {
   };
 
   const handleContainerClick = () => {
-    textareaRef.current?.focus();
+    if (isMobile) {
+      syncCaretAnchor();
+      requestAnimationFrame(() => textareaRef.current?.focus({ preventScroll: true } as any));
+    } else {
+      textareaRef.current?.focus();
+    }
     setIsFocused(true);
   };
 
@@ -1759,17 +1795,17 @@ export default function CodeMode() {
     if (style === "block") {
       // Block caret: positioned behind the character with lower z-index
       return (
-        <span className={`absolute -left-[1px] top-0 w-[0.65em] h-[1.2em] bg-primary/25 rounded-sm ${baseClass} -z-10`} />
+        <span data-caret="true" className={`absolute -left-[1px] top-0 w-[0.65em] h-[1.2em] bg-primary/25 rounded-sm ${baseClass} -z-10`} />
       );
     }
     if (style === "underline") {
       return (
-        <span className={`absolute left-0 bottom-0 w-[0.6em] h-[2px] bg-primary rounded-full ${baseClass} shadow-[0_0_6px_rgba(var(--primary),0.5)]`} />
+        <span data-caret="true" className={`absolute left-0 bottom-0 w-[0.6em] h-[2px] bg-primary rounded-full ${baseClass} shadow-[0_0_6px_rgba(var(--primary),0.5)]`} />
       );
     }
     // Default: line - positioned just before the character
     return (
-      <span className={`absolute -left-[1px] top-0 w-[2px] h-[1.2em] bg-primary rounded-full ${baseClass} shadow-[0_0_6px_rgba(var(--primary),0.4)]`} />
+      <span data-caret="true" className={`absolute -left-[1px] top-0 w-[2px] h-[1.2em] bg-primary rounded-full ${baseClass} shadow-[0_0_6px_rgba(var(--primary),0.4)]`} />
     );
   };
 
@@ -3091,13 +3127,15 @@ Understanding your baseline code typing speed can help identify opportunities fo
           <div
             ref={containerRef}
             onClick={handleContainerClick}
+            onPointerDown={handleContainerClick}
             className={`relative rounded-lg sm:rounded-xl min-h-[200px] sm:min-h-[300px] cursor-text transition-all duration-300 overflow-hidden ${isFocused
                 ? "ring-2 ring-primary/30 shadow-lg shadow-primary/5" 
                 : "ring-1 ring-border/30 hover:ring-border/50"
             }`}
             data-testid="typing-container"
             style={{
-              background: 'linear-gradient(180deg, hsl(var(--card)/0.6) 0%, hsl(var(--card)/0.3) 100%)'
+              background: 'linear-gradient(180deg, hsl(var(--card)/0.6) 0%, hsl(var(--card)/0.3) 100%)',
+              touchAction: 'manipulation'
             }}
           >
             {/* Code editor header bar */}
@@ -3177,18 +3215,32 @@ Understanding your baseline code typing speed can help identify opportunities fo
                     onChange={handleInput}
                     onKeyDown={handleKeyDown}
                     onPaste={handlePaste}
+                    onBeforeInput={(e: any) => {
+                      if (e.inputType === 'insertFromPaste' || e.inputType === 'insertFromDrop') {
+                        e.preventDefault();
+                        toast({ title: 'Paste Disabled', description: 'Pasting is disabled during tests.', variant: 'destructive' });
+                      }
+                    }}
+                    onDrop={(e) => e.preventDefault()}
+                    onDragOver={(e) => e.preventDefault()}
+                    onCut={(e) => e.preventDefault()}
                     onCompositionStart={handleCompositionStart}
                     onCompositionEnd={handleCompositionEnd}
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
-                    className="absolute opacity-0 w-0 h-0 top-0 left-0 resize-none"
+                    className="absolute opacity-0 top-0 left-0 resize-none"
                     autoComplete="off"
                     autoCorrect="off"
                     autoCapitalize="off"
                     spellCheck={false}
+                    inputMode="text"
+                    data-gramm="false"
+                    data-gramm_editor="false"
+                    data-enable-grammarly="false"
                     data-testid="input-code-typing"
                     disabled={isFinished || isFailed}
                     aria-label="Code typing input"
+                    style={isMobile ? { left: caretAnchor.left, top: caretAnchor.top, height: caretAnchor.height, width: 1, fontSize: 16 } : undefined}
                   />
                   
                   {/* Displayed code with highlighting and line numbers */}
@@ -3198,6 +3250,7 @@ Understanding your baseline code typing speed can help identify opportunities fo
                     role="textbox"
                     aria-readonly="true"
                     aria-label="Code display area"
+                    onScroll={() => { if (isMobile) syncCaretAnchor(); }}
                     style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(100,100,100,0.3) transparent' }}
                   >
                     {highlightedCode}
@@ -3479,14 +3532,14 @@ Understanding your baseline code typing speed can help identify opportunities fo
                         setCertificateOnlyMode(true);
                         setShareDialogOpen(true);
                         }}
-                        className="w-full py-2.5 sm:py-3 bg-gradient-to-r from-purple-500 to-cyan-500 text-white text-sm sm:text-base font-bold rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+                        className="w-full py-2 sm:py-3 bg-gradient-to-r from-purple-500 to-cyan-500 text-white text-xs sm:text-base font-bold rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5 sm:gap-2"
                         data-testid="button-get-certificate"
                       >
-                        <Award className="w-4 sm:w-5 h-4 sm:h-5" />
+                        <Award className="w-4 sm:w-5 h-4 sm:h-5 shrink-0" />
                         Get Certificate
                       </button>
                     )}
-                    <div className="flex gap-2 sm:gap-3">
+                    <div className="flex gap-2 sm:gap-3 min-w-0">
                       <button
                         onClick={() => {
                           setCompletionDialogOpen(false);
@@ -3498,26 +3551,22 @@ Understanding your baseline code typing speed can help identify opportunities fo
                           }
                       }}
                       disabled={isLoading}
-                        className="flex-1 py-2.5 sm:py-3 bg-primary text-primary-foreground text-sm sm:text-base font-bold rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5 sm:gap-2 disabled:opacity-50"
+                        className="flex-1 min-w-0 py-2.5 sm:py-3 bg-primary text-primary-foreground text-xs sm:text-base font-bold rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-1 sm:gap-2 disabled:opacity-50"
                         data-testid="button-new-snippet"
                       >
-                        <Zap className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
-                        {mode === "ai" ? (
-                          <>New Code</>
-                        ) : (
-                          <>Try Again</>
-                        )}
+                        <Zap className="w-3.5 sm:w-4 h-3.5 sm:h-4 shrink-0" />
+                        <span className="truncate">{mode === "ai" ? "New Code" : "Try Again"}</span>
                       </button>
                       <button
                       onClick={() => {
                         setCompletionDialogOpen(false);
                           resetTest();
                       }}
-                        className="px-4 sm:px-6 py-2.5 sm:py-3 border border-border text-sm sm:text-base rounded-lg hover:bg-accent transition-colors flex items-center justify-center gap-1.5 sm:gap-2"
+                        className="px-3 sm:px-6 py-2.5 sm:py-3 border border-border text-xs sm:text-base rounded-lg hover:bg-accent transition-colors flex items-center justify-center gap-1 sm:gap-2 shrink-0"
                         data-testid="button-try-again"
                       >
                         <RotateCcw className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
-                        Retry
+                        <span className="hidden xs:inline">Retry</span>
                       </button>
               </div>
                   </div>
@@ -3659,16 +3708,16 @@ Understanding your baseline code typing speed can help identify opportunities fo
                   <p className="text-[10px] sm:text-xs font-medium text-center text-muted-foreground uppercase tracking-wide">
                     Click to Share
                   </p>
-                  <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
+                  <div className="grid grid-cols-2 xs:grid-cols-3 gap-1.5 sm:gap-2">
                 <Tooltip>
                   <TooltipTrigger asChild>
                         <button
                           onClick={() => shareToSocial('twitter')}
-                          className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#1DA1F2]/10 hover:bg-[#1DA1F2]/25 border border-[#1DA1F2]/20 transition-all group"
+                          className="flex items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#1DA1F2]/10 hover:bg-[#1DA1F2]/25 border border-[#1DA1F2]/20 transition-all group"
                           data-testid="button-share-twitter"
                         >
-                          <Twitter className="w-4 h-4 text-[#1DA1F2]" />
-                          <span className="text-xs font-medium">X (Twitter)</span>
+                          <Twitter className="w-4 h-4 text-[#1DA1F2] shrink-0" />
+                          <span className="text-[10px] sm:text-xs font-medium truncate">X</span>
                         </button>
                   </TooltipTrigger>
                       <TooltipContent>
@@ -3679,11 +3728,11 @@ Understanding your baseline code typing speed can help identify opportunities fo
                   <TooltipTrigger asChild>
                         <button
                           onClick={() => shareToSocial('facebook')}
-                          className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#1877F2]/10 hover:bg-[#1877F2]/25 border border-[#1877F2]/20 transition-all group"
+                          className="flex items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#1877F2]/10 hover:bg-[#1877F2]/25 border border-[#1877F2]/20 transition-all group"
                           data-testid="button-share-facebook"
                         >
-                          <Facebook className="w-4 h-4 text-[#1877F2]" />
-                          <span className="text-xs font-medium">Facebook</span>
+                          <Facebook className="w-4 h-4 text-[#1877F2] shrink-0" />
+                          <span className="text-[10px] sm:text-xs font-medium truncate">Facebook</span>
                         </button>
                   </TooltipTrigger>
                       <TooltipContent>
@@ -3694,11 +3743,11 @@ Understanding your baseline code typing speed can help identify opportunities fo
                       <TooltipTrigger asChild>
                         <button
                           onClick={() => shareToSocial('linkedin')}
-                          className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#0A66C2]/10 hover:bg-[#0A66C2]/25 border border-[#0A66C2]/20 transition-all group"
+                          className="flex items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#0A66C2]/10 hover:bg-[#0A66C2]/25 border border-[#0A66C2]/20 transition-all group"
                           data-testid="button-share-linkedin"
                         >
-                          <Linkedin className="w-4 h-4 text-[#0A66C2]" />
-                          <span className="text-xs font-medium">LinkedIn</span>
+                          <Linkedin className="w-4 h-4 text-[#0A66C2] shrink-0" />
+                          <span className="text-[10px] sm:text-xs font-medium truncate">LinkedIn</span>
                         </button>
                       </TooltipTrigger>
                       <TooltipContent>
@@ -3709,11 +3758,11 @@ Understanding your baseline code typing speed can help identify opportunities fo
                       <TooltipTrigger asChild>
                         <button
                           onClick={() => shareToSocial('whatsapp')}
-                          className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/25 border border-[#25D366]/20 transition-all group"
+                          className="flex items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/25 border border-[#25D366]/20 transition-all group"
                           data-testid="button-share-whatsapp"
                         >
-                          <MessageCircle className="w-4 h-4 text-[#25D366]" />
-                          <span className="text-xs font-medium">WhatsApp</span>
+                          <MessageCircle className="w-4 h-4 text-[#25D366] shrink-0" />
+                          <span className="text-[10px] sm:text-xs font-medium truncate">WhatsApp</span>
                         </button>
                       </TooltipTrigger>
                       <TooltipContent>
@@ -3724,13 +3773,13 @@ Understanding your baseline code typing speed can help identify opportunities fo
                       <TooltipTrigger asChild>
                         <button
                           onClick={() => shareToSocial('discord')}
-                          className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#5865F2]/10 hover:bg-[#5865F2]/25 border border-[#5865F2]/20 transition-all group"
+                          className="flex items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#5865F2]/10 hover:bg-[#5865F2]/25 border border-[#5865F2]/20 transition-all group"
                           data-testid="button-share-discord"
                         >
-                          <svg className="w-4 h-4 text-[#5865F2]" viewBox="0 0 24 24" fill="currentColor">
+                          <svg className="w-4 h-4 text-[#5865F2] shrink-0" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
                           </svg>
-                          <span className="text-xs font-medium">Discord</span>
+                          <span className="text-[10px] sm:text-xs font-medium truncate">Discord</span>
                         </button>
                       </TooltipTrigger>
                       <TooltipContent>
@@ -3741,11 +3790,11 @@ Understanding your baseline code typing speed can help identify opportunities fo
                       <TooltipTrigger asChild>
                         <button
                           onClick={() => shareToSocial('telegram')}
-                          className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#0088cc]/10 hover:bg-[#0088cc]/25 border border-[#0088cc]/20 transition-all group"
+                          className="flex items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#0088cc]/10 hover:bg-[#0088cc]/25 border border-[#0088cc]/20 transition-all group"
                           data-testid="button-share-telegram"
                         >
-                          <Send className="w-4 h-4 text-[#0088cc]" />
-                          <span className="text-xs font-medium">Telegram</span>
+                          <Send className="w-4 h-4 text-[#0088cc] shrink-0" />
+                          <span className="text-[10px] sm:text-xs font-medium truncate">Telegram</span>
                         </button>
                       </TooltipTrigger>
                       <TooltipContent>
@@ -3759,11 +3808,11 @@ Understanding your baseline code typing speed can help identify opportunities fo
                 {'share' in navigator && (
                   <button
                     onClick={handleNativeShare}
-                    className="w-full py-3 bg-gradient-to-r from-primary/10 to-purple-500/10 text-foreground font-medium rounded-xl hover:from-primary/20 hover:to-purple-500/20 transition-all flex items-center justify-center gap-2 border border-primary/20"
+                    className="w-full py-2.5 sm:py-3 bg-gradient-to-r from-primary/10 to-purple-500/10 text-foreground text-sm sm:text-base font-medium rounded-lg sm:rounded-xl hover:from-primary/20 hover:to-purple-500/20 transition-all flex items-center justify-center gap-2 border border-primary/20"
                     data-testid="button-native-share"
                   >
-                    <Share2 className="w-4 h-4" />
-                    More Sharing Options
+                    <Share2 className="w-4 h-4 shrink-0" />
+                    <span className="truncate">More Sharing Options</span>
                   </button>
                 )}
               </TabsContent>
@@ -3787,35 +3836,35 @@ Understanding your baseline code typing speed can help identify opportunities fo
               
               {/* Certificate Tab - Only for logged in users */}
               {user && (
-                <TabsContent value="certificate" className="space-y-4">
-                  <div className="text-center space-y-2 mb-4">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border-2 border-yellow-500/30 mb-2">
-                      <Award className="w-8 h-8 text-yellow-400" />
+                <TabsContent value="certificate" className="space-y-3 sm:space-y-4">
+                  <div className="text-center space-y-1.5 sm:space-y-2 mb-3 sm:mb-4">
+                    <div className="inline-flex items-center justify-center w-12 sm:w-16 h-12 sm:h-16 rounded-full bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border-2 border-yellow-500/30 mb-1.5 sm:mb-2">
+                      <Award className="w-6 sm:w-8 h-6 sm:h-8 text-yellow-400" />
                     </div>
-                    <h3 className="text-lg font-bold">Share Your Certificate</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Show off your official {PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name} Code Typing Certificate!
+                    <h3 className="text-base sm:text-lg font-bold">Share Your Certificate</h3>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
+                      Show off your official <span className="font-medium">{PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name}</span> Code Typing Certificate!
                     </p>
                   </div>
 
                   {/* Certificate Stats Preview */}
-                  <div className="p-4 bg-gradient-to-br from-yellow-500/10 via-orange-500/10 to-purple-500/10 rounded-xl border border-yellow-500/20">
-                    <div className="grid grid-cols-2 gap-3 text-center">
-                      <div>
-                        <p className="text-xs text-muted-foreground mb-1">Typing Speed</p>
-                        <p className="text-2xl font-bold text-primary">{wpm} WPM</p>
+                  <div className="p-3 sm:p-4 bg-gradient-to-br from-yellow-500/10 via-orange-500/10 to-purple-500/10 rounded-lg sm:rounded-xl border border-yellow-500/20">
+                    <div className="grid grid-cols-2 gap-2 sm:gap-3 text-center">
+                      <div className="min-w-0">
+                        <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5 sm:mb-1">Typing Speed</p>
+                        <p className="text-xl sm:text-2xl font-bold text-primary">{wpm} WPM</p>
                       </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground mb-1">Accuracy</p>
-                        <p className="text-2xl font-bold text-green-400">{accuracy}%</p>
+                      <div className="min-w-0">
+                        <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5 sm:mb-1">Accuracy</p>
+                        <p className="text-xl sm:text-2xl font-bold text-green-400">{accuracy}%</p>
                       </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground mb-1">Performance</p>
-                        <p className="text-sm font-bold text-yellow-400">{getCodePerformanceRating(wpm, accuracy).badge}</p>
+                      <div className="min-w-0">
+                        <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5 sm:mb-1">Performance</p>
+                        <p className="text-xs sm:text-sm font-bold text-yellow-400 truncate">{getCodePerformanceRating(wpm, accuracy).badge}</p>
                       </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground mb-1">Language</p>
-                        <p className="text-sm font-bold">{PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name}</p>
+                      <div className="min-w-0">
+                        <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5 sm:mb-1">Language</p>
+                        <p className="text-xs sm:text-sm font-bold truncate">{PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name}</p>
                       </div>
                     </div>
                   </div>
@@ -3838,14 +3887,14 @@ Understanding your baseline code typing speed can help identify opportunities fo
                   </div>
 
                   {/* View, Download & Share Certificate Buttons */}
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-2 sm:gap-3">
                     <button
                       onClick={() => setShowCertificate(true)}
-                      className="py-3 bg-gradient-to-r from-purple-500 to-cyan-500 text-white font-bold rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25"
+                      className="py-2.5 sm:py-3 bg-gradient-to-r from-purple-500 to-cyan-500 text-white text-xs sm:text-sm font-bold rounded-lg sm:rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5 sm:gap-2 shadow-lg shadow-purple-500/25"
                       data-testid="button-view-certificate-share"
                     >
-                      <Award className="w-5 h-5" />
-                      View Certificate
+                      <Award className="w-4 sm:w-5 h-4 sm:h-5 shrink-0" />
+                      <span className="truncate">View</span>
                     </button>
                     <button
                       onClick={async () => {
@@ -3866,11 +3915,11 @@ Understanding your baseline code typing speed can help identify opportunities fo
                           toast({ title: "Copy Failed", description: "Please download instead.", variant: "destructive" });
                         }
                       }}
-                      className="py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg shadow-green-500/25"
+                      className="py-2.5 sm:py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs sm:text-sm font-bold rounded-lg sm:rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5 sm:gap-2 shadow-lg shadow-green-500/25"
                       data-testid="button-copy-certificate-image"
                     >
-                      {certificateImageCopied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
-                      {certificateImageCopied ? "Copied!" : "Copy Image"}
+                      {certificateImageCopied ? <Check className="w-4 sm:w-5 h-4 sm:h-5 shrink-0" /> : <Copy className="w-4 sm:w-5 h-4 sm:h-5 shrink-0" />}
+                      <span className="truncate">{certificateImageCopied ? "Copied!" : "Copy Image"}</span>
                     </button>
                   </div>
 
@@ -3878,25 +3927,25 @@ Understanding your baseline code typing speed can help identify opportunities fo
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
-                        className="w-full gap-2 h-11 text-white font-semibold bg-gradient-to-r from-blue-500 to-indigo-600 hover:opacity-90"
+                        className="w-full gap-1.5 sm:gap-2 h-10 sm:h-11 text-xs sm:text-sm text-white font-semibold bg-gradient-to-r from-blue-500 to-indigo-600 hover:opacity-90"
                         data-testid="button-download-certificate-format"
                       >
-                        <Download className="w-5 h-5" />
-                        Download Certificate
-                        <ChevronDown className="w-4 h-4 ml-auto" />
+                        <Download className="w-4 sm:w-5 h-4 sm:h-5 shrink-0" />
+                        <span className="truncate">Download Certificate</span>
+                        <ChevronDown className="w-3 sm:w-4 h-3 sm:h-4 ml-auto shrink-0" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56">
-                      <DropdownMenuItem onClick={() => downloadCertificate("png")} className="cursor-pointer">
-                        <FileImage className="w-4 h-4 mr-2" />
+                    <DropdownMenuContent align="end" className="w-48 sm:w-56">
+                      <DropdownMenuItem onClick={() => downloadCertificate("png")} className="cursor-pointer text-xs sm:text-sm">
+                        <FileImage className="w-4 h-4 mr-2 shrink-0" />
                         Download as PNG
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => downloadCertificate("jpg")} className="cursor-pointer">
-                        <FileImage className="w-4 h-4 mr-2" />
+                      <DropdownMenuItem onClick={() => downloadCertificate("jpg")} className="cursor-pointer text-xs sm:text-sm">
+                        <FileImage className="w-4 h-4 mr-2 shrink-0" />
                         Download as JPG
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => downloadCertificate("pdf")} className="cursor-pointer">
-                        <FileText className="w-4 h-4 mr-2" />
+                      <DropdownMenuItem onClick={() => downloadCertificate("pdf")} className="cursor-pointer text-xs sm:text-sm">
+                        <FileText className="w-4 h-4 mr-2 shrink-0" />
                         Download as PDF
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -3935,46 +3984,46 @@ Understanding your baseline code typing speed can help identify opportunities fo
                         }
                       }}
                       disabled={isSharingCertificate}
-                      className="w-full py-4 bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 text-white font-bold rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg shadow-orange-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full py-3 sm:py-4 bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 text-white text-xs sm:text-sm font-bold rounded-lg sm:rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5 sm:gap-2 shadow-lg shadow-orange-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
                       data-testid="button-share-certificate-with-image"
                     >
-                      <Share2 className="w-5 h-5" />
-                      {isSharingCertificate ? "Preparing..." : "Share Certificate with Image"}
+                      <Share2 className="w-4 sm:w-5 h-4 sm:h-5 shrink-0" />
+                      <span className="truncate">{isSharingCertificate ? "Preparing..." : "Share Certificate with Image"}</span>
                     </button>
                   )}
 
                   {/* Certificate Share Message Preview */}
                   <div className="relative">
-                    <div className="absolute -top-2 left-3 px-2 bg-background text-xs font-medium text-muted-foreground">
+                    <div className="absolute -top-2 left-3 px-2 bg-background text-[10px] sm:text-xs font-medium text-muted-foreground">
                       Certificate Share Message
                     </div>
-                    <div className="p-4 bg-gradient-to-br from-slate-900/50 to-slate-800/50 rounded-xl border border-yellow-500/20 text-sm leading-relaxed">
-                      <div className="space-y-2">
-                        <p className="text-base font-medium">
+                    <div className="p-3 sm:p-4 bg-gradient-to-br from-slate-900/50 to-slate-800/50 rounded-lg sm:rounded-xl border border-yellow-500/20 text-xs sm:text-sm leading-relaxed">
+                      <div className="space-y-1.5 sm:space-y-2">
+                        <p className="text-sm sm:text-base font-medium">
                           🎓 <span className="text-yellow-400 font-bold">CERTIFIED: {wpm} WPM Code Typing!</span>
                         </p>
-                        <p className="text-muted-foreground">
+                        <p className="text-muted-foreground text-xs sm:text-sm">
                           ⚡ Speed: <span className="text-foreground font-semibold">{wpm} WPM</span>
                         </p>
-                        <p className="text-muted-foreground">
+                        <p className="text-muted-foreground text-xs sm:text-sm">
                           ✨ Accuracy: <span className="text-foreground font-semibold">{accuracy}%</span>
                         </p>
-                        <p className="text-muted-foreground">
+                        <p className="text-muted-foreground text-xs sm:text-sm">
                           💻 Language: <span className="text-foreground font-semibold">{PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name}</span>
                         </p>
-                        <p className="text-muted-foreground">
+                        <p className="text-muted-foreground text-xs sm:text-sm">
                           🏆 Level: <span className="text-yellow-400 font-semibold">{getCodePerformanceRating(wpm, accuracy).title}</span>
                         </p>
-                        <p className="text-muted-foreground">
+                        <p className="text-muted-foreground text-xs sm:text-sm">
                           🎯 Badge: <span className="text-foreground font-semibold">{getCodePerformanceRating(wpm, accuracy).badge}</span>
                         </p>
-                        <p className="text-primary/80 text-xs mt-3 font-medium">
+                        <p className="text-primary/80 text-[10px] sm:text-xs mt-2 sm:mt-3 font-medium">
                           Official code typing certificate earned! Get yours 👇
                         </p>
-                        <p className="text-xs text-primary mt-2 font-medium">
+                        <p className="text-[10px] sm:text-xs text-primary mt-1.5 sm:mt-2 font-medium break-all">
                           🔗 https://typemasterai.com/code-mode
                         </p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-[10px] sm:text-xs text-muted-foreground">
                           #TypeMasterAI #CodeTyping #Programming #Certified
                         </p>
                       </div>
@@ -4000,11 +4049,11 @@ Understanding your baseline code typing speed can help identify opportunities fo
                   </div>
 
                   {/* Certificate Social Share Buttons */}
-                  <div className="space-y-3">
-                    <p className="text-xs font-medium text-center text-muted-foreground uppercase tracking-wide">
+                  <div className="space-y-2 sm:space-y-3">
+                    <p className="text-[10px] sm:text-xs font-medium text-center text-muted-foreground uppercase tracking-wide">
                       Share Certificate On
                     </p>
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-2 xs:grid-cols-3 gap-1.5 sm:gap-2">
                       <button
                         onClick={() => {
                           const rating = getCodePerformanceRating(wpm, accuracy);
@@ -4013,11 +4062,11 @@ Understanding your baseline code typing speed can help identify opportunities fo
 #TypeMasterAI #CodeTyping #Certified`);
                           window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent('https://typemasterai.com/code-mode')}`, '_blank', 'width=600,height=400');
                         }}
-                        className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#1DA1F2]/10 hover:bg-[#1DA1F2]/25 border border-[#1DA1F2]/20 transition-all"
+                        className="flex items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#1DA1F2]/10 hover:bg-[#1DA1F2]/25 border border-[#1DA1F2]/20 transition-all"
                         data-testid="button-cert-share-twitter"
                       >
-                        <Twitter className="w-4 h-4 text-[#1DA1F2]" />
-                        <span className="text-xs font-medium">X (Twitter)</span>
+                        <Twitter className="w-4 h-4 text-[#1DA1F2] shrink-0" />
+                        <span className="text-[10px] sm:text-xs font-medium truncate">X</span>
                       </button>
                       <button
                         onClick={() => {
@@ -4034,22 +4083,22 @@ Achieved ${wpm} WPM with ${accuracy}% accuracy typing ${PROGRAMMING_LANGUAGES[la
 Ready to earn yours? 🚀`);
                           window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://typemasterai.com/code-mode')}&quote=${text}`, '_blank', 'width=600,height=400');
                         }}
-                        className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#1877F2]/10 hover:bg-[#1877F2]/25 border border-[#1877F2]/20 transition-all"
+                        className="flex items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#1877F2]/10 hover:bg-[#1877F2]/25 border border-[#1877F2]/20 transition-all"
                         data-testid="button-cert-share-facebook"
                       >
-                        <Facebook className="w-4 h-4 text-[#1877F2]" />
-                        <span className="text-xs font-medium">Facebook</span>
+                        <Facebook className="w-4 h-4 text-[#1877F2] shrink-0" />
+                        <span className="text-[10px] sm:text-xs font-medium truncate">Facebook</span>
                       </button>
                       <button
                         onClick={() => {
                           const rating = getCodePerformanceRating(wpm, accuracy);
                           window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://typemasterai.com/code-mode')}`, '_blank', 'width=600,height=400');
                         }}
-                        className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#0A66C2]/10 hover:bg-[#0A66C2]/25 border border-[#0A66C2]/20 transition-all"
+                        className="flex items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#0A66C2]/10 hover:bg-[#0A66C2]/25 border border-[#0A66C2]/20 transition-all"
                         data-testid="button-cert-share-linkedin"
                       >
-                        <Linkedin className="w-4 h-4 text-[#0A66C2]" />
-                        <span className="text-xs font-medium">LinkedIn</span>
+                        <Linkedin className="w-4 h-4 text-[#0A66C2] shrink-0" />
+                        <span className="text-[10px] sm:text-xs font-medium truncate">LinkedIn</span>
                       </button>
                       <button
                         onClick={() => {
@@ -4057,11 +4106,11 @@ Ready to earn yours? 🚀`);
                           const waText = `*TypeMasterAI Code Certificate*\n\nSpeed: *${wpm} WPM*\nAccuracy: *${accuracy}%*\nLanguage: ${PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name}\nLevel: ${rating.title}\nBadge: ${rating.badge}\n\nGet yours: https://typemasterai.com/code-mode`;
                           window.open(`https://wa.me/?text=${encodeURIComponent(waText)}`, '_blank', 'width=600,height=400');
                         }}
-                        className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/25 border border-[#25D366]/20 transition-all"
+                        className="flex items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/25 border border-[#25D366]/20 transition-all"
                         data-testid="button-cert-share-whatsapp"
                       >
-                        <MessageCircle className="w-4 h-4 text-[#25D366]" />
-                        <span className="text-xs font-medium">WhatsApp</span>
+                        <MessageCircle className="w-4 h-4 text-[#25D366] shrink-0" />
+                        <span className="text-[10px] sm:text-xs font-medium truncate">WhatsApp</span>
                       </button>
                       <button
                         onClick={() => {
@@ -4069,11 +4118,11 @@ Ready to earn yours? 🚀`);
                           const text = `🎓 CERTIFIED!\n\n⚡ ${wpm} WPM | ✨ ${accuracy}% Accuracy\n💻 ${PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name}\n🏆 ${rating.title} | 🎯 ${rating.badge} Badge\n\nJust earned my official code typing certificate! Can you beat it? 😎`;
                           window.open(`https://t.me/share/url?url=${encodeURIComponent('https://typemasterai.com/code-mode')}&text=${encodeURIComponent(text)}`, '_blank', 'width=600,height=400');
                         }}
-                        className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#0088cc]/10 hover:bg-[#0088cc]/25 border border-[#0088cc]/20 transition-all"
+                        className="flex items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#0088cc]/10 hover:bg-[#0088cc]/25 border border-[#0088cc]/20 transition-all"
                         data-testid="button-cert-share-telegram"
                       >
-                        <Send className="w-4 h-4 text-[#0088cc]" />
-                        <span className="text-xs font-medium">Telegram</span>
+                        <Send className="w-4 h-4 text-[#0088cc] shrink-0" />
+                        <span className="text-[10px] sm:text-xs font-medium truncate">Telegram</span>
                       </button>
                       <button
                         onClick={() => {
@@ -4082,25 +4131,25 @@ Ready to earn yours? 🚀`);
                           const body = encodeURIComponent(`Hello!\n\nI'm excited to share that I've earned an official TypeMasterAI Code Typing Certificate!\n\n📜 CERTIFICATE DETAILS:\n━━━━━━━━━━━━━━━━━━━━\n⚡ Typing Speed: ${wpm} WPM\n✨ Accuracy Rate: ${accuracy}%\n💻 Language: ${PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name}\n🏆 Performance Level: ${rating.title}\n🎯 Badge Earned: ${rating.badge}\n📅 Date: ${new Date().toLocaleDateString()}\n\nThis certification validates my code typing proficiency!\n\n👉 Get certified: https://typemasterai.com/code-mode\n\nBest regards!`);
                           window.open(`mailto:?subject=${subject}&body=${body}`);
                         }}
-                        className="flex items-center justify-center gap-2 p-3 rounded-xl bg-gray-500/10 hover:bg-gray-500/25 border border-gray-500/20 transition-all"
+                        className="flex items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gray-500/10 hover:bg-gray-500/25 border border-gray-500/20 transition-all"
                         data-testid="button-cert-share-email"
                       >
-                        <Mail className="w-4 h-4 text-gray-400" />
-                        <span className="text-xs font-medium">Email</span>
+                        <Mail className="w-4 h-4 text-gray-400 shrink-0" />
+                        <span className="text-[10px] sm:text-xs font-medium truncate">Email</span>
                       </button>
                     </div>
                   </div>
 
                   {/* Certificate Sharing Tips */}
-                  <div className="space-y-2">
-                    <div className="p-3 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-lg border border-blue-500/20">
-                      <p className="text-xs text-center text-muted-foreground">
-                        📱 <span className="font-medium text-foreground">Mobile:</span> Use "Share Certificate with Image" to attach the certificate directly!
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <div className="p-2 sm:p-3 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-md sm:rounded-lg border border-blue-500/20">
+                      <p className="text-[10px] sm:text-xs text-center text-muted-foreground">
+                        📱 <span className="font-medium text-foreground">Mobile:</span> Use "Share Certificate with Image" to attach directly!
                       </p>
                     </div>
-                    <div className="p-3 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-lg border border-green-500/20">
-                      <p className="text-xs text-center text-muted-foreground">
-                        💻 <span className="font-medium text-foreground">Desktop:</span> Use "Copy Image" then paste directly into Twitter, LinkedIn, Discord, or any social media!
+                    <div className="p-2 sm:p-3 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-md sm:rounded-lg border border-green-500/20">
+                      <p className="text-[10px] sm:text-xs text-center text-muted-foreground">
+                        💻 <span className="font-medium text-foreground">Desktop:</span> Use "Copy Image" then paste into any social media!
                       </p>
                     </div>
                   </div>
@@ -4136,52 +4185,52 @@ Ready to earn yours? 🚀`);
               )}
 
               {/* Challenge Tab */}
-              <TabsContent value="challenge" className="mt-4 space-y-4">
+              <TabsContent value="challenge" className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">
                 {/* Challenge Header */}
-                <div className="text-center space-y-2">
-                  <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-orange-500/20 to-red-500/20 border-2 border-orange-500/30 mb-2">
-                    <Zap className="w-7 h-7 text-orange-400" />
+                <div className="text-center space-y-1.5 sm:space-y-2">
+                  <div className="inline-flex items-center justify-center w-12 sm:w-14 h-12 sm:h-14 rounded-full bg-gradient-to-br from-orange-500/20 to-red-500/20 border-2 border-orange-500/30 mb-1.5 sm:mb-2">
+                    <Zap className="w-6 sm:w-7 h-6 sm:h-7 text-orange-400" />
                   </div>
-                  <h3 className="text-lg font-bold">Challenge Your Friends!</h3>
-                  <p className="text-sm text-muted-foreground">
+                  <h3 className="text-base sm:text-lg font-bold">Challenge Your Friends!</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     Think you're fast? Challenge your friends to beat your score!
                   </p>
                 </div>
 
                 {/* Your Score to Beat */}
-                <div className="p-4 bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-xl border border-orange-500/30">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm font-medium text-muted-foreground">Score to Beat</span>
-                    <span className="px-2 py-0.5 bg-orange-500/20 text-orange-400 text-xs font-medium rounded-full">
+                <div className="p-3 sm:p-4 bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-lg sm:rounded-xl border border-orange-500/30">
+                  <div className="flex items-center justify-between mb-2 sm:mb-3">
+                    <span className="text-xs sm:text-sm font-medium text-muted-foreground">Score to Beat</span>
+                    <span className="px-1.5 sm:px-2 py-0.5 bg-orange-500/20 text-orange-400 text-[10px] sm:text-xs font-medium rounded-full truncate max-w-[100px]">
                       {getCodePerformanceRating(wpm, accuracy).badge}
                     </span>
                   </div>
-                  <div className="grid grid-cols-3 gap-3 text-center">
-                    <div>
-                      <div className="text-2xl font-bold text-primary">{wpm}</div>
-                      <div className="text-xs text-muted-foreground">WPM</div>
+                  <div className="grid grid-cols-3 gap-2 sm:gap-3 text-center">
+                    <div className="min-w-0">
+                      <div className="text-xl sm:text-2xl font-bold text-primary">{wpm}</div>
+                      <div className="text-[10px] sm:text-xs text-muted-foreground">WPM</div>
                     </div>
-                    <div>
-                      <div className="text-2xl font-bold text-green-400">{accuracy}%</div>
-                      <div className="text-xs text-muted-foreground">Accuracy</div>
+                    <div className="min-w-0">
+                      <div className="text-xl sm:text-2xl font-bold text-green-400">{accuracy}%</div>
+                      <div className="text-[10px] sm:text-xs text-muted-foreground">Accuracy</div>
                     </div>
-                    <div>
-                      <div className="text-2xl font-bold">{PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name}</div>
-                      <div className="text-xs text-muted-foreground">Language</div>
+                    <div className="min-w-0">
+                      <div className="text-sm sm:text-2xl font-bold truncate">{PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name}</div>
+                      <div className="text-[10px] sm:text-xs text-muted-foreground">Language</div>
                     </div>
                   </div>
                 </div>
                 
                 {/* Challenge Link */}
-                <div className="space-y-3">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide text-center">
+                <div className="space-y-2 sm:space-y-3">
+                  <p className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wide text-center">
                     Share Challenge Link
                   </p>
                   <div className="flex items-center gap-2">
                     <Input 
                       value={shareUrl || `${window.location.origin}/code-mode?challenge=${wpm}`}
                       readOnly
-                      className="flex-1 font-mono text-sm"
+                      className="flex-1 font-mono text-xs sm:text-sm min-w-0"
                     />
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -4193,6 +4242,7 @@ Ready to earn yours? 🚀`);
                           }}
                       variant="outline"
                       size="icon"
+                          className="shrink-0"
                           data-testid="button-copy-challenge-link"
                     >
                       <Copy className="w-4 h-4" />
@@ -4207,16 +4257,16 @@ Ready to earn yours? 🚀`);
                   
                 {/* Challenge Message */}
                 <div className="relative">
-                  <div className="absolute -top-2 left-3 px-2 bg-background text-xs font-medium text-muted-foreground">
+                  <div className="absolute -top-2 left-3 px-2 bg-background text-[10px] sm:text-xs font-medium text-muted-foreground">
                     Challenge Message
                   </div>
-                  <div className="p-4 bg-gradient-to-br from-orange-500/5 to-red-500/5 rounded-xl border border-orange-500/20 text-sm">
-                    <p className="mb-2">🔥 <span className="font-bold">I challenge you to beat my score!</span></p>
-                    <p className="text-muted-foreground mb-2">
-                      I just typed {PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name} code at <span className="text-primary font-bold">{wpm} WPM</span> with {accuracy}% accuracy!
+                  <div className="p-3 sm:p-4 bg-gradient-to-br from-orange-500/5 to-red-500/5 rounded-lg sm:rounded-xl border border-orange-500/20 text-xs sm:text-sm">
+                    <p className="mb-1.5 sm:mb-2">🔥 <span className="font-bold">I challenge you to beat my score!</span></p>
+                    <p className="text-muted-foreground mb-1.5 sm:mb-2">
+                      I just typed <span className="font-medium">{PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name}</span> code at <span className="text-primary font-bold">{wpm} WPM</span> with {accuracy}% accuracy!
                     </p>
                     <p className="text-muted-foreground">Think you can code faster? Prove it! 💻⚡</p>
-                    <p className="text-primary/80 text-xs mt-3">👉 https://typemasterai.com/code-mode</p>
+                    <p className="text-primary/80 text-[10px] sm:text-xs mt-2 sm:mt-3 break-all">👉 https://typemasterai.com/code-mode</p>
                   </div>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -4240,7 +4290,7 @@ Ready to earn yours? 🚀`);
                 </div>
 
                 {/* Quick Challenge Share */}
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <button
@@ -4250,11 +4300,11 @@ Ready to earn yours? 🚀`);
                           const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent('https://typemasterai.com/code-mode')}`;
                           window.open(url, '_blank');
                         }}
-                        className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#1DA1F2]/10 hover:bg-[#1DA1F2]/25 border border-[#1DA1F2]/20 transition-all"
+                        className="flex items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#1DA1F2]/10 hover:bg-[#1DA1F2]/25 border border-[#1DA1F2]/20 transition-all"
                         data-testid="button-challenge-twitter"
                         >
-                        <Twitter className="w-4 h-4 text-[#1DA1F2]" />
-                        <span className="text-sm font-medium">Challenge on X</span>
+                        <Twitter className="w-4 h-4 text-[#1DA1F2] shrink-0" />
+                        <span className="text-[10px] sm:text-sm font-medium truncate">Challenge on X</span>
                         </button>
                       </TooltipTrigger>
                     <TooltipContent>
@@ -4270,11 +4320,11 @@ Ready to earn yours? 🚀`);
                           const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
                           window.open(url, '_blank');
                         }}
-                        className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/25 border border-[#25D366]/20 transition-all"
+                        className="flex items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/25 border border-[#25D366]/20 transition-all"
                         data-testid="button-challenge-whatsapp"
                         >
-                          <MessageCircle className="w-4 h-4 text-[#25D366]" />
-                        <span className="text-sm font-medium">Challenge on WhatsApp</span>
+                          <MessageCircle className="w-4 h-4 text-[#25D366] shrink-0" />
+                        <span className="text-[10px] sm:text-sm font-medium truncate">WhatsApp</span>
                         </button>
                       </TooltipTrigger>
                     <TooltipContent>
@@ -4293,11 +4343,11 @@ Ready to earn yours? 🚀`);
                         url: 'https://typemasterai.com/code-mode'
                       }).catch(() => { });
                     }}
-                    className="w-full py-3 bg-gradient-to-r from-orange-500/10 to-red-500/10 text-foreground font-medium rounded-xl hover:from-orange-500/20 hover:to-red-500/20 transition-all flex items-center justify-center gap-2 border border-orange-500/20"
+                    className="w-full py-2.5 sm:py-3 bg-gradient-to-r from-orange-500/10 to-red-500/10 text-foreground text-xs sm:text-base font-medium rounded-lg sm:rounded-xl hover:from-orange-500/20 hover:to-red-500/20 transition-all flex items-center justify-center gap-2 border border-orange-500/20"
                     data-testid="button-challenge-native"
                     >
-                      <Share2 className="w-4 h-4" />
-                    More Sharing Options
+                      <Share2 className="w-4 h-4 shrink-0" />
+                    <span className="truncate">More Sharing Options</span>
                   </button>
                   )}
               </TabsContent>

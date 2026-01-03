@@ -323,39 +323,39 @@ Think you can code faster? I dare you to try! 😏🚀`;
   };
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col items-center gap-3 sm:gap-4">
       <canvas
         ref={canvasRef}
-        className="rounded-xl shadow-2xl max-w-full h-auto border border-primary/20"
+        className="rounded-lg sm:rounded-xl shadow-2xl max-w-full h-auto border border-primary/20"
         style={{ maxWidth: "100%", height: "auto" }}
       />
 
-      <div className="w-full space-y-3">
+      <div className="w-full space-y-2 sm:space-y-3">
         {/* Image Sharing Section (like standard card) */}
-        <div className="p-3 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-xl border border-purple-500/20">
-          <p className="text-xs text-center text-purple-300 font-medium mb-2">Share This Image</p>
-          <div className="grid grid-cols-2 gap-2">
+        <div className="p-2.5 sm:p-3 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-lg sm:rounded-xl border border-purple-500/20">
+          <p className="text-[10px] sm:text-xs text-center text-purple-300 font-medium mb-1.5 sm:mb-2">Share This Image</p>
+          <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
             <Button
               onClick={copyImageToClipboard}
               variant="outline"
-              className="gap-2 bg-purple-500/10 border-purple-500/30 hover:bg-purple-500/20"
+              className="gap-1.5 sm:gap-2 text-xs sm:text-sm h-9 sm:h-10 bg-purple-500/10 border-purple-500/30 hover:bg-purple-500/20"
               data-testid="button-copy-code-image"
             >
-              {imageCopied ? <Check className="w-4 h-4 text-green-500" /> : <Clipboard className="w-4 h-4 text-purple-400" />}
-              {imageCopied ? "Copied!" : "Copy Image"}
+              {imageCopied ? <Check className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-green-500 shrink-0" /> : <Clipboard className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-purple-400 shrink-0" />}
+              <span className="truncate">{imageCopied ? "Copied!" : "Copy"}</span>
             </Button>
             <Button
               onClick={downloadCard}
               variant="outline"
-              className="gap-2 bg-blue-500/10 border-blue-500/30 hover:bg-blue-500/20"
+              className="gap-1.5 sm:gap-2 text-xs sm:text-sm h-9 sm:h-10 bg-blue-500/10 border-blue-500/30 hover:bg-blue-500/20"
               data-testid="button-download-code-card"
             >
-              <Download className="w-4 h-4 text-blue-400" />
-              Download
+              <Download className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-blue-400 shrink-0" />
+              <span className="truncate">Download</span>
             </Button>
           </div>
-          <p className="text-[10px] text-center text-muted-foreground mt-2">
-            Copy image and paste directly into Twitter, Discord, or any social app
+          <p className="text-[9px] sm:text-[10px] text-center text-muted-foreground mt-1.5 sm:mt-2">
+            Copy and paste directly into any social app
           </p>
         </div>
 
@@ -364,92 +364,92 @@ Think you can code faster? I dare you to try! 😏🚀`;
           <Button
             onClick={shareCard}
             disabled={isSharing}
-            className="w-full gap-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+            className="w-full gap-1.5 sm:gap-2 h-9 sm:h-10 text-xs sm:text-sm bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
             data-testid="button-share-code-card"
           >
-            <Share2 className="w-4 h-4" />
-            {isSharing ? "Sharing..." : "Share Image (Mobile/Desktop Apps)"}
+            <Share2 className="w-3.5 sm:w-4 h-3.5 sm:h-4 shrink-0" />
+            <span className="truncate">{isSharing ? "Sharing..." : "Share Image"}</span>
           </Button>
         )}
 
         {/* Quick Text Share Section (like standard card) */}
-        <div className="w-full space-y-2">
-          <p className="text-xs text-center text-muted-foreground uppercase tracking-wide">Or Share with Text + Link</p>
-          <div className="grid grid-cols-3 gap-2">
+        <div className="w-full space-y-1.5 sm:space-y-2">
+          <p className="text-[10px] sm:text-xs text-center text-muted-foreground uppercase tracking-wide">Or Share with Text + Link</p>
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5 sm:gap-2">
             <button
               onClick={() => shareWebComposer('twitter', socialLinks.twitter)}
-              className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#1DA1F2]/10 hover:bg-[#1DA1F2]/25 border border-[#1DA1F2]/20 transition-all"
+              className="flex items-center justify-center gap-1.5 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#1DA1F2]/10 hover:bg-[#1DA1F2]/25 border border-[#1DA1F2]/20 transition-all"
             >
-              <Twitter className="w-4 h-4 text-[#1DA1F2]" />
-              <span className="text-xs font-medium">X (Twitter)</span>
+              <Twitter className="w-4 h-4 text-[#1DA1F2] shrink-0" />
+              <span className="hidden sm:inline text-xs font-medium">X</span>
             </button>
             <button
               onClick={shareToFacebook}
-              className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#1877F2]/10 hover:bg-[#1877F2]/25 border border-[#1877F2]/20 transition-all"
+              className="flex items-center justify-center gap-1.5 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#1877F2]/10 hover:bg-[#1877F2]/25 border border-[#1877F2]/20 transition-all"
             >
-              <Facebook className="w-4 h-4 text-[#1877F2]" />
-              <span className="text-xs font-medium">Facebook</span>
+              <Facebook className="w-4 h-4 text-[#1877F2] shrink-0" />
+              <span className="hidden sm:inline text-xs font-medium">FB</span>
             </button>
             <button
               onClick={() => shareWebComposer('linkedin', socialLinks.linkedin)}
-              className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#0A66C2]/10 hover:bg-[#0A66C2]/25 border border-[#0A66C2]/20 transition-all"
+              className="flex items-center justify-center gap-1.5 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#0A66C2]/10 hover:bg-[#0A66C2]/25 border border-[#0A66C2]/20 transition-all"
             >
-              <Linkedin className="w-4 h-4 text-[#0A66C2]" />
-              <span className="text-xs font-medium">LinkedIn</span>
+              <Linkedin className="w-4 h-4 text-[#0A66C2] shrink-0" />
+              <span className="hidden sm:inline text-xs font-medium">LI</span>
             </button>
             <button
               onClick={() => shareWebComposer('whatsapp', socialLinks.whatsapp)}
-              className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/25 border border-[#25D366]/20 transition-all"
+              className="flex items-center justify-center gap-1.5 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/25 border border-[#25D366]/20 transition-all"
             >
-              <MessageCircle className="w-4 h-4 text-[#25D366]" />
-              <span className="text-xs font-medium">WhatsApp</span>
+              <MessageCircle className="w-4 h-4 text-[#25D366] shrink-0" />
+              <span className="hidden sm:inline text-xs font-medium">WA</span>
             </button>
             <button
               onClick={shareToReddit}
-              className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#FF4500]/10 hover:bg-[#FF4500]/25 border border-[#FF4500]/20 transition-all"
+              className="flex items-center justify-center gap-1.5 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#FF4500]/10 hover:bg-[#FF4500]/25 border border-[#FF4500]/20 transition-all"
             >
-              <svg className="w-4 h-4 text-[#FF4500]" viewBox="0 0 24 24" fill="currentColor">
+              <svg className="w-4 h-4 text-[#FF4500] shrink-0" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z" />
               </svg>
-              <span className="text-xs font-medium">Reddit</span>
+              <span className="hidden sm:inline text-xs font-medium">Reddit</span>
             </button>
             <button
               onClick={shareToTelegram}
-              className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#0088cc]/10 hover:bg-[#0088cc]/25 border border-[#0088cc]/20 transition-all"
+              className="flex items-center justify-center gap-1.5 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#0088cc]/10 hover:bg-[#0088cc]/25 border border-[#0088cc]/20 transition-all"
             >
-              <Send className="w-4 h-4 text-[#0088cc]" />
-              <span className="text-xs font-medium">Telegram</span>
+              <Send className="w-4 h-4 text-[#0088cc] shrink-0" />
+              <span className="hidden sm:inline text-xs font-medium">TG</span>
             </button>
             <button
               onClick={shareViaEmail}
-              className="flex items-center justify-center gap-2 p-3 rounded-xl bg-gray-500/10 hover:bg-gray-500/25 border border-gray-500/20 transition-all"
+              className="flex items-center justify-center gap-1.5 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gray-500/10 hover:bg-gray-500/25 border border-gray-500/20 transition-all"
             >
-              <Mail className="w-4 h-4 text-gray-400" />
-              <span className="text-xs font-medium">Email</span>
+              <Mail className="w-4 h-4 text-gray-400 shrink-0" />
+              <span className="hidden sm:inline text-xs font-medium">Email</span>
             </button>
           </div>
 
           {/* Copy Text Button (like standard card) */}
           <button
             onClick={copyShareText}
-            className="w-full py-2 mt-2 bg-secondary/50 hover:bg-secondary text-secondary-foreground rounded-lg text-sm flex items-center justify-center gap-2 transition-all"
+            className="w-full py-2 mt-1.5 sm:mt-2 bg-secondary/50 hover:bg-secondary text-secondary-foreground rounded-md sm:rounded-lg text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 transition-all"
             data-testid="button-copy-share-text"
           >
-            {textCopied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
-            {textCopied ? "Text Copied!" : "Copy Share Text"}
+            {textCopied ? <Check className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-green-500 shrink-0" /> : <Copy className="w-3.5 sm:w-4 h-3.5 sm:h-4 shrink-0" />}
+            <span className="truncate">{textCopied ? "Copied!" : "Copy Share Text"}</span>
           </button>
         </div>
 
         {/* Sharing Tips (like standard typing test) */}
-        <div className="space-y-2">
-          <div className="p-3 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-lg border border-blue-500/20">
-            <p className="text-xs text-center text-muted-foreground">
-              📱 <span className="font-medium text-foreground">Mobile:</span> Use "Share Image" to attach the card directly to any app!
+        <div className="space-y-1.5 sm:space-y-2">
+          <div className="p-2 sm:p-3 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-md sm:rounded-lg border border-blue-500/20">
+            <p className="text-[10px] sm:text-xs text-center text-muted-foreground">
+              📱 <span className="font-medium text-foreground">Mobile:</span> Use "Share Image" to attach directly!
             </p>
           </div>
-          <div className="p-3 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-lg border border-green-500/20">
-            <p className="text-xs text-center text-muted-foreground">
-              💻 <span className="font-medium text-foreground">Desktop:</span> Use "Copy Image" then paste directly into Twitter, Discord, or any social media!
+          <div className="p-2 sm:p-3 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-md sm:rounded-lg border border-green-500/20">
+            <p className="text-[10px] sm:text-xs text-center text-muted-foreground">
+              💻 <span className="font-medium text-foreground">Desktop:</span> Copy and paste into any social media!
             </p>
           </div>
         </div>

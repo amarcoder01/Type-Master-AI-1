@@ -611,17 +611,17 @@ export function CodeCertificate({
   };
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <div className="relative w-full overflow-hidden rounded-xl shadow-2xl" data-testid="certificate-container" style={{ boxShadow: `0 25px 50px -12px ${tierVisuals.glowColor}` }}>
+    <div className="flex flex-col items-center gap-3 sm:gap-4">
+      <div className="relative w-full overflow-hidden rounded-lg sm:rounded-xl shadow-2xl" data-testid="certificate-container" style={{ boxShadow: `0 25px 50px -12px ${tierVisuals.glowColor}` }}>
         <canvas
           ref={canvasRef}
           className="w-full h-auto"
           style={{ maxWidth: "100%" }}
           data-testid="certificate-canvas"
         />
-        <div className="absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1.5 bg-black/60 rounded-full backdrop-blur-sm border border-white/10">
-          <Award className="w-3.5 h-3.5" style={{ color: tierVisuals.primaryColor }} />
-          <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: tierVisuals.primaryColor }}>
+        <div className="absolute top-2 sm:top-3 left-2 sm:left-3 flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 bg-black/60 rounded-full backdrop-blur-sm border border-white/10">
+          <Award className="w-3 sm:w-3.5 h-3 sm:h-3.5" style={{ color: tierVisuals.primaryColor }} />
+          <span className="text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider" style={{ color: tierVisuals.primaryColor }}>
             {rating.badge} Tier
           </span>
         </div>
@@ -633,77 +633,77 @@ export function CodeCertificate({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                className="w-full gap-2 h-11 text-white font-semibold"
+                className="w-full gap-1.5 sm:gap-2 h-10 sm:h-11 text-xs sm:text-sm text-white font-semibold"
                 style={{
                   background: `linear-gradient(135deg, ${tierVisuals.borderGradient[0]}, ${tierVisuals.primaryColor}, ${tierVisuals.borderGradient[2]})`,
                 }}
                 data-testid="button-download-certificate"
               >
-                <Download className="w-4 h-4" />
-                Download Certificate
-                <ChevronDown className="w-4 h-4 ml-auto" />
+                <Download className="w-3.5 sm:w-4 h-3.5 sm:h-4 shrink-0" />
+                <span className="truncate">Download Certificate</span>
+                <ChevronDown className="w-3 sm:w-4 h-3 sm:h-4 ml-auto shrink-0" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem onClick={() => downloadCertificate("png")} className="cursor-pointer">
-                <FileImage className="w-4 h-4 mr-2" />
+            <DropdownMenuContent align="end" className="w-44 sm:w-48">
+              <DropdownMenuItem onClick={() => downloadCertificate("png")} className="cursor-pointer text-xs sm:text-sm">
+                <FileImage className="w-4 h-4 mr-2 shrink-0" />
                 Download as PNG
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => downloadCertificate("jpg")} className="cursor-pointer">
-                <FileImage className="w-4 h-4 mr-2" />
+              <DropdownMenuItem onClick={() => downloadCertificate("jpg")} className="cursor-pointer text-xs sm:text-sm">
+                <FileImage className="w-4 h-4 mr-2 shrink-0" />
                 Download as JPG
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => downloadCertificate("pdf")} className="cursor-pointer">
-                <FileText className="w-4 h-4 mr-2" />
+              <DropdownMenuItem onClick={() => downloadCertificate("pdf")} className="cursor-pointer text-xs sm:text-sm">
+                <FileText className="w-4 h-4 mr-2 shrink-0" />
                 Download as PDF
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <p className="text-[10px] text-center text-zinc-500 mt-2" data-testid="text-certificate-id">
-            Certificate ID: <span className="font-mono" style={{ color: tierVisuals.primaryColor }}>{certificateId}</span>
+          <p className="text-[9px] sm:text-[10px] text-center text-zinc-500 mt-1.5 sm:mt-2" data-testid="text-certificate-id">
+            Certificate ID: <span className="font-mono break-all" style={{ color: tierVisuals.primaryColor }}>{certificateId}</span>
           </p>
         </div>
       ) : (
-        <div className="w-full space-y-3">
-          <div className="p-4 bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 rounded-xl border border-zinc-700">
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <Sparkles className="w-4 h-4" style={{ color: tierVisuals.primaryColor }} />
-              <p className="text-sm font-medium" style={{ color: tierVisuals.primaryColor }}>Share Your Achievement</p>
-              <Sparkles className="w-4 h-4" style={{ color: tierVisuals.primaryColor }} />
+        <div className="w-full space-y-2 sm:space-y-3">
+          <div className="p-3 sm:p-4 bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 rounded-lg sm:rounded-xl border border-zinc-700">
+            <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-2 sm:mb-3">
+              <Sparkles className="w-3.5 sm:w-4 h-3.5 sm:h-4" style={{ color: tierVisuals.primaryColor }} />
+              <p className="text-xs sm:text-sm font-medium" style={{ color: tierVisuals.primaryColor }}>Share Your Achievement</p>
+              <Sparkles className="w-3.5 sm:w-4 h-3.5 sm:h-4" style={{ color: tierVisuals.primaryColor }} />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
               <Button
                 onClick={copyImageToClipboard}
                 variant="outline"
-                className="gap-2 h-10 bg-zinc-800/50 border-zinc-600 hover:bg-zinc-700/50 hover:border-zinc-500"
+                className="gap-1.5 sm:gap-2 h-9 sm:h-10 text-xs sm:text-sm bg-zinc-800/50 border-zinc-600 hover:bg-zinc-700/50 hover:border-zinc-500"
                 data-testid="button-copy-certificate"
               >
-                {imageCopied ? <Check className="w-4 h-4 text-green-500" /> : <Clipboard className="w-4 h-4" style={{ color: tierVisuals.primaryColor }} />}
-                <span className="text-zinc-200">{imageCopied ? "Copied!" : "Copy Image"}</span>
+                {imageCopied ? <Check className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-green-500 shrink-0" /> : <Clipboard className="w-3.5 sm:w-4 h-3.5 sm:h-4 shrink-0" style={{ color: tierVisuals.primaryColor }} />}
+                <span className="text-zinc-200 truncate">{imageCopied ? "Copied!" : "Copy"}</span>
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="outline"
-                    className="gap-2 h-10 bg-zinc-800/50 border-zinc-600 hover:bg-zinc-700/50 hover:border-zinc-500"
+                    className="gap-1.5 sm:gap-2 h-9 sm:h-10 text-xs sm:text-sm bg-zinc-800/50 border-zinc-600 hover:bg-zinc-700/50 hover:border-zinc-500"
                     data-testid="button-download-certificate"
                   >
-                    <Download className="w-4 h-4 text-purple-400" />
-                    <span className="text-zinc-200">Download</span>
-                    <ChevronDown className="w-3 h-3 ml-auto" />
+                    <Download className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-purple-400 shrink-0" />
+                    <span className="text-zinc-200 truncate">Download</span>
+                    <ChevronDown className="w-2.5 sm:w-3 h-2.5 sm:h-3 ml-auto shrink-0" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem onClick={() => downloadCertificate("png")} className="cursor-pointer">
-                    <FileImage className="w-4 h-4 mr-2" />
+                <DropdownMenuContent align="end" className="w-44 sm:w-48">
+                  <DropdownMenuItem onClick={() => downloadCertificate("png")} className="cursor-pointer text-xs sm:text-sm">
+                    <FileImage className="w-4 h-4 mr-2 shrink-0" />
                     Download as PNG
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => downloadCertificate("jpg")} className="cursor-pointer">
-                    <FileImage className="w-4 h-4 mr-2" />
+                  <DropdownMenuItem onClick={() => downloadCertificate("jpg")} className="cursor-pointer text-xs sm:text-sm">
+                    <FileImage className="w-4 h-4 mr-2 shrink-0" />
                     Download as JPG
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => downloadCertificate("pdf")} className="cursor-pointer">
-                    <FileText className="w-4 h-4 mr-2" />
+                  <DropdownMenuItem onClick={() => downloadCertificate("pdf")} className="cursor-pointer text-xs sm:text-sm">
+                    <FileText className="w-4 h-4 mr-2 shrink-0" />
                     Download as PDF
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -715,19 +715,19 @@ export function CodeCertificate({
             <Button
               onClick={shareCertificate}
               disabled={isSharing}
-              className="w-full gap-2 h-11 text-white font-semibold"
+              className="w-full gap-1.5 sm:gap-2 h-10 sm:h-11 text-xs sm:text-sm text-white font-semibold"
               style={{
                 background: `linear-gradient(135deg, ${tierVisuals.borderGradient[0]}, ${tierVisuals.primaryColor}, ${tierVisuals.borderGradient[2]})`,
               }}
               data-testid="button-share-certificate"
             >
-              <Share2 className="w-4 h-4" />
-              {isSharing ? "Sharing..." : "Share Certificate"}
+              <Share2 className="w-3.5 sm:w-4 h-3.5 sm:h-4 shrink-0" />
+              <span className="truncate">{isSharing ? "Sharing..." : "Share Certificate"}</span>
             </Button>
           )}
 
-          <p className="text-[10px] text-center text-zinc-500" data-testid="text-certificate-id">
-            Certificate ID: <span className="font-mono" style={{ color: tierVisuals.primaryColor }}>{certificateId}</span>
+          <p className="text-[9px] sm:text-[10px] text-center text-zinc-500" data-testid="text-certificate-id">
+            Certificate ID: <span className="font-mono break-all" style={{ color: tierVisuals.primaryColor }}>{certificateId}</span>
           </p>
         </div>
       )}
