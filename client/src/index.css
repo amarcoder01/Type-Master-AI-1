@@ -1090,12 +1090,13 @@
 
 /* High-performance typing caret - GPU accelerated */
 .caret-element {
-  --caret-transition-duration: 80ms;
-  will-change: transform;
+  --caret-transition-duration: 60ms;
+  will-change: transform, height;
   contain: layout style;
-  transition: transform var(--caret-transition-duration) ease-out, height 0.1s ease-out;
-  /* Ensure caret is always visible and properly sized */
-  min-height: 24px;
+  transition: transform var(--caret-transition-duration) cubic-bezier(0.4, 0, 0.2, 1), 
+              height 0.08s ease-out;
+  /* Ensure caret is always visible */
+  min-height: 2px;
   width: 2px !important;
   border-radius: 1px;
   /* Ensure it renders on top of text */
@@ -1106,6 +1107,8 @@
   -webkit-backface-visibility: hidden;
   /* Fallback background for visibility */
   background-color: hsl(var(--primary)) !important;
+  /* Subtle glow for visibility */
+  box-shadow: 0 0 4px hsl(var(--primary) / 0.4);
 }
 
 .caret-element.no-transition {
@@ -1116,15 +1119,24 @@
 /* Mobile-specific caret adjustments */
 @media (max-width: 640px) {
   .caret-element {
+    --caret-transition-duration: 40ms;
+    width: 2px !important;
+    min-height: 2px;
+    box-shadow: 0 0 3px hsl(var(--primary) / 0.5);
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .caret-element {
     --caret-transition-duration: 50ms;
-    width: 2px;
-    min-height: 1em;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .caret-element {
     --caret-transition-duration: 0ms;
+    box-shadow: none;
     transition: none !important;
     animation: none !important;
   }

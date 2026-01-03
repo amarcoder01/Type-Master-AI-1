@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, useMemo, memo, forwardRef, useTransition, useDeferredValue, startTransition } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo, memo, useTransition, useDeferredValue, startTransition } from "react";
 import { generateText, calculateWPM, calculateAccuracy } from "@/lib/typing-utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { RefreshCw, Zap, Target, Clock, Globe, BookOpen, Sparkles, Award, Share2, Twitter, Facebook, MessageCircle, Copy, Check, Link2, Linkedin, Mail, Send, AlertCircle, Loader2, HelpCircle, Timer, BarChart3, Eye, EyeOff, PenLine, Info } from "lucide-react";
@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+import { useCursorPosition } from "@/hooks/useCursorPosition";
 import AuthPromptDialog from "@/components/auth-prompt-dialog";
 import { SearchableSelect } from "@/components/searchable-select";
 import { CertificateGenerator } from "@/components/certificate-generator";
@@ -77,52 +78,54 @@ function groupCharsIntoWords(characters: string[]): CharGroup[] {
   return groups;
 }
 
-// Character component with forwardRef for cursor positioning
-// Uses inline instead of inline-block to allow proper text flow and word grouping
-const CharSpan = forwardRef<HTMLSpanElement, {
+/**
+ * Character component for typing test display
+ * Uses data-char-index attribute for cursor positioning lookup
+ * No refs needed - cursor hook uses querySelector with data attribute
+ */
+interface CharSpanProps {
   char: string;
   index: number;
   state: 'pending' | 'correct' | 'incorrect';
-  typedChar?: string;
-}>(({ char, index, state, typedChar }, ref) => {
+}
+
+const CharSpan = ({ char, index, state }: CharSpanProps) => {
   const isSpace = char === ' ' || /\s/.test(char);
   const isIncorrectSpace = state === 'incorrect' && isSpace;
 
-  // Use inline positioning for proper text flow - inline-block breaks word grouping
   const className = state === 'pending'
-    ? "relative text-muted-foreground/40"
+    ? "text-muted-foreground/40"
     : state === 'correct'
-      ? "relative text-foreground"
+      ? "text-foreground"
       : isIncorrectSpace
-        ? "relative text-muted-foreground/40 bg-destructive/30 rounded-sm"
-        : "relative text-destructive";
+        ? "text-muted-foreground/40 bg-destructive/30 rounded-sm"
+        : "text-destructive";
 
   return (
-    <span ref={ref} data-char-index={index} className={className}>
+    <span data-char-index={index} className={className}>
       {char}
     </span>
   );
-});
-CharSpan.displayName = 'CharSpan';
+};
 
-// Word component that groups characters to prevent mid-word breaks
-interface WordProps {
-  chars: Array<{ char: string; index: number; state: 'pending' | 'correct' | 'incorrect'; typedChar?: string }>;
-  charRefs: React.MutableRefObject<(HTMLSpanElement | null)[]>;
+/**
+ * Word component that groups characters to prevent mid-word breaks
+ * Uses whitespace-nowrap to keep words together
+ */
+interface WordSpanProps {
+  chars: Array<{ char: string; index: number; state: 'pending' | 'correct' | 'incorrect' }>;
   isRTL?: boolean;
 }
 
-const WordSpan = ({ chars, charRefs, isRTL }: WordProps) => {
+const WordSpan = ({ chars, isRTL }: WordSpanProps) => {
   return (
     <span className="inline whitespace-nowrap" style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
-      {chars.map(({ char, index, state, typedChar }) => (
+      {chars.map(({ char, index, state }) => (
         <CharSpan
           key={index}
-          ref={(el) => { charRefs.current[index] = el; }}
           char={char}
           index={index}
           state={state}
-          typedChar={typedChar}
         />
       ))}
     </span>
@@ -341,12 +344,7 @@ export default function TypingTest() {
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const charRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const caretRef = useRef<HTMLDivElement>(null);
-  const caretPosRef = useRef({ left: 0, top: 0, height: 40 });
-  // Pre-cached character positions for fast cursor updates (avoids getBoundingClientRect during typing)
-  const charPositionCacheRef = useRef<Array<{left: number, top: number, height: number}>>([]);
-  const positionCacheValidRef = useRef(false);
   const keystrokeTrackerRef = useRef<KeystrokeTracker | null>(null);
   const pendingFetchesRef = useRef(0);
   const latestRequestIdRef = useRef(0);
@@ -745,7 +743,6 @@ export default function TypingTest() {
     setLastResultId(null);
     setHasInteracted(false);
     setCursorIndex(0);
-    lastCursorIndexRef.current = 0; // Sync ref with state for cursor positioning
     setCharStates([]);
 
     keystrokeTrackerRef.current = null;
@@ -1310,7 +1307,6 @@ Test yourself: `,
           }));
           // Only reset cursor on full replacement, not extension
           setCursorIndex(0);
-          lastCursorIndexRef.current = 0; // Sync ref with state for cursor positioning
           return initialStates;
         }
       });
@@ -1337,7 +1333,6 @@ Test yourself: `,
     paragraphQueueRef.current = [];
     usedParagraphIdsRef.current = new Set();
     setCursorIndex(0);
-    lastCursorIndexRef.current = 0; // Sync ref with state for cursor positioning
     lastKeystrokeTimeRef.current = 0;
     isTypingFastRef.current = false;
     freestyleLastKeystrokeRef.current = 0;
@@ -1366,7 +1361,6 @@ Test yourself: `,
       paragraphQueueRef.current = [];
       usedParagraphIdsRef.current = new Set();
       setCursorIndex(0);
-      lastCursorIndexRef.current = 0; // Sync ref with state for cursor positioning
       lastKeystrokeTimeRef.current = 0;
       isTypingFastRef.current = false;
       freestyleLastKeystrokeRef.current = 0;
@@ -1797,253 +1791,41 @@ Test yourself: `,
     }
   }, []);
 
-  // Track if cursor update is from keystroke (for auto-scroll gating)
-  const lastCursorIndexRef = useRef(0);
+  // Calculate cursor position from typed input (single source of truth for cursor hook)
+  const typedLength = useMemo(() => getGraphemes(userInput).length, [userInput]);
 
-  // Recalculate and cache all character positions (called on text change, resize, font load)
-  const recalculatePositionCache = useCallback(() => {
+  // Use the production-ready cursor positioning hook
+  useCursorPosition({
+    containerRef,
+    caretRef,
+    cursorIndex: typedLength,
+    language,
+    isActive,
+    isFinished,
+    smoothCaret: caretSpeed !== 'off',
+    prefersReducedMotion,
+  });
+
+  // Keep caret visible within the scroll container during typing
+  useEffect(() => {
     const container = containerRef.current;
-    if (!container) return;
-    
+    const caret = caretRef.current;
+    if (!container || !caret) return;
+    if (isUserScrollingRef.current) return;
+
     const containerRect = container.getBoundingClientRect();
-    const rtl = language === 'ar' || language === 'he';
-    const cache: Array<{left: number, top: number, height: number}> = [];
-    
-    charRefs.current.forEach((el, index) => {
-      if (el) {
-        const rect = el.getBoundingClientRect();
-        // Store content-relative positions (add scrollTop for absolute positioning)
-        cache[index] = {
-          left: rtl ? (rect.right - containerRect.left) : (rect.left - containerRect.left),
-          top: (rect.top - containerRect.top) + container.scrollTop,
-          height: Math.max(1, rect.height)
-        };
-      }
-    });
-    
-    charPositionCacheRef.current = cache;
-    positionCacheValidRef.current = true;
-  }, [language]);
+    const caretRect = caret.getBoundingClientRect();
+    const caretRelativeTop = caretRect.top - containerRect.top + container.scrollTop;
+    const visibleTop = container.scrollTop;
+    const visibleBottom = visibleTop + container.clientHeight;
+    const margin = 50;
 
-  // Update cursor position based on typing progress and layout changes
-  const updateCursorPosition = useCallback((fromKeystroke = false) => {
-    // Use requestAnimationFrame to batch with rendering
-    requestAnimationFrame(() => {
-      const container = containerRef.current;
-      const caretEl = caretRef.current;
-      if (!container || !caretEl) return;
-
-      const targetIndex = lastCursorIndexRef.current;
-      const rtl = language === 'ar' || language === 'he';
-      
-      // Get container padding for proper positioning
-      const containerStyle = getComputedStyle(container);
-      const paddingLeft = parseFloat(containerStyle.paddingLeft) || 0;
-      const paddingTop = parseFloat(containerStyle.paddingTop) || 0;
-      
-      let left = paddingLeft; // Default to padding position
-      let top = paddingTop;
-      let height = 40; // Default height
-      let found = false;
-
-      // Try to get first character height for initial positioning
-      const firstCharEl = charRefs.current[0];
-      if (firstCharEl) {
-        const firstRect = firstCharEl.getBoundingClientRect();
-        height = Math.max(24, firstRect.height); // Minimum 24px height
-      }
-
-      // Try to use cached position first (fast path)
-      const cache = charPositionCacheRef.current;
-      if (positionCacheValidRef.current && cache[targetIndex]) {
-        const cached = cache[targetIndex];
-        left = cached.left;
-        top = cached.top;
-        height = cached.height;
-        found = true;
-      } else if (positionCacheValidRef.current && targetIndex > 0 && cache[targetIndex - 1]) {
-        // Cursor is after last typed character - use previous char's right edge
-        const prevCached = cache[targetIndex - 1];
-        const prevEl = charRefs.current[targetIndex - 1];
-        if (prevEl) {
-          const containerRect = container.getBoundingClientRect();
-          const prevRect = prevEl.getBoundingClientRect();
-          left = rtl ? (prevRect.left - containerRect.left) : (prevRect.right - containerRect.left);
-          top = prevCached.top;
-          height = prevCached.height;
-          found = true;
-        }
-      }
-      
-      if (!found) {
-        // Fallback: calculate directly (slow path - only on cache miss)
-        const containerRect = container.getBoundingClientRect();
-        const charEl = charRefs.current[targetIndex];
-        
-        if (charEl) {
-          // Target character exists - position cursor at its left edge
-          const rect = charEl.getBoundingClientRect();
-          top = (rect.top - containerRect.top) + container.scrollTop;
-          left = rtl ? (rect.right - containerRect.left) : (rect.left - containerRect.left);
-          height = Math.max(24, rect.height);
-          found = true;
-        } else if (targetIndex === 0 && firstCharEl) {
-          // At start, use first character position
-          const rect = firstCharEl.getBoundingClientRect();
-          top = (rect.top - containerRect.top) + container.scrollTop;
-          left = rtl ? (rect.right - containerRect.left) : (rect.left - containerRect.left);
-          height = Math.max(24, rect.height);
-          found = true;
-        } else if (targetIndex > 0) {
-          // After last character - use previous char's right edge
-          const prevEl = charRefs.current[targetIndex - 1];
-          if (prevEl) {
-            const prevRect = prevEl.getBoundingClientRect();
-            top = (prevRect.top - containerRect.top) + container.scrollTop;
-            left = rtl ? (prevRect.left - containerRect.left) : (prevRect.right - containerRect.left);
-            height = Math.max(24, prevRect.height);
-            found = true;
-          }
-        }
-        
-        // Ultimate fallback - use container padding (first character position)
-        if (!found && firstCharEl) {
-          const rect = firstCharEl.getBoundingClientRect();
-          top = (rect.top - containerRect.top) + container.scrollTop;
-          left = rtl ? (rect.right - containerRect.left) : (rect.left - containerRect.left);
-          height = Math.max(24, rect.height);
-        }
-      }
-
-      // Ensure minimum values and round for crisp rendering
-      const rLeft = Math.max(0, Math.round(left));
-      const rTop = Math.max(0, Math.round(top));
-      const rHeight = Math.max(24, Math.round(height));
-
-      // Direct DOM update - always update if we found a valid position
-      // Also update if position changed significantly (avoid sub-pixel jitter)
-      const last = caretPosRef.current;
-      const needsUpdate = found || Math.abs(last.left - rLeft) > 0.5 || Math.abs(last.top - rTop) > 0.5;
-      if (needsUpdate) {
-        caretEl.style.transform = `translate3d(${rLeft}px, ${rTop}px, 0)`;
-        caretPosRef.current = { left: rLeft, top: rTop, height: rHeight };
-      }
-      // Always update height when there's a significant change
-      if (Math.abs(parseFloat(caretEl.style.height || '0') - rHeight) > 0.5) {
-        caretEl.style.height = `${rHeight}px`;
-      }
-
-      // Toggle transition class based on typing speed (no React state update)
-      caretEl.classList.toggle('no-transition', isTypingFastRef.current);
-
-      // Auto-scroll when triggered by keystroke and not during manual scroll
-      if (fromKeystroke && !isUserScrollingRef.current) {
-        const cursorTopRelative = rTop - container.scrollTop;
-        const containerHeight = container.clientHeight;
-        const idealCursorPosition = containerHeight * 0.3;
-        if (cursorTopRelative > idealCursorPosition) {
-          const delta = cursorTopRelative - idealCursorPosition;
-          container.scrollTop = container.scrollTop + delta;
-          // Invalidate cache after scroll
-          positionCacheValidRef.current = false;
-        } else if (cursorTopRelative < 0) {
-          container.scrollTop = container.scrollTop + cursorTopRelative - 20;
-          positionCacheValidRef.current = false;
-        }
-      }
-    });
-  }, [language, recalculatePositionCache]);
-
-  // Only update cursor position on keystroke changes (not on every layout change)
-  useEffect(() => {
-    const cursorIndex = getGraphemes(userInput).length;
-    const wasKeystroke = cursorIndex !== lastCursorIndexRef.current;
-    lastCursorIndexRef.current = cursorIndex;
-
-    // Pass fromKeystroke=true only when cursor actually moved from typing
-    updateCursorPosition(wasKeystroke);
-  }, [userInput, updateCursorPosition]);
-
-  // Recalculate position cache and cursor on resize/layout changes
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const resizeObserver = new ResizeObserver(() => {
-      // Invalidate cache and recalculate on resize
-      positionCacheValidRef.current = false;
-      requestAnimationFrame(() => {
-        recalculatePositionCache();
-        updateCursorPosition(false);
-      });
-    });
-
-    resizeObserver.observe(containerRef.current);
-    return () => resizeObserver.disconnect();
-  }, [updateCursorPosition, recalculatePositionCache]);
-
-  // Re-position caret on window resize and zoom changes
-  useEffect(() => {
-    const onResize = () => {
-      positionCacheValidRef.current = false;
-      requestAnimationFrame(() => {
-        recalculatePositionCache();
-        updateCursorPosition(false);
-      });
-    };
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, [updateCursorPosition, recalculatePositionCache]);
-
-  // Build position cache and position caret when text loads or changes
-  useEffect(() => {
-    if (!text) return;
-    // Invalidate cache on text change
-    positionCacheValidRef.current = false;
-    
-    // Wait for DOM to render new characters before caching positions
-    // Use multiple frames to ensure fonts are loaded and layout is stable
-    requestAnimationFrame(() => {
-      // First frame: DOM should be updated
-      requestAnimationFrame(() => {
-        // Second frame: Layout should be stable, fonts should be loaded
-        recalculatePositionCache();
-        updateCursorPosition(false);
-      });
-    });
-  }, [text, updateCursorPosition, recalculatePositionCache]);
-
-  // Handle font loading - recalculate positions after fonts are ready
-  useEffect(() => {
-    if (!text) return;
-    
-    // Check if document.fonts API is available
-    if ('fonts' in document) {
-      document.fonts.ready.then(() => {
-        // Fonts are loaded, recalculate character positions
-        positionCacheValidRef.current = false;
-        requestAnimationFrame(() => {
-          recalculatePositionCache();
-          updateCursorPosition(false);
-        });
-      });
+    if (caretRelativeTop < visibleTop + margin) {
+      container.scrollTo({ top: Math.max(0, caretRelativeTop - margin), behavior: 'smooth' });
+    } else if (caretRelativeTop > visibleBottom - margin) {
+      container.scrollTo({ top: Math.max(0, caretRelativeTop - container.clientHeight + margin), behavior: 'smooth' });
     }
-  }, [text, recalculatePositionCache, updateCursorPosition]);
-
-  // Apply GPU-accelerated transform and base transition on mount
-  // Transition toggling during typing is handled via CSS class in updateCursorPosition
-  useEffect(() => {
-    const el = caretRef.current;
-    if (!el) return;
-    // Set base transition based on caret speed preference
-    const baseDuration = prefersReducedMotion || caretSpeed === 'off' 
-      ? 0 
-      : (caretSpeed === 'smooth' ? 120 : caretSpeed === 'fast' ? 40 : 80);
-    el.style.setProperty('--caret-transition-duration', `${baseDuration}ms`);
-    
-    // Set initial visible position - will be updated when text loads
-    el.style.transform = 'translate3d(16px, 16px, 0)';
-    el.style.height = '32px';
-  }, [prefersReducedMotion, caretSpeed]);
+  }, [typedLength]);
 
   // Initialize keystroke tracker when test is ready (before first keystroke)
   useEffect(() => {
@@ -2161,12 +1943,7 @@ Test yourself: `,
   };
 
   // Memoize the characters array to avoid recreating on every render
-  const characters = useMemo(() => {
-    // Ensure charRefs array length matches text length to prevent stale refs
-    const g = getGraphemes(text);
-    charRefs.current.length = g.length;
-    return g;
-  }, [text]);
+  const characters = useMemo(() => getGraphemes(text), [text]);
 
   // Group characters into words for proper word-wrapping (words won't break mid-character)
   const wordGroups = useMemo(() => {
@@ -3334,10 +3111,7 @@ Test yourself: `,
               onScroll={() => {
                 // Detect manual user scrolling
                 isUserScrollingRef.current = true;
-
-                // CRITICAL: Recalculate cursor position SYNCHRONOUSLY during scroll
-                // This keeps cursor aligned with character without React state lag
-                updateCursorPosition(false);
+                // Cursor position is handled by useCursorPosition hook
 
                 // Clear any existing timeout
                 if (userScrollTimeoutRef.current) {
@@ -3355,21 +3129,18 @@ Test yourself: `,
                 const groupChars = group.chars.map(({ char, globalIndex }) => {
                   const charState = charStates[globalIndex];
                   const state = charState ? charState.state : 'pending';
-                  const typedChar = charState?.typed || undefined;
-                  return { char, index: globalIndex, state, typedChar };
+                  return { char, index: globalIndex, state };
                 });
 
                 // Spaces can break normally, words should not break
                 if (group.isSpace) {
                   // Render spaces inline (can wrap after them)
-                  return groupChars.map(({ char, index, state, typedChar }) => (
+                  return groupChars.map(({ char, index, state }) => (
                     <CharSpan
                       key={index}
-                      ref={(el) => { charRefs.current[index] = el; }}
                       char={char}
                       index={index}
                       state={state}
-                      typedChar={typedChar}
                     />
                   ));
                 }
@@ -3379,7 +3150,6 @@ Test yourself: `,
                   <WordSpan
                     key={`word-${groupIndex}`}
                     chars={groupChars}
-                    charRefs={charRefs}
                     isRTL={isRTL}
                   />
                 );
@@ -3390,17 +3160,23 @@ Test yourself: `,
                 <div
                   ref={caretRef}
                   className={cn(
-                    "absolute left-0 top-0 pointer-events-none caret-element",
+                    "absolute pointer-events-none caret-element",
                     "bg-primary",
                     // Only animate when not actively typing (pulse for visibility)
                     !isActive && "animate-pulse"
                   )}
                   style={{
-                    // Explicit size for visibility - will be updated by updateCursorPosition
+                    // Base positioning - transform is handled by useCursorPosition hook
+                    left: 0,
+                    top: 0,
+                    // Explicit size for visibility - height will be updated by hook
                     width: '2px',
-                    height: '32px',
+                    height: '0px',
                     zIndex: 50,
                     borderRadius: '1px',
+                    // Initial transform - will be updated by useCursorPosition hook
+                    transform: 'translate3d(0, 0, 0)',
+                    willChange: 'transform, height',
                   }}
                   aria-hidden="true"
                 />
