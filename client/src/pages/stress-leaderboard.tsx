@@ -479,15 +479,84 @@ function StressLeaderboardContent() {
                         return (
                           <div
                             key={`${entry.userId}-${entry.difficulty}-${entry.createdAt}`}
-                            className={`grid items-center p-4 transition-colors ${
+                            className={`p-4 transition-colors border-b last:border-b-0 ${
                               isCurrentUser ? 'bg-primary/5 border-l-2 border-l-primary' : 'hover:bg-muted/50'
                             }`}
-                            style={{ 
-                              gridTemplateColumns: selectedDifficulty === 'all' 
-                                ? '60px 1fr 120px 80px 70px 70px 70px' 
-                                : '60px 1fr 80px 70px 70px 70px'
-                            }}
                           >
+                            {/* Mobile card layout */}
+                            <div className="md:hidden flex flex-col gap-3">
+                              <div className="flex items-center gap-3">
+                                {/* Rank */}
+                                {rank <= 3 ? (
+                                  <div className={`flex items-center justify-center w-10 h-10 rounded-full ${
+                                    rank === 1 ? 'bg-gradient-to-br from-yellow-400 to-amber-500 text-black' :
+                                    rank === 2 ? 'bg-gradient-to-br from-slate-300 to-slate-400 text-black' :
+                                    'bg-gradient-to-br from-amber-600 to-orange-700 text-white'
+                                  }`}>
+                                    <span className="text-xl font-black">{rank}</span>
+                                  </div>
+                                ) : (
+                                  <span className="text-lg font-bold text-muted-foreground">#{rank}</span>
+                                )}
+
+                                {/* User */}
+                                <Avatar className="w-10 h-10 border-2 flex-shrink-0" style={{ borderColor: entry.avatarColor || '#888' }}>
+                                  <AvatarFallback style={{ backgroundColor: entry.avatarColor || '#888' }}>
+                                    {entry.username.substring(0, 2).toUpperCase()}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div className="min-w-0 flex-1">
+                                  <div className="flex items-center gap-2 min-w-0">
+                                    <span className="font-medium truncate max-w-[180px]">{entry.username}</span>
+                                    {isCurrentUser && (
+                                      <Badge variant="secondary" className="text-xs">You</Badge>
+                                    )}
+                                  </div>
+                                  <div className="text-xs text-muted-foreground">
+                                    {new Date(entry.createdAt).toLocaleDateString()}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Difficulty (only when viewing all) */}
+                              {selectedDifficulty === 'all' && (
+                                <div>
+                                  <Badge variant="outline" className="cursor-default" style={{ borderColor: diffColor }}>
+                                    <span className="mr-1">{DIFFICULTY_ICONS[entry.difficulty as keyof typeof DIFFICULTY_ICONS]}</span>
+                                    <span className="capitalize" style={{ color: diffColor }}>{entry.difficulty}</span>
+                                  </Badge>
+                                </div>
+                              )}
+
+                              {/* Metrics */}
+                              <div className="grid grid-cols-3 gap-3 text-center">
+                                <div>
+                                  <div className="text-[10px] uppercase text-muted-foreground">Score</div>
+                                  <div className="text-lg font-bold text-primary">{entry.stressScore}</div>
+                                </div>
+                                <div>
+                                  <div className="text-[10px] uppercase text-muted-foreground">WPM</div>
+                                  <div className="text-base font-semibold">{entry.wpm}</div>
+                                </div>
+                                <div>
+                                  <div className="text-[10px] uppercase text-muted-foreground">Acc</div>
+                                  <div className="text-base font-semibold">{entry.accuracy.toFixed(1)}%</div>
+                                </div>
+                              </div>
+                              <div className="text-center text-xs text-muted-foreground">
+                                Done: <span className="font-medium text-foreground">{entry.completionRate.toFixed(0)}%</span>
+                              </div>
+                            </div>
+
+                            {/* Desktop grid layout */}
+                            <div
+                              className="hidden md:grid items-center"
+                              style={{ 
+                                gridTemplateColumns: selectedDifficulty === 'all' 
+                                  ? '60px 1fr 120px 80px 70px 70px 70px' 
+                                  : '60px 1fr 80px 70px 70px 70px'
+                              }}
+                            >
                             {/* Rank */}
                             <div className="flex justify-center items-center">
                               {rank <= 3 ? (
@@ -621,6 +690,7 @@ function StressLeaderboardContent() {
                                 <p>Completed {entry.completionRate.toFixed(0)}% of the text under extreme pressure</p>
                               </TooltipContent>
                             </Tooltip>
+                            </div>
                           </div>
                         );
                       })}

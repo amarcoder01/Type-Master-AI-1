@@ -42,7 +42,7 @@ export function LeaderboardFilters({ mode, filters, onFilterChange }: Leaderboar
   }
 
   return (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 flex-wrap">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 flex-wrap w-full">
       {config.filters.map((filter: LeaderboardFilter) => (
         <div key={filter.key} className="flex items-center gap-2">
           {filter.type === "tabs" ? (
@@ -50,14 +50,14 @@ export function LeaderboardFilters({ mode, filters, onFilterChange }: Leaderboar
               value={filters[filter.key] || filter.defaultValue || "all"} 
               onValueChange={(v) => onFilterChange(filter.key, v)}
             >
-              <TabsList className="h-9 p-1 bg-muted/60">
+              <TabsList className="h-9 p-1 bg-muted/60 w-full overflow-x-auto">
                 {filter.options.map((option) => {
                   const isActive = (filters[filter.key] || filter.defaultValue || "all") === option.value;
                   return (
                     <TabsTrigger 
                       key={option.value}
                       value={option.value}
-                      className="text-xs sm:text-sm relative z-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none transition-none"
+                      className="text-xs sm:text-sm px-3 whitespace-nowrap relative z-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none transition-none"
                       data-testid={`filter-${filter.key}-${option.value}`}
                     >
                       {isActive && (
@@ -74,7 +74,7 @@ export function LeaderboardFilters({ mode, filters, onFilterChange }: Leaderboar
               </TabsList>
             </Tabs>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
               <SearchableSelect
                 value={filters[filter.key] || filter.defaultValue || "all"}
                 onValueChange={(v) => onFilterChange(filter.key, v)}
@@ -83,7 +83,7 @@ export function LeaderboardFilters({ mode, filters, onFilterChange }: Leaderboar
                 searchPlaceholder={`Search ${filter.label.toLowerCase()}...`}
                 emptyText={`No ${filter.label.toLowerCase()} found.`}
                 icon={getFilterIcon(filter.key, mode)}
-                triggerClassName={mode === "code" ? "w-[280px]" : "w-[180px]"}
+                triggerClassName={mode === "code" ? "w-full sm:w-[280px]" : "w-full sm:w-[180px]"}
                 contentClassName="max-h-[300px] overflow-y-auto"
                 data-testid={`filter-${filter.key}`}
               />
@@ -91,7 +91,7 @@ export function LeaderboardFilters({ mode, filters, onFilterChange }: Leaderboar
                 <TooltipTrigger asChild>
                   <button 
                     type="button" 
-                    className="text-muted-foreground/60 hover:text-muted-foreground transition-colors"
+                    className="self-end sm:self-auto text-muted-foreground/60 hover:text-muted-foreground transition-colors"
                     aria-label={`${filter.label} help`}
                   >
                     <HelpCircle className="w-3.5 h-3.5" />

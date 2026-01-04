@@ -76,7 +76,7 @@ function CellContent({
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="flex flex-col items-center cursor-help">
-              <div className="font-mono font-bold text-primary text-xl tabular-nums">
+              <div className="font-mono font-bold text-primary text-lg md:text-xl tabular-nums">
                 {entry.wpm}
               </div>
             </div>
@@ -95,7 +95,7 @@ function CellContent({
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="flex flex-col items-center cursor-help">
-              <div className={cn("font-mono font-semibold text-base tabular-nums", accuracyColor)}>
+              <div className={cn("font-mono font-semibold text-sm md:text-base tabular-nums", accuracyColor)}>
                 {accuracyValue.toFixed(1)}%
               </div>
             </div>
@@ -129,7 +129,7 @@ function CellContent({
     case "stressScore":
       return (
         <div className="flex items-center justify-center">
-          <span className="font-mono font-bold text-orange-500 text-lg tabular-nums animate-pulse">
+          <span className="font-mono font-bold text-orange-500 text-base md:text-lg tabular-nums animate-pulse">
             {entry.stressScore}
           </span>
         </div>
@@ -138,14 +138,14 @@ function CellContent({
     case "completionRate":
       const rate = typeof entry.completionRate === "number" ? entry.completionRate : parseFloat(entry.completionRate);
       return (
-        <span className="font-mono text-orange-500 tabular-nums">
+        <span className="font-mono text-orange-500 tabular-nums text-sm md:text-base">
           {rate.toFixed(0)}%
         </span>
       );
 
     case "rating":
       return (
-        <span className="font-mono font-bold text-green-500 text-lg tabular-nums">
+        <span className="font-mono font-bold text-green-500 text-base md:text-lg tabular-nums">
           {entry.rating}
         </span>
       );
@@ -322,7 +322,7 @@ export function LeaderboardTable({
       <CardContent className="p-0">
         {/* Table Header */}
         <div 
-          className="hidden md:grid gap-4 p-4 bg-muted/40 text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b border-white/5"
+          className="hidden md:grid gap-4 p-3 md:p-4 bg-muted/40 text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b border-white/5"
           style={{ 
             gridTemplateColumns: config.columns.map(col => {
               if (col.width === "flex-1") return "1fr";
@@ -376,7 +376,8 @@ export function LeaderboardTable({
               <div
                 key={`${entry.userId}-${rank}`}
                 className={cn(
-                  "grid gap-4 p-4 items-center transition-all duration-200 border-b border-white/5 last:border-0",
+                  "md:grid gap-4 p-3 md:p-4 items-center transition-all duration-200 border-b border-white/5 last:border-0",
+                  "flex flex-col gap-3",
                   "hover:bg-muted/50",
                   isCurrentUser && "bg-primary/5 hover:bg-primary/10 border-l-2 border-l-primary shadow-[inset_0_0_20px_rgba(var(--primary),0.05)]",
                   // Staggered animation on mount
@@ -399,87 +400,146 @@ export function LeaderboardTable({
                 data-testid={`leaderboard-entry-${index}`}
                 role="row"
               >
-                {config.columns.map((column) => {
-                  if (column.key === "rank") {
-                    return (
-                      <div key={column.key} className="flex justify-center" role="cell">
-                        <RankBadge rank={rank} />
+                {/* Mobile card layout */}
+                <div className="md:hidden flex flex-col gap-3">
+                  <div className="flex items-center gap-3">
+                    <RankBadge rank={rank} />
+                    <Avatar className={cn(
+                      "w-10 h-10 ring-2 ring-offset-2 ring-offset-background transition-all",
+                      rank === 1 ? "ring-yellow-500" : 
+                      rank === 2 ? "ring-gray-400" : 
+                      rank === 3 ? "ring-orange-500" : 
+                      "ring-border/50"
+                    )}>
+                      <AvatarFallback 
+                        className={cn(
+                          "text-sm font-semibold",
+                          entry.avatarColor || "bg-primary/20"
+                        )}
+                        style={{ color: "white" }}
+                      >
+                        {username.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="font-medium truncate max-w-[180px]">{username}</span>
+                        {entry.isVerified && (
+                          <ShieldCheck className="w-4 h-4 text-green-500 flex-shrink-0" />
+                        )}
+                        {isCurrentUser && (
+                          <Badge variant="default" className="text-[10px] px-1.5 py-0 h-4 bg-primary/80">You</Badge>
+                        )}
                       </div>
-                    );
-                  }
+                      {typeof entry.totalTests !== 'undefined' && (
+                        <span className="text-xs text-muted-foreground">
+                          {entry.totalTests || 1} test{(entry.totalTests || 1) !== 1 ? 's' : ''}
+                        </span>
+                      )}
+                    </div>
+                  </div>
 
-                  if (column.key === "user") {
-                    return (
-                      <div key={column.key} className="flex items-center gap-3" role="cell">
-                        <Avatar className={cn(
-                          "w-10 h-10 ring-2 ring-offset-2 ring-offset-background transition-all",
-                          rank === 1 ? "ring-yellow-500" : 
-                          rank === 2 ? "ring-gray-400" : 
-                          rank === 3 ? "ring-orange-500" : 
-                          "ring-border/50"
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {config.columns.filter(col => col.key !== 'rank' && col.key !== 'user').slice(0, 6).map((column) => (
+                      <div key={column.key} className="flex flex-col items-center">
+                        <div className="text-[10px] uppercase text-muted-foreground">{column.label}</div>
+                        <div className={cn(
+                          "mt-0.5 w-full flex",
+                          column.align === "center" && "justify-center",
+                          column.align === "right" && "justify-end",
+                          column.align === "left" && "justify-start"
                         )}>
-                          <AvatarFallback 
-                            className={cn(
-                              "text-sm font-semibold",
-                              entry.avatarColor || "bg-primary/20"
-                            )}
-                            style={{ color: "white" }}
-                          >
-                            {username.charAt(0).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex flex-col min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium truncate max-w-[140px]">
-                              {username}
-                            </span>
-                            {entry.isVerified && (
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <ShieldCheck className="w-4 h-4 text-green-500 cursor-help flex-shrink-0" />
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p className="font-medium">Verified Score</p>
-                                  <p className="text-xs text-muted-foreground">Passed anti-cheat challenge</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            )}
-                            {isCurrentUser && (
-                              <Badge variant="default" className="text-[10px] px-1.5 py-0 h-4 bg-primary/80">
-                                You
-                              </Badge>
-                            )}
-                          </div>
-                          <span className="text-xs text-muted-foreground">
-                            {entry.totalTests || 1} test{(entry.totalTests || 1) !== 1 ? 's' : ''}
-                          </span>
+                          <CellContent mode={mode} columnKey={column.key} entry={entry} />
                         </div>
                       </div>
-                    );
-                  }
+                    ))}
+                  </div>
+                </div>
 
-                  return (
-                    <div 
-                      key={column.key} 
-                      className={cn(
-                        "flex items-center",
-                        column.align === "center" && "justify-center",
-                        column.align === "right" && "justify-end",
-                        column.align === "left" && "justify-start"
-                      )}
-                      role="cell"
-                    >
-                      <CellContent mode={mode} columnKey={column.key} entry={entry} />
-                    </div>
-                  );
-                })}
+                {/* Desktop grid cells */}
+                <div className="hidden md:contents">
+                  {config.columns.map((column) => {
+                    if (column.key === "rank") {
+                      return (
+                        <div key={column.key} className="flex justify-center" role="cell">
+                          <RankBadge rank={rank} />
+                        </div>
+                      );
+                    }
+
+                    if (column.key === "user") {
+                      return (
+                        <div key={column.key} className="flex items-center gap-3" role="cell">
+                          <Avatar className={cn(
+                            "w-10 h-10 ring-2 ring-offset-2 ring-offset-background transition-all",
+                            rank === 1 ? "ring-yellow-500" : 
+                            rank === 2 ? "ring-gray-400" : 
+                            rank === 3 ? "ring-orange-500" : 
+                            "ring-border/50"
+                          )}>
+                            <AvatarFallback 
+                              className={cn(
+                                "text-sm font-semibold",
+                                entry.avatarColor || "bg-primary/20"
+                              )}
+                              style={{ color: "white" }}
+                            >
+                              {username.charAt(0).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex flex-col min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium truncate max-w-[140px]">
+                                {username}
+                              </span>
+                              {entry.isVerified && (
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <ShieldCheck className="w-4 h-4 text-green-500 cursor-help flex-shrink-0" />
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p className="font-medium">Verified Score</p>
+                                    <p className="text-xs text-muted-foreground">Passed anti-cheat challenge</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              )}
+                              {isCurrentUser && (
+                                <Badge variant="default" className="text-[10px] px-1.5 py-0 h-4 bg-primary/80">
+                                  You
+                                </Badge>
+                              )}
+                            </div>
+                            <span className="text-xs text-muted-foreground">
+                              {entry.totalTests || 1} test{(entry.totalTests || 1) !== 1 ? 's' : ''}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div 
+                        key={column.key} 
+                        className={cn(
+                          "flex items-center",
+                          column.align === "center" && "justify-center",
+                          column.align === "right" && "justify-end",
+                          column.align === "left" && "justify-start"
+                        )}
+                        role="cell"
+                      >
+                        <CellContent mode={mode} columnKey={column.key} entry={entry} />
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             );
           })}
         </div>
 
         {/* Pagination */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 border-t border-border/50 bg-muted/20">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-3 md:p-4 border-t border-border/50 bg-muted/20">
           <div className="flex items-center gap-3">
             <Tooltip>
               <TooltipTrigger asChild>
