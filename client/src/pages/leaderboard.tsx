@@ -751,7 +751,8 @@ function LeaderboardContent() {
             ) : (
               <>
                 <div className="divide-y divide-border/50 rounded-lg overflow-hidden border border-border/50">
-                  <div className="grid grid-cols-12 gap-4 px-4 py-3 bg-slate-900/30 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                  {/* Desktop Header - Hidden on mobile */}
+                  <div className="hidden md:grid grid-cols-12 gap-4 px-4 py-3 bg-slate-900/30 text-xs font-semibold text-slate-400 uppercase tracking-wider">
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <div className="col-span-1 text-center cursor-help flex items-center justify-center">#</div>
@@ -803,121 +804,202 @@ function LeaderboardContent() {
                     const totalTests = safeNumber(entry.totalTests, 1);
                     
                     return (
-                      <div 
-                        key={`${entry.userId}-${entry.createdAt || rank}`} 
-                        className={`
-                          grid grid-cols-12 gap-4 px-4 py-4 items-center 
-                          transition-all duration-200
-                          hover:bg-slate-800/30 hover:shadow-sm
-                          ${isCurrentUser ? 'bg-primary/10 border-l-2 border-primary' : ''}
-                        `}
-                      >
-                        <div className="col-span-1 flex justify-center">
-                          {rank <= 3 && MEDAL_TOOLTIPS[rank] ? (
+                      <div key={`${entry.userId}-${entry.createdAt || rank}`}>
+                        {/* Desktop Row - Hidden on mobile */}
+                        <div 
+                          className={`
+                            hidden md:grid grid-cols-12 gap-4 px-4 py-4 items-center 
+                            transition-all duration-200
+                            hover:bg-slate-800/30 hover:shadow-sm
+                            ${isCurrentUser ? 'bg-primary/10 border-l-2 border-primary' : ''}
+                          `}
+                        >
+                          <div className="col-span-1 flex justify-center">
+                            {rank <= 3 && MEDAL_TOOLTIPS[rank] ? (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <div className="cursor-help">
+                                    <Medal 
+                                      className={`w-6 h-6 ${
+                                        rank === 1 ? 'text-yellow-400 drop-shadow-[0_0_6px_rgba(250,204,21,0.6)]' : 
+                                        rank === 2 ? 'text-slate-300 drop-shadow-[0_0_6px_rgba(203,213,225,0.4)]' : 
+                                        'text-amber-600 drop-shadow-[0_0_6px_rgba(217,119,6,0.4)]'
+                                      }`} 
+                                      data-testid={`medal-rank-${rank}`} 
+                                    />
+                                  </div>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="font-medium">{MEDAL_TOOLTIPS[rank].label}</p>
+                                  <p className="text-xs text-muted-foreground">{MEDAL_TOOLTIPS[rank].description}</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            ) : (
+                              <span className="font-mono text-sm font-medium text-muted-foreground" data-testid={`rank-${rank}`}>#{rank}</span>
+                            )}
+                          </div>
+                          <div className="col-span-4 flex items-center gap-3">
+                            <Avatar className="w-10 h-10 ring-2 ring-border/50">
+                              <AvatarFallback 
+                                className={entry.avatarColor || "bg-primary/20"} 
+                                style={{ color: "white" }}
+                              >
+                                {username.charAt(0).toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex flex-col min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="font-semibold truncate max-w-[140px]" data-testid={`username-${username}`}>
+                                  {username}
+                                </span>
+                                {entry.isVerified && (
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <ShieldCheck className="w-4 h-4 text-green-400 cursor-help flex-shrink-0" data-testid={`verified-${entry.userId}`} />
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>Verified score - passed anti-cheat challenge</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                )}
+                              </div>
+                              <span className="text-xs text-muted-foreground/80">{totalTests} test{totalTests !== 1 ? 's' : ''}</span>
+                            </div>
+                          </div>
+                          <div className="col-span-2 flex justify-center">
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <div className="cursor-help">
-                                  <Medal 
-                                    className={`w-6 h-6 ${
-                                      rank === 1 ? 'text-yellow-400 drop-shadow-[0_0_6px_rgba(250,204,21,0.6)]' : 
-                                      rank === 2 ? 'text-slate-300 drop-shadow-[0_0_6px_rgba(203,213,225,0.4)]' : 
-                                      'text-amber-600 drop-shadow-[0_0_6px_rgba(217,119,6,0.4)]'
-                                    }`} 
-                                    data-testid={`medal-rank-${rank}`} 
-                                  />
+                                <div className="flex flex-col items-center cursor-help">
+                                  <div className="font-mono font-bold text-primary text-xl tabular-nums" data-testid={`wpm-${entry.userId}`}>
+                                  {wpm}
+                                  </div>
+                                  <div className="text-[10px] text-muted-foreground/60 uppercase tracking-wide">wpm</div>
                                 </div>
                               </TooltipTrigger>
                               <TooltipContent>
-                                <p className="font-medium">{MEDAL_TOOLTIPS[rank].label}</p>
-                                <p className="text-xs text-muted-foreground">{MEDAL_TOOLTIPS[rank].description}</p>
+                                <p>{wpm} words per minute</p>
                               </TooltipContent>
                             </Tooltip>
-                          ) : (
-                            <span className="font-mono text-sm font-medium text-muted-foreground" data-testid={`rank-${rank}`}>#{rank}</span>
-                          )}
-                        </div>
-                        <div className="col-span-4 flex items-center gap-3">
-                          <Avatar className="w-10 h-10 ring-2 ring-border/50">
-                            <AvatarFallback 
-                              className={entry.avatarColor || "bg-primary/20"} 
-                              style={{ color: "white" }}
-                            >
-                              {username.charAt(0).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex flex-col min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="font-semibold truncate max-w-[140px]" data-testid={`username-${username}`}>
-                                {username}
-                              </span>
-                              {entry.isVerified && (
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <ShieldCheck className="w-4 h-4 text-green-400 cursor-help flex-shrink-0" data-testid={`verified-${entry.userId}`} />
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p>Verified score - passed anti-cheat challenge</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              )}
-                            </div>
-                            <span className="text-xs text-muted-foreground/80">{totalTests} test{totalTests !== 1 ? 's' : ''}</span>
+                          </div>
+                          <div className="col-span-2 flex justify-center">
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="flex flex-col items-center cursor-help" data-testid={`accuracy-${entry.userId}`}>
+                                  <div className={`font-mono font-semibold text-base tabular-nums ${
+                                    accuracy >= 98 ? 'text-green-400' : 
+                                    accuracy >= 95 ? 'text-blue-400' : 
+                                    accuracy >= 90 ? 'text-yellow-400' : 
+                                    'text-red-400'
+                                  }`}>
+                                  {accuracy.toFixed(1)}%
+                                  </div>
+                                  <div className="text-[10px] text-muted-foreground/60 uppercase tracking-wide">acc</div>
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{accuracy.toFixed(2)}% typing accuracy</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </div>
+                          <div className="col-span-2 flex justify-center">
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-800/40 rounded-md cursor-help">
+                                  <Clock className="w-3.5 h-3.5 text-muted-foreground/80" />
+                                  <span className="text-sm font-medium tabular-nums" data-testid={`mode-${entry.userId}`}>
+                                  {formatTestMode(entry.mode)}
+                                  </span>
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Test time: {formatTestMode(entry.mode)}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </div>
+                          <div className="col-span-1 flex justify-center">
+                            <span className="text-sm font-medium text-muted-foreground/80 tabular-nums" data-testid={`total-tests-${entry.userId}`}>
+                                  {totalTests}
+                            </span>
                           </div>
                         </div>
-                        <div className="col-span-2 flex justify-center">
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <div className="flex flex-col items-center cursor-help">
-                                <div className="font-mono font-bold text-primary text-xl tabular-nums" data-testid={`wpm-${entry.userId}`}>
-                                {wpm}
-                                </div>
-                                <div className="text-[10px] text-muted-foreground/60 uppercase tracking-wide">wpm</div>
+
+                        {/* Mobile Card - Shown only on mobile */}
+                        <div 
+                          className={`
+                            md:hidden p-4 transition-all duration-200
+                            hover:bg-slate-800/30
+                            ${isCurrentUser ? 'bg-primary/10 border-l-2 border-primary' : ''}
+                          `}
+                        >
+                          {/* Top row: Rank + User info */}
+                          <div className="flex items-center gap-3 mb-3">
+                            {/* Rank */}
+                            <div className="flex-shrink-0 w-10 flex justify-center">
+                              {rank <= 3 && MEDAL_TOOLTIPS[rank] ? (
+                                <Medal 
+                                  className={`w-6 h-6 ${
+                                    rank === 1 ? 'text-yellow-400 drop-shadow-[0_0_6px_rgba(250,204,21,0.6)]' : 
+                                    rank === 2 ? 'text-slate-300 drop-shadow-[0_0_6px_rgba(203,213,225,0.4)]' : 
+                                    'text-amber-600 drop-shadow-[0_0_6px_rgba(217,119,6,0.4)]'
+                                  }`} 
+                                />
+                              ) : (
+                                <span className="font-mono text-sm font-bold text-muted-foreground">#{rank}</span>
+                              )}
+                            </div>
+
+                            {/* User info */}
+                            <Avatar className="w-9 h-9 ring-2 ring-border/50 flex-shrink-0">
+                              <AvatarFallback 
+                                className={entry.avatarColor || "bg-primary/20"} 
+                                style={{ color: "white" }}
+                              >
+                                {username.charAt(0).toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex flex-col min-w-0 flex-1">
+                              <div className="flex items-center gap-2">
+                                <span className="font-semibold truncate">
+                                  {username}
+                                </span>
+                                {entry.isVerified && (
+                                  <ShieldCheck className="w-4 h-4 text-green-400 flex-shrink-0" />
+                                )}
                               </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>{wpm} words per minute</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </div>
-                        <div className="col-span-2 flex justify-center">
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <div className="flex flex-col items-center cursor-help" data-testid={`accuracy-${entry.userId}`}>
-                                <div className={`font-mono font-semibold text-base tabular-nums ${
+                              <span className="text-xs text-muted-foreground/80">{totalTests} test{totalTests !== 1 ? 's' : ''}</span>
+                            </div>
+
+                            {/* WPM - prominent on mobile */}
+                            <div className="flex flex-col items-center flex-shrink-0">
+                              <div className="font-mono font-bold text-primary text-xl tabular-nums">
+                                {wpm}
+                              </div>
+                              <div className="text-[10px] text-muted-foreground/60 uppercase tracking-wide">wpm</div>
+                            </div>
+                          </div>
+
+                          {/* Bottom row: Stats */}
+                          <div className="flex items-center justify-between pl-10 gap-3">
+                            <div className="flex items-center gap-4">
+                              <div className="flex items-center gap-1.5">
+                                <Target className="w-3.5 h-3.5 text-muted-foreground/60" />
+                                <span className={`font-mono text-sm tabular-nums ${
                                   accuracy >= 98 ? 'text-green-400' : 
                                   accuracy >= 95 ? 'text-blue-400' : 
                                   accuracy >= 90 ? 'text-yellow-400' : 
                                   'text-red-400'
                                 }`}>
-                                {accuracy.toFixed(1)}%
-                                </div>
-                                <div className="text-[10px] text-muted-foreground/60 uppercase tracking-wide">acc</div>
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>{accuracy.toFixed(2)}% typing accuracy</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </div>
-                        <div className="col-span-2 flex justify-center">
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-800/40 rounded-md cursor-help">
-                                <Clock className="w-3.5 h-3.5 text-muted-foreground/80" />
-                                <span className="text-sm font-medium tabular-nums" data-testid={`mode-${entry.userId}`}>
-                                {formatTestMode(entry.mode)}
+                                  {accuracy.toFixed(1)}%
                                 </span>
                               </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Test time: {formatTestMode(entry.mode)}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </div>
-                        <div className="col-span-1 flex justify-center">
-                          <span className="text-sm font-medium text-muted-foreground/80 tabular-nums" data-testid={`total-tests-${entry.userId}`}>
-                                {totalTests}
-                          </span>
+                              <div className="flex items-center gap-1.5 px-2 py-0.5 bg-slate-800/40 rounded">
+                                <Clock className="w-3 h-3 text-muted-foreground/60" />
+                                <span className="text-xs font-medium tabular-nums">
+                                  {formatTestMode(entry.mode)}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     );

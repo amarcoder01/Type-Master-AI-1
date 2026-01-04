@@ -1598,21 +1598,21 @@ export default function StressTest() {
         style={{ top: '56px' }}
       >
         <div
-          ref={containerRef}
-          onClick={() => inputRef.current?.focus({ preventScroll: true })}
+        ref={containerRef}
+        onClick={() => inputRef.current?.focus({ preventScroll: true })}
           className={`w-full h-full flex items-center justify-center p-4 cursor-text transition-all duration-100 ${
-            backgroundFlash ? 'bg-red-500/20' : 'bg-background'
-          }`}
-          style={{
-            transform: prefersReducedMotion ? 'none' : `translate(${shakeOffset.x}px, ${shakeOffset.y}px) rotate(${rotation}deg) scale(${zoomScale}) ${screenFlipped ? 'rotateX(180deg)' : ''} skewX(${realityWarp}deg)`,
-            filter: prefersReducedMotion ? 'none' : `${glitchActive ? 'hue-rotate(180deg) saturate(3)' : ''} ${screenInverted ? 'invert(1) hue-rotate(180deg)' : ''} ${chaosWaveIntensity > 0 ? `contrast(${1 + chaosWaveIntensity * 0.3})` : ''}`,
-            willChange: 'transform, filter',
-            touchAction: 'manipulation',
-            overscrollBehavior: 'contain',
-          }}
-          role="main"
-          aria-label="Stress test in progress - May cause extreme frustration!"
-        >
+          backgroundFlash ? 'bg-red-500/20' : 'bg-background'
+        }`}
+        style={{
+          transform: prefersReducedMotion ? 'none' : `translate(${shakeOffset.x}px, ${shakeOffset.y}px) rotate(${rotation}deg) scale(${zoomScale}) ${screenFlipped ? 'rotateX(180deg)' : ''} skewX(${realityWarp}deg)`,
+          filter: prefersReducedMotion ? 'none' : `${glitchActive ? 'hue-rotate(180deg) saturate(3)' : ''} ${screenInverted ? 'invert(1) hue-rotate(180deg)' : ''} ${chaosWaveIntensity > 0 ? `contrast(${1 + chaosWaveIntensity * 0.3})` : ''}`,
+          willChange: 'transform, filter',
+          touchAction: 'manipulation',
+          overscrollBehavior: 'contain',
+        }}
+        role="main"
+        aria-label="Stress test in progress - May cause extreme frustration!"
+      >
         {!prefersReducedMotion && particles.map((particle) => (
           <Particle key={particle.id} particle={particle} />
         ))}

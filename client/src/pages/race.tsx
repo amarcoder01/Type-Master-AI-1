@@ -355,14 +355,14 @@ function RaceChat({
   if (isCompact) {
     return (
       <TooltipProvider delayDuration={300}>
-        <div className="border rounded-lg p-2 bg-muted/20">
-          <div className="flex items-center gap-2 mb-2">
+        <div className="border rounded-lg p-1.5 sm:p-2 bg-muted/20">
+          <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="flex items-center gap-2 cursor-help">
-                  <MessageCircle className="h-3 w-3 text-muted-foreground" />
-                  <span className="text-xs font-medium">Chat</span>
-                  {!wsConnected && <WifiOff className="h-3 w-3 text-yellow-500" />}
+                  <MessageCircle className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-muted-foreground" />
+                  <span className="text-[10px] sm:text-xs font-medium">Chat</span>
+                  {!wsConnected && <WifiOff className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-yellow-500" />}
                 </div>
               </TooltipTrigger>
               <TooltipContent side="top" className="max-w-xs">
@@ -377,19 +377,19 @@ function RaceChat({
           </div>
           <div 
             ref={scrollRef}
-            className="h-20 overflow-y-auto mb-1 space-y-1"
+            className="h-16 sm:h-20 overflow-y-auto mb-1 space-y-0.5 sm:space-y-1"
           >
             {messages.length === 0 ? (
-              <p className="text-xs text-muted-foreground text-center py-1">
+              <p className="text-[10px] sm:text-xs text-muted-foreground text-center py-0.5 sm:py-1">
                 No messages
               </p>
             ) : (
               messages.slice(-10).map((msg, idx) => (
                 <Tooltip key={msg.id || idx}>
                   <TooltipTrigger asChild>
-                    <div className={`text-xs cursor-default ${msg.isSystem ? 'text-muted-foreground italic' : ''}`}>
+                    <div className={`text-[10px] sm:text-xs cursor-default ${msg.isSystem ? 'text-muted-foreground italic' : ''}`}>
                       {!msg.isSystem && (
-                        <span className="font-medium text-primary">
+                        <span className="font-medium text-primary text-[10px] sm:text-xs">
                           {msg.username}:
                         </span>
                       )}{" "}
@@ -414,7 +414,7 @@ function RaceChat({
                     placeholder={isInputDisabled ? getDisabledReason() || "Disabled" : "Chat..."}
                     disabled={isInputDisabled}
                     maxLength={MAX_CHAT_LENGTH}
-                    className={`text-xs h-6 ${sendError ? 'border-red-500' : ''}`}
+                    className={`text-[10px] sm:text-xs h-5 sm:h-6 ${sendError ? 'border-red-500' : ''}`}
                     data-testid="input-chat-compact"
                   />
                 </div>
@@ -429,10 +429,10 @@ function RaceChat({
                   size="sm"
                   onClick={sendMessage}
                   disabled={isInputDisabled || !input.trim()}
-                  className="h-6 px-2"
+                  className="h-5 sm:h-6 px-1.5 sm:px-2"
                   data-testid="button-send-chat-compact"
                 >
-                  <Send className="h-2.5 w-2.5" />
+                  <Send className="h-2 w-2 sm:h-2.5 sm:w-2.5" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="top">
@@ -455,7 +455,7 @@ function RaceChat({
                 <div className="flex items-center gap-2 cursor-help">
                   <MessageCircle className="h-4 w-4" />
                   Race Chat
-                  {!wsConnected && <WifiOff className="h-3 w-3 text-yellow-500" />}
+                  {!wsConnected && <WifiOff className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-yellow-500" />}
                   <Info className="h-3 w-3 text-muted-foreground" />
                 </div>
               </TooltipTrigger>
@@ -492,7 +492,7 @@ function RaceChat({
                       <TooltipTrigger asChild>
                         <div className={`text-xs cursor-default hover:bg-muted/30 rounded px-1 py-0.5 transition-colors ${msg.isSystem ? 'text-muted-foreground italic' : ''}`}>
                           {!msg.isSystem && (
-                            <span className="font-medium text-primary">
+                            <span className="font-medium text-primary text-[10px] sm:text-xs">
                               {msg.username}:
                             </span>
                           )}{" "}
@@ -2275,7 +2275,7 @@ export default function RacePage() {
             </div>
             
             {/* Countdown number */}
-            <div className="text-9xl font-bold text-primary animate-pulse" data-testid="countdown-number">
+                  <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-primary animate-pulse" data-testid="countdown-number">
               {countdown === 0 ? "GO!" : countdown ?? "..."}
             </div>
             
@@ -2304,8 +2304,8 @@ export default function RacePage() {
     return (
       <TooltipProvider delayDuration={300}>
         <div className="min-h-screen bg-background">
-          <div className="container max-w-4xl mx-auto px-4 py-8">
-            <div className="flex items-center gap-4 mb-4">
+          <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-4xl lg:max-w-6xl">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between sm:gap-4 mb-4 space-y-3 sm:space-y-0">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -2325,7 +2325,7 @@ export default function RacePage() {
             </div>
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
                   <div>
                     <CardTitle className="flex items-center gap-2">
                       Waiting for Players
@@ -2348,7 +2348,7 @@ export default function RacePage() {
                           variant="outline"
                           onClick={copyRoomCode}
                           data-testid="button-copy-code"
-                          className="font-mono"
+                          className="font-mono text-sm sm:text-base h-10 sm:h-auto"
                         >
                           {copied ? <Check className="h-4 w-4 mr-2 text-green-500" /> : <Share2 className="h-4 w-4 mr-2" />}
                           {race.roomCode}
@@ -2363,7 +2363,7 @@ export default function RacePage() {
                 </div>
                 
                 {/* Room Settings Display */}
-                <div className="flex items-center gap-4 mt-3 pt-3 border-t">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4 mt-3 pt-3 border-t space-y-2 sm:space-y-0">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Timer className="h-4 w-4" />
                     <span>{race.timeLimitSeconds ? `${race.timeLimitSeconds}s race` : 'Untimed'}</span>
@@ -2412,13 +2412,13 @@ export default function RacePage() {
                         return (
                           <div
                             key={p.id}
-                            className={`flex items-center gap-3 p-3 border rounded-lg transition-colors ${
+                            className={`flex items-center gap-2 sm:gap-3 p-2 sm:p-3 border rounded-lg transition-colors ${
                               p.id === myParticipant?.id ? 'border-primary/50 bg-primary/5' : ''
                             } ${p.id === hostParticipantId ? 'border-yellow-500/50' : ''
                             } ${playerReady ? 'bg-green-500/5' : ''}`}
                             data-testid={`participant-${p.id}`}
                           >
-                            <div className={`h-10 w-10 rounded-full ${p.avatarColor || 'bg-primary'} flex items-center justify-center text-white font-medium relative`}>
+                            <div className={`h-8 w-8 sm:h-10 sm:w-10 rounded-full ${p.avatarColor || 'bg-primary'} flex items-center justify-center text-white font-medium relative`}>
                               {p.username[0].toUpperCase()}
                               {p.id === hostParticipantId && (
                                 <div className="absolute -top-1 -right-1 bg-yellow-500 rounded-full p-0.5">
@@ -2432,7 +2432,7 @@ export default function RacePage() {
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <div className="font-medium flex items-center gap-2 flex-wrap">
+                              <div className="font-medium flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 flex-wrap">
                                 <span className="truncate">{p.username}</span>
                                 {p.id === hostParticipantId && (
                                   <Badge variant="outline" className="text-xs px-1.5 py-0 border-yellow-500 text-yellow-500 shrink-0">
@@ -2459,7 +2459,7 @@ export default function RacePage() {
                                   <Button
                                     variant="ghost"
                                     size="sm"
-                                    className="h-8 w-8 p-0 text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                                    className="h-6 w-6 sm:h-8 sm:w-8 p-0 text-red-400 hover:text-red-300 hover:bg-red-500/10"
                                     onClick={() => {
                                       if (!wsConnected || !hasJoinedRace) {
                                         toast.warning("Please wait for connection to be established", { duration: 2000 });
@@ -2505,10 +2505,10 @@ export default function RacePage() {
 
                 {/* Host controls: Lock room toggle */}
                 {myParticipant?.id === hostParticipantId && (
-                  <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-2 sm:p-3 bg-muted/30 rounded-lg">
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <div className="flex items-center gap-2 text-sm cursor-help">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-sm cursor-help">
                           <Lock className="h-4 w-4" />
                           <span>Lock Room</span>
                           <Info className="h-3 w-3 text-muted-foreground" />
@@ -2521,6 +2521,7 @@ export default function RacePage() {
                     <Button
                       variant={isRoomLocked ? "default" : "outline"}
                       size="sm"
+                      className="h-8 sm:h-auto px-2 sm:px-3"
                       onClick={() => {
                         // Ensure we're connected and authenticated before sending
                         if (!wsConnected || !hasJoinedRace) {
@@ -2667,7 +2668,7 @@ export default function RacePage() {
         </AlertDialog>
         
         <div className="min-h-screen bg-background">
-          <div className="container max-w-6xl mx-auto px-4 py-8">
+          <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-6xl lg:max-w-7xl">
             {/* Network status banner */}
             <NetworkStatusBanner
               isConnected={wsConnected}
@@ -2677,7 +2678,7 @@ export default function RacePage() {
               onManualRetry={manualReconnect}
             />
             
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between sm:gap-4 mb-4 space-y-3 sm:space-y-0">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -2733,13 +2734,13 @@ export default function RacePage() {
                     {race.raceType === "timed" && timeRemaining !== null && (
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className={`flex items-center gap-2 px-4 py-2 rounded-lg font-mono text-lg cursor-help ${
-                            timeRemaining <= 10 
-                              ? 'bg-red-500/20 text-red-400 animate-pulse' 
-                              : timeRemaining <= 30 
-                                ? 'bg-yellow-500/20 text-yellow-400' 
-                                : 'bg-primary/20 text-primary'
-                          }`}>
+                  <div className={`flex items-center gap-2 px-2 sm:px-4 py-2 rounded-lg font-mono text-base sm:text-lg cursor-help ${
+                    timeRemaining <= 10 
+                      ? 'bg-red-500/20 text-red-400 animate-pulse' 
+                      : timeRemaining <= 30 
+                        ? 'bg-yellow-500/20 text-yellow-400' 
+                        : 'bg-primary/20 text-primary'
+                  }`}>
                             <Timer className="h-5 w-5" />
                             <span data-testid="time-remaining">
                               {Math.floor(timeRemaining / 60)}:{String(Math.floor(timeRemaining % 60)).padStart(2, '0')}
@@ -2766,11 +2767,11 @@ export default function RacePage() {
                         const progressPercent = (p.progress / race.paragraphContent.length) * 100;
                         return (
                           <div key={p.id} className="space-y-2" data-testid={`progress-${p.id}`}>
-                            <div className="flex items-center justify-between text-sm">
-                              <div className="flex items-center gap-2">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm">
+                              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    <div className={`h-6 w-6 rounded-full ${p.avatarColor || 'bg-primary'} flex items-center justify-center text-white text-xs cursor-help relative`}>
+                                    <div className={`h-6 w-6 sm:h-8 sm:w-8 rounded-full ${p.avatarColor || 'bg-primary'} flex items-center justify-center text-white text-xs sm:text-sm cursor-help relative`}>
                                       {p.username[0].toUpperCase()}
                                     </div>
                                   </TooltipTrigger>
@@ -2779,60 +2780,64 @@ export default function RacePage() {
                                     <p className="text-zinc-400">{p.id === myParticipant?.id ? "You" : "Racer"}</p>
                                   </TooltipContent>
                                 </Tooltip>
-                                <span className="font-medium">{p.username}</span>
-                                {p.id === myParticipant?.id && (
-                                  <span className="text-xs text-primary">(You)</span>
-                                )}
-                                {p.isFinished === 1 && p.finishPosition && (
+                                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                                  <span className="font-medium truncate max-w-[120px] sm:max-w-none">{p.username}</span>
+                                  {p.id === myParticipant?.id && (
+                                    <span className="text-xs text-primary whitespace-nowrap">(You)</span>
+                                  )}
+                                  {p.isFinished === 1 && p.finishPosition && (
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <span className="text-xs font-semibold text-yellow-500 cursor-help whitespace-nowrap" data-testid={`text-position-${p.id}`}>
+                                          {p.finishPosition === 1 ? '🥇 1st' : p.finishPosition === 2 ? '🥈 2nd' : p.finishPosition === 3 ? '🥉 3rd' : `#${p.finishPosition}`}
+                                        </span>
+                                      </TooltipTrigger>
+                                      <TooltipContent side="right">
+                                        <p className="font-medium">Finished #{p.finishPosition}</p>
+                                        <p className="text-zinc-400">{p.username} completed the race!</p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-right">
+                                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      <span className="text-xs font-semibold text-yellow-500 cursor-help" data-testid={`text-position-${p.id}`}>
-                                        {p.finishPosition === 1 ? '🥇 1st' : p.finishPosition === 2 ? '🥈 2nd' : p.finishPosition === 3 ? '🥉 3rd' : `#${p.finishPosition}`}
+                                      <span className="flex items-center gap-1 cursor-help">
+                                        <Gauge className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-muted-foreground" />
+                                        <span className="text-xs sm:text-sm">{p.wpm} WPM</span>
                                       </span>
                                     </TooltipTrigger>
-                                    <TooltipContent side="right">
-                                      <p className="font-medium">Finished #{p.finishPosition}</p>
-                                      <p className="text-zinc-400">{p.username} completed the race!</p>
+                                    <TooltipContent side="bottom">
+                                      <p className="font-medium">Words Per Minute</p>
+                                      <p className="text-zinc-400">Typing speed measured in words per minute</p>
                                     </TooltipContent>
                                   </Tooltip>
-                                )}
-                              </div>
-                              <div className="flex items-center gap-4">
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <span className="flex items-center gap-1 cursor-help">
-                                      <Gauge className="h-3.5 w-3.5 text-muted-foreground" />
-                                      {p.wpm} WPM
-                                    </span>
-                                  </TooltipTrigger>
-                                  <TooltipContent side="bottom">
-                                    <p className="font-medium">Words Per Minute</p>
-                                    <p className="text-zinc-400">Typing speed measured in words per minute</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <span className="flex items-center gap-1 cursor-help">
-                                      <Target className="h-3.5 w-3.5 text-muted-foreground" />
-                                      {p.accuracy}%
-                                    </span>
-                                  </TooltipTrigger>
-                                  <TooltipContent side="bottom">
-                                    <p className="font-medium">Accuracy</p>
-                                    <p className="text-zinc-400">Percentage of characters typed correctly</p>
-                                  </TooltipContent>
-                                </Tooltip>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <span className="flex items-center gap-1 cursor-help">
+                                        <Target className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-muted-foreground" />
+                                        <span className="text-xs sm:text-sm">{p.accuracy}%</span>
+                                      </span>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="bottom">
+                                      <p className="font-medium">Accuracy</p>
+                                      <p className="text-zinc-400">Percentage of characters typed correctly</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </div>
                               </div>
                             </div>
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <div className="cursor-help">
-                                  <Progress value={progressPercent} className="h-3" />
+                                  <Progress value={progressPercent} className="h-2 sm:h-3" />
                                 </div>
                               </TooltipTrigger>
                               <TooltipContent side="bottom">
                                 <p className="font-medium">{Math.round(progressPercent)}% complete</p>
-                                <p className="text-zinc-400">{p.progress} of {race.paragraphContent.length} characters</p>
+                                <p className="text-zinc-400 text-xs">{p.progress} of {race.paragraphContent.length} characters</p>
                               </TooltipContent>
                             </Tooltip>
                           </div>
@@ -2859,16 +2864,16 @@ export default function RacePage() {
                   </div>
                 )}
                 
-                <div className="relative">
-                  <div 
-                    ref={textContainerRef}
-                    className="text-xl leading-[2] font-mono select-none max-h-[280px] overflow-y-auto scroll-smooth p-8 bg-zinc-900 rounded-lg whitespace-pre-wrap break-words" 
-                    data-testid="text-paragraph"
-                    role="textbox"
-                    aria-readonly="true"
-                    aria-label="Text to type"
-                    aria-describedby="typing-instructions"
-                  >
+              <div className="relative">
+                <div 
+                  ref={textContainerRef}
+                  className="text-lg sm:text-xl leading-[1.8] sm:leading-[2] font-mono select-none max-h-[200px] sm:max-h-[280px] overflow-y-auto scroll-smooth p-4 sm:p-6 lg:p-8 bg-zinc-900 rounded-lg whitespace-pre-wrap break-words" 
+                  data-testid="text-paragraph"
+                  role="textbox"
+                  aria-readonly="true"
+                  aria-label="Text to type"
+                  aria-describedby="typing-instructions"
+                >
                     {(() => {
                       const text = race.paragraphContent;
                       const words = text.split(/(\s+)/);
@@ -3016,14 +3021,14 @@ export default function RacePage() {
           />
         )}
         <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
-          <div className="container max-w-5xl mx-auto px-4 py-6">
+          <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-5xl lg:max-w-7xl">
             {/* Hero Section */}
             <div className="relative mb-8">
               {/* Background decoration */}
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-yellow-500/10 to-primary/10 rounded-3xl blur-3xl opacity-50" />
+              <div className="hidden sm:block absolute inset-0 bg-gradient-to-r from-primary/10 via-yellow-500/10 to-primary/10 rounded-3xl blur-3xl opacity-50" />
               
-              <div className="relative bg-gradient-to-br from-zinc-900/80 via-zinc-900/60 to-zinc-800/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6 md:p-8">
-                <div className="flex items-center justify-between mb-6">
+              <div className="relative overflow-hidden bg-gradient-to-br from-zinc-900/80 via-zinc-900/60 to-zinc-800/80 backdrop-blur-xl rounded-2xl border border-white/10 p-4 sm:p-6 md:p-8">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between sm:gap-4 mb-4 sm:mb-6 space-y-3 sm:space-y-0">
                   <Button
                     variant="ghost"
                     size="sm"
@@ -3047,19 +3052,19 @@ export default function RacePage() {
                       {myPosition === 1 ? (
                         <div className="relative">
                           <div className="absolute inset-0 bg-yellow-500/30 blur-2xl rounded-full" />
-                          <div className="relative text-7xl">🏆</div>
+                          <div className="relative text-4xl sm:text-6xl md:text-7xl">🏆</div>
                         </div>
                       ) : myPosition === 2 ? (
-                        <div className="text-6xl">🥈</div>
+                        <div className="text-4xl sm:text-6xl">🥈</div>
                       ) : myPosition === 3 ? (
-                        <div className="text-6xl">🥉</div>
+                        <div className="text-4xl sm:text-6xl">🥉</div>
                       ) : (
-                        <div className="text-5xl">🏁</div>
+                        <div className="text-3xl sm:text-5xl">🏁</div>
                       )}
                     </div>
                     
                     <div>
-                      <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-primary to-white bg-clip-text text-transparent">
+                      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-primary to-white bg-clip-text text-transparent">
                         {myPosition === 1 ? "Victory!" : myPosition === 2 ? "Runner Up!" : myPosition === 3 ? "Podium Finish!" : "Race Complete!"}
                       </h1>
                       <p className="text-muted-foreground mt-1">
@@ -3068,37 +3073,37 @@ export default function RacePage() {
                       </div>
 
                     {/* Quick Stats */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-                      <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                      <div className="bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10">
                         <div className="flex items-center justify-center gap-2 text-primary mb-1">
                           <Gauge className="h-4 w-4" />
                           <span className="text-xs uppercase tracking-wide">Speed</span>
                         </div>
-                        <p className="text-2xl md:text-3xl font-bold">{lastResultSnapshot.wpm}</p>
+                        <p className="text-xl sm:text-2xl md:text-3xl font-bold">{lastResultSnapshot.wpm}</p>
                         <p className="text-xs text-muted-foreground">WPM</p>
                       </div>
-                      <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                      <div className="bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10">
                         <div className="flex items-center justify-center gap-2 text-green-400 mb-1">
                           <Target className="h-4 w-4" />
                           <span className="text-xs uppercase tracking-wide">Accuracy</span>
                         </div>
-                        <p className="text-2xl md:text-3xl font-bold">{lastResultSnapshot.accuracy}%</p>
+                        <p className="text-xl sm:text-2xl md:text-3xl font-bold">{lastResultSnapshot.accuracy}%</p>
                         <p className="text-xs text-muted-foreground">Correct</p>
                       </div>
-                      <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                      <div className="bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10">
                         <div className="flex items-center justify-center gap-2 text-purple-400 mb-1">
                           <Zap className="h-4 w-4" />
                           <span className="text-xs uppercase tracking-wide">Characters</span>
                         </div>
-                        <p className="text-2xl md:text-3xl font-bold">{lastResultSnapshot.characters}</p>
+                        <p className="text-xl sm:text-2xl md:text-3xl font-bold">{lastResultSnapshot.characters}</p>
                         <p className="text-xs text-muted-foreground">Typed</p>
                       </div>
-                      <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                      <div className="bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10">
                         <div className="flex items-center justify-center gap-2 text-yellow-400 mb-1">
                           <Award className="h-4 w-4" />
                           <span className="text-xs uppercase tracking-wide">Tier</span>
                         </div>
-                        <p className="text-lg font-bold">{getTypingPerformanceRating(lastResultSnapshot.wpm, lastResultSnapshot.accuracy).badge}</p>
+                        <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold">{getTypingPerformanceRating(lastResultSnapshot.wpm, lastResultSnapshot.accuracy).badge}</p>
                         <p className="text-xs text-muted-foreground">Performance</p>
                       </div>
                     </div>
@@ -3109,62 +3114,111 @@ export default function RacePage() {
 
             {/* Tabs Section */}
             <Tabs defaultValue="leaderboard" className="w-full">
-              <TabsList className="grid w-full grid-cols-4 mb-6 bg-zinc-900/50 border border-white/10 p-1 rounded-xl">
-                <TabsTrigger value="leaderboard" className="gap-2 data-[state=active]:bg-primary/20 data-[state=active]:text-primary rounded-lg" data-testid="tab-leaderboard">
-                  <Trophy className="h-4 w-4" />
+              <TabsList className="grid w-full grid-cols-4 mb-4 sm:mb-6 bg-zinc-900/50 border border-white/10 p-1 rounded-xl h-auto">
+                <TabsTrigger value="leaderboard" className="group relative flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-1 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm rounded-lg transition-colors data-[state=active]:bg-primary/20 data-[state=active]:text-primary data-[state=active]:ring-1 data-[state=active]:ring-primary/40 data-[state=active]:shadow font-medium" data-testid="tab-leaderboard">
+                  <Trophy className="h-4 w-4 sm:h-4 sm:w-4 text-muted-foreground group-data-[state=active]:text-primary" />
                   <span className="hidden sm:inline">Leaderboard</span>
                 </TabsTrigger>
-                <TabsTrigger value="stats" className="gap-2 data-[state=active]:bg-green-500/20 data-[state=active]:text-green-400 rounded-lg" data-testid="tab-stats">
-                  <Target className="h-4 w-4" />
+                <TabsTrigger value="stats" className="group relative flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-1 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm rounded-lg transition-colors data-[state=active]:bg-green-500/20 data-[state=active]:text-green-400 data-[state=active]:ring-1 data-[state=active]:ring-green-400/40 data-[state=active]:shadow font-medium" data-testid="tab-stats">
+                  <Target className="h-4 w-4 sm:h-4 sm:w-4 text-muted-foreground group-data-[state=active]:text-green-400" />
                   <span className="hidden sm:inline">Stats</span>
                 </TabsTrigger>
-                <TabsTrigger value="certificate" className="gap-2 data-[state=active]:bg-yellow-500/20 data-[state=active]:text-yellow-400 rounded-lg" data-testid="tab-certificate">
-                  <Award className="h-4 w-4" />
+                <TabsTrigger value="certificate" className="group relative flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-1 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm rounded-lg transition-colors data-[state=active]:bg-yellow-500/20 data-[state=active]:text-yellow-400 data-[state=active]:ring-1 data-[state=active]:ring-yellow-400/40 data-[state=active]:shadow font-medium" data-testid="tab-certificate">
+                  <Award className="h-4 w-4 sm:h-4 sm:w-4 text-muted-foreground group-data-[state=active]:text-yellow-400" />
                   <span className="hidden sm:inline">Certificate</span>
                 </TabsTrigger>
-                <TabsTrigger value="share" className="gap-2 data-[state=active]:bg-purple-500/20 data-[state=active]:text-purple-400 rounded-lg" data-testid="tab-share">
-                  <Share2 className="h-4 w-4" />
+                <TabsTrigger value="share" className="group relative flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-1 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm rounded-lg transition-colors data-[state=active]:bg-purple-500/20 data-[state=active]:text-purple-400 data-[state=active]:ring-1 data-[state=active]:ring-purple-400/40 data-[state=active]:shadow font-medium" data-testid="tab-share">
+                  <Share2 className="h-4 w-4 sm:h-4 sm:w-4 text-muted-foreground group-data-[state=active]:text-purple-400" />
                   <span className="hidden sm:inline">Share</span>
                 </TabsTrigger>
               </TabsList>
 
               {/* Leaderboard Tab */}
-              <TabsContent value="leaderboard" className="space-y-4">
+              <TabsContent value="leaderboard" className="space-y-3 sm:space-y-4">
                 <Card className="bg-zinc-900/50 border-white/10">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="flex items-center gap-2 text-lg">
-                      <Users className="h-5 w-5 text-primary" />
+                  <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-6">
+                    <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                      <Users className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                       Final Standings
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-3">
+                  <CardContent className="space-y-2 sm:space-y-3 px-3 sm:px-6">
                   {sortedParticipants.map((p, idx) => {
                     const isParticipantBot = p.isBot === 1 || p.isBot === true;
                     const tierColor = p.tierInfo?.color || 'gray';
                     return (
                         <div
                           key={p.id}
-                          className={`flex items-center gap-4 p-4 rounded-xl transition-all duration-200 hover:scale-[1.01] ${
+                          className={`rounded-xl transition-all duration-200 hover:scale-[1.005] ${
                             p.id === myParticipant?.id 
                               ? 'bg-gradient-to-r from-primary/20 to-primary/5 border border-primary/30' 
                               : 'bg-white/5 border border-white/10 hover:border-white/20'
-                            }`}
-                            data-testid={`result-${p.id}`}
-                          >
-                            <div className="text-2xl font-bold w-12 text-center">
+                          }`}
+                          data-testid={`result-${p.id}`}
+                        >  
+                          {/* Mobile Layout */}
+                          <div className="flex sm:hidden p-3">
+                            <div className="flex items-start gap-2 w-full">
+                              <div className="text-lg font-bold w-7 text-center shrink-0 pt-1">
+                                {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`}
+                              </div>
+                              <div className={`h-9 w-9 rounded-full ${p.avatarColor || 'bg-primary'} flex items-center justify-center text-white font-bold text-sm shadow-lg shrink-0`}>
+                                {p.username[0].toUpperCase()}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <span className="font-semibold text-sm truncate max-w-[120px]">{p.username}</span>
+                                  {p.id === myParticipant?.id && (
+                                    <Badge variant="secondary" className="text-[9px] px-1 py-0 bg-primary/20 text-primary border-0">
+                                      You
+                                    </Badge>
+                                  )}
+                                  {!isParticipantBot && p.tier && (
+                                    <Badge
+                                      variant="outline"
+                                      className="text-[9px] px-1 py-0 capitalize"
+                                      style={{ borderColor: tierColor, color: tierColor }}
+                                    >
+                                      {p.tierInfo?.name || p.tier}
+                                    </Badge>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-2 mt-1 text-[10px] text-muted-foreground flex-wrap">
+                                  {!isParticipantBot && p.rating !== null && p.rating !== undefined && (
+                                    <span className="flex items-center gap-0.5">
+                                      <Award className="h-2.5 w-2.5" />
+                                      {p.rating}
+                                    </span>
+                                  )}
+                                  <span className="flex items-center gap-0.5">
+                                    <Zap className="h-2.5 w-2.5" />
+                                    {p.progress} chars
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="text-right shrink-0 pl-2">
+                                <div className="text-lg font-bold text-primary">{p.wpm}</div>
+                                <div className="text-[10px] text-muted-foreground">WPM • {p.accuracy}%</div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Desktop Layout */}
+                          <div className="hidden sm:flex items-center gap-4 p-4">
+                            <div className="text-2xl font-bold w-12 text-center shrink-0">
                               {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`}
                             </div>
-                          <div className={`h-12 w-12 rounded-full ${p.avatarColor || 'bg-primary'} flex items-center justify-center text-white font-bold text-lg shadow-lg`}>
+                            <div className={`h-12 w-12 rounded-full ${p.avatarColor || 'bg-primary'} flex items-center justify-center text-white font-bold text-lg shadow-lg shrink-0`}>
                               {p.username[0].toUpperCase()}
                             </div>
                             <div className="flex-1 min-w-0">
-                            <div className="font-semibold flex items-center gap-2 flex-wrap">
+                              <div className="font-semibold flex items-center gap-2 flex-wrap">
                                 <span className="truncate">{p.username}</span>
-                              {p.id === myParticipant?.id && (
-                                <Badge variant="secondary" className="text-[10px] bg-primary/20 text-primary border-0">
-                                  You
-                                </Badge>
-                              )}
+                                {p.id === myParticipant?.id && (
+                                  <Badge variant="secondary" className="text-[10px] bg-primary/20 text-primary border-0">
+                                    You
+                                  </Badge>
+                                )}
                                 {!isParticipantBot && p.tier && (
                                   <Badge
                                     variant="outline"
@@ -3175,26 +3229,27 @@ export default function RacePage() {
                                   </Badge>
                                 )}
                               </div>
-                            <div className="text-xs text-muted-foreground flex items-center gap-3 mt-1">
+                              <div className="text-xs text-muted-foreground flex items-center gap-3 mt-1">
                                 {!isParticipantBot && p.rating !== null && p.rating !== undefined && (
-                                <span className="flex items-center gap-1">
+                                  <span className="flex items-center gap-1">
                                     <Award className="h-3 w-3" />
-                                  {p.rating} Rating
+                                    {p.rating} Rating
                                   </span>
                                 )}
-                              <span className="flex items-center gap-1">
-                                <Zap className="h-3 w-3" />
-                                {p.progress} chars
-                              </span>
+                                <span className="flex items-center gap-1">
+                                  <Zap className="h-3 w-3" />
+                                  {p.progress} chars
+                                </span>
                               </div>
                             </div>
-                            <div className="text-right">
-                            <div className="text-2xl font-bold text-primary">{p.wpm}</div>
-                            <div className="text-xs text-muted-foreground">WPM • {p.accuracy}%</div>
-                              </div>
-                              </div>
-                      );
-                    })}
+                            <div className="text-right shrink-0 min-w-[90px]">
+                              <div className="text-2xl font-bold text-primary">{p.wpm}</div>
+                              <div className="text-xs text-muted-foreground">WPM • {p.accuracy}%</div>
+                            </div>
+                          </div>
+                        </div>
+                        );
+                      })}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -3212,24 +3267,24 @@ export default function RacePage() {
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="text-center p-3 bg-white/5 rounded-lg">
-                            <p className="text-3xl font-bold text-primary">{lastResultSnapshot.wpm}</p>
+                        <div className="grid grid-cols-2 gap-2 sm:gap-4">
+                          <div className="text-center p-2 sm:p-3 bg-white/5 rounded-lg">
+                            <p className="text-2xl sm:text-3xl font-bold text-primary">{lastResultSnapshot.wpm}</p>
                             <p className="text-xs text-muted-foreground">Words/Min</p>
                             </div>
-                          <div className="text-center p-3 bg-white/5 rounded-lg">
-                            <p className="text-3xl font-bold text-green-400">{lastResultSnapshot.accuracy}%</p>
+                          <div className="text-center p-2 sm:p-3 bg-white/5 rounded-lg">
+                            <p className="text-2xl sm:text-3xl font-bold text-green-400">{lastResultSnapshot.accuracy}%</p>
                             <p className="text-xs text-muted-foreground">Accuracy</p>
                           </div>
-                          <div className="text-center p-3 bg-white/5 rounded-lg">
-                            <p className="text-3xl font-bold text-purple-400">{lastResultSnapshot.characters}</p>
+                          <div className="text-center p-2 sm:p-3 bg-white/5 rounded-lg">
+                            <p className="text-2xl sm:text-3xl font-bold text-purple-400">{lastResultSnapshot.characters}</p>
                             <p className="text-xs text-muted-foreground">Characters</p>
                             </div>
-                          <div className="text-center p-3 bg-white/5 rounded-lg">
-                            <p className="text-3xl font-bold text-red-400">{lastResultSnapshot.errors}</p>
+                          <div className="text-center p-2 sm:p-3 bg-white/5 rounded-lg">
+                            <p className="text-2xl sm:text-3xl font-bold text-red-400">{lastResultSnapshot.errors}</p>
                             <p className="text-xs text-muted-foreground">Errors</p>
-                              </div>
                           </div>
+                        </div>
                         <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
                           <span className="text-sm text-muted-foreground">Race Duration</span>
                           <span className="font-bold">{lastResultSnapshot.duration}s</span>
@@ -3279,7 +3334,8 @@ export default function RacePage() {
                 <Card className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border-yellow-500/20">
                   <CardContent className="pt-6">
                     {lastResultSnapshot ? (
-                      <RaceCertificate
+                      <div className="overflow-x-auto -mx-2 sm:mx-0 px-2">
+                        <RaceCertificate
                         wpm={lastResultSnapshot.wpm}
                         accuracy={lastResultSnapshot.accuracy}
                         consistency={lastResultSnapshot.consistency}
@@ -3290,7 +3346,8 @@ export default function RacePage() {
                         duration={lastResultSnapshot.duration}
                         username={user?.username}
                         raceId={race?.id?.toString()}
-                      />
+                        />
+                      </div>
                     ) : (
                       <div className="text-center p-8 text-muted-foreground">
                         <Award className="h-12 w-12 mx-auto mb-3" />
@@ -3315,7 +3372,7 @@ export default function RacePage() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {/* Quick Share Buttons */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
                       <Button
                         variant="outline"
                         className="gap-2 bg-[#1DA1F2]/10 border-[#1DA1F2]/30 hover:bg-[#1DA1F2]/20 text-[#1DA1F2]"
@@ -3362,11 +3419,11 @@ export default function RacePage() {
                     </div>
 
                     {/* Copy Link */}
-                    <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                       <Input
                         readOnly
                         value="typemasterai.com/multiplayer"
-                        className="bg-white/5 border-white/10"
+                        className="bg-white/5 border-white/10 flex-1"
                       />
                       <Button
                         variant="secondary"
@@ -3393,28 +3450,29 @@ export default function RacePage() {
             </Tabs>
 
             {/* Action Buttons Section */}
-            <Card className="mt-6 bg-zinc-900/50 border-white/10">
-              <CardContent className="pt-6">
+            <Card className="mt-4 sm:mt-6 bg-zinc-900/50 border-white/10">
+              <CardContent className="p-3 sm:p-6">
                 {/* Rematch Notification */}
                 {rematchInfo && (
-                  <div className="p-4 mb-4 border border-green-500/30 rounded-xl bg-green-500/10 flex items-center justify-between">
+                  <div className="p-3 sm:p-4 mb-3 sm:mb-4 border border-green-500/30 rounded-xl bg-green-500/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
                     <div className="flex items-center gap-2">
-                      <RotateCcw className="h-5 w-5 text-green-500" />
+                      <RotateCcw className="h-4 w-4 sm:h-5 sm:w-5 text-green-500 shrink-0" />
                       <div>
-                        <p className="font-medium text-green-400">New Race Ready!</p>
-                        <p className="text-sm text-muted-foreground">Room Code: {rematchInfo.roomCode}</p>
+                        <p className="font-medium text-green-400 text-sm sm:text-base">New Race Ready!</p>
+                        <p className="text-xs sm:text-sm text-muted-foreground">Room Code: {rematchInfo.roomCode}</p>
                       </div>
                     </div>
                     <Button
                       onClick={() => setLocation(`/race/${rematchInfo.newRaceId}?code=${rematchInfo.roomCode}`)}
-                      className="bg-green-600 hover:bg-green-700"
+                      className="bg-green-600 hover:bg-green-700 w-full sm:w-auto text-sm"
+                      size="sm"
                     >
                       Join Now
                     </Button>
                   </div>
                 )}
 
-                <div className="flex gap-3 mt-4">
+                <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button

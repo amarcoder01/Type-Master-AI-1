@@ -40,9 +40,20 @@ class LeaderboardWebSocketService {
 
   initialize(server: Server): void {
     this.wss = new WebSocketServer({ 
-      server,
-      path: '/ws/leaderboard',
+      noServer: true,
       perMessageDeflate: false,
+    });
+
+    // Handle upgrade requests manually to avoid conflicts with Vite HMR
+    server.on('upgrade', (request, socket, head) => {
+      const pathname = request.url ? new URL(request.url, `http://${request.headers.host}`).pathname : '';
+      
+      if (pathname === '/ws/leaderboard') {
+        this.wss!.handleUpgrade(request, socket, head, (ws) => {
+          this.wss!.emit('connection', ws, request);
+        });
+      }
+      // Don't destroy socket for other paths - let other handlers process them
     });
 
     this.wss.on('connection', (ws: WebSocket, req) => {

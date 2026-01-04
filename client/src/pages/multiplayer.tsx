@@ -281,7 +281,7 @@ export default function MultiplayerPage() {
   return (
     <TooltipProvider delayDuration={300}>
       <div className="min-h-screen bg-background">
-        <div className="container max-w-6xl mx-auto px-4 py-8">
+        <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8 max-w-6xl">
           {/* Network offline banner */}
           {!isOnline && (
             <Alert variant="destructive" className="mb-6 border-yellow-500/50 bg-yellow-500/10">
@@ -304,8 +304,8 @@ export default function MultiplayerPage() {
             </Alert>
           )}
           
-          <div className="text-center mb-12">
-            <div className="flex items-center justify-center gap-3 mb-4">
+          <div className="text-center mb-8 sm:mb-12">
+            <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Trophy className="h-12 w-12 text-primary cursor-help" />
@@ -315,18 +315,22 @@ export default function MultiplayerPage() {
                   <p className="text-zinc-400">Compete with real players in real-time typing races</p>
                 </TooltipContent>
               </Tooltip>
-              <h1 className="text-4xl font-bold">Multiplayer Racing</h1>
+              <h1 className="text-3xl sm:text-4xl font-bold">Multiplayer Racing</h1>
             </div>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-base sm:text-lg text-muted-foreground">
               Compete against others in real-time typing races
             </p>
           </div>
 
           <Tabs defaultValue="quick" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-8">
+            <TabsList className="grid w-full grid-cols-3 mb-6 sm:mb-8 bg-zinc-900/50 border border-white/10 p-1 rounded-xl gap-1">
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <TabsTrigger value="quick" data-testid="tab-quick-match">
+                  <TabsTrigger
+                    value="quick"
+                    data-testid="tab-quick-match"
+                    className="relative gap-2 px-2 sm:px-3 py-2 text-xs sm:text-sm whitespace-nowrap rounded-lg transition-colors data-[state=active]:bg-primary/20 data-[state=active]:text-primary data-[state=active]:ring-1 data-[state=active]:ring-primary/40 data-[state=active]:shadow font-medium after:content-[''] after:absolute after:inset-x-2 after:-bottom-1 after:h-0.5 after:rounded-full after:bg-primary/70 after:opacity-0 data-[state=active]:after:opacity-100"
+                  >
                     <Zap className="h-4 w-4 mr-2" />
                     Quick Match
                   </TabsTrigger>
@@ -338,7 +342,11 @@ export default function MultiplayerPage() {
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <TabsTrigger value="create" data-testid="tab-create-room">
+                  <TabsTrigger
+                    value="create"
+                    data-testid="tab-create-room"
+                    className="relative gap-2 px-2 sm:px-3 py-2 text-xs sm:text-sm whitespace-nowrap rounded-lg transition-colors data-[state=active]:bg-primary/20 data-[state=active]:text-primary data-[state=active]:ring-1 data-[state=active]:ring-primary/40 data-[state=active]:shadow font-medium after:content-[''] after:absolute after:inset-x-2 after:-bottom-1 after:h-0.5 after:rounded-full after:bg-primary/70 after:opacity-0 data-[state=active]:after:opacity-100"
+                  >
                     <Users className="h-4 w-4 mr-2" />
                     Create Room
                   </TabsTrigger>
@@ -350,7 +358,11 @@ export default function MultiplayerPage() {
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <TabsTrigger value="join" data-testid="tab-join-room">
+                  <TabsTrigger
+                    value="join"
+                    data-testid="tab-join-room"
+                    className="relative gap-2 px-2 sm:px-3 py-2 text-xs sm:text-sm whitespace-nowrap rounded-lg transition-colors data-[state=active]:bg-primary/20 data-[state=active]:text-primary data-[state=active]:ring-1 data-[state=active]:ring-primary/40 data-[state=active]:shadow font-medium after:content-[''] after:absolute after:inset-x-2 after:-bottom-1 after:h-0.5 after:rounded-full after:bg-primary/70 after:opacity-0 data-[state=active]:after:opacity-100"
+                  >
                     <Lock className="h-4 w-4 mr-2" />
                     Join Room
                   </TabsTrigger>
@@ -418,7 +430,7 @@ export default function MultiplayerPage() {
                         onClick={quickMatch}
                         disabled={loading}
                         size="lg"
-                        className="w-full text-lg h-14"
+                        className="w-full text-base sm:text-lg h-12 sm:h-14"
                         data-testid="button-quick-match"
                       >
                         {loading && loadingAction === "quickMatch" ? (
@@ -578,7 +590,7 @@ export default function MultiplayerPage() {
                         onClick={createRoom}
                         disabled={loading || loadingAction !== null}
                         size="lg"
-                        className="w-full text-lg h-14"
+                        className="w-full text-base sm:text-lg h-12 sm:h-14"
                         data-testid="button-create-room"
                       >
                         {loading && loadingAction === "createRoom" ? (
@@ -663,7 +675,7 @@ export default function MultiplayerPage() {
                         onClick={() => { void joinRoom(); }}
                         disabled={loading || roomCode.length !== 6}
                         size="lg"
-                        className="w-full text-lg h-14"
+                        className="w-full text-base sm:text-lg h-12 sm:h-14"
                         data-testid="button-join-room"
                       >
                         {loading ? (

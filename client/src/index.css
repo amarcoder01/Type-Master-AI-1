@@ -1088,6 +1088,287 @@
   }
 }
 
+/* Additional mobile improvements for racing features */
+@media (max-width: 640px) {
+  /* Improved race progress cards */
+  .race-progress-card {
+    padding: 0.5rem !important;
+    gap: 0.5rem !important;
+  }
+  
+  .race-progress-avatar {
+    width: 2rem !important;
+    height: 2rem !important;
+  }
+  
+  .race-progress-stats {
+    font-size: 0.75rem !important;
+    gap: 0.25rem !important;
+  }
+  
+  /* Better chat on mobile */
+  .race-chat-compact {
+    padding: 0.375rem !important;
+  }
+  
+  .race-chat-input {
+    font-size: 0.625rem !important;
+    height: 1.25rem !important;
+  }
+  
+  .race-chat-messages {
+    height: 4rem !important;
+  }
+  
+  /* Mobile waiting room improvements */
+  .race-waiting-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem !important;
+  }
+  
+  .race-waiting-participant {
+    padding: 0.5rem !important;
+    gap: 0.5rem !important;
+  }
+  
+  .race-waiting-avatar {
+    width: 2rem !important;
+    height: 2rem !important;
+  }
+  
+  .race-waiting-controls {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+  
+  /* Mobile results screen */
+  .race-results-hero {
+    padding: 1rem !important;
+  }
+  
+  .race-results-stats {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.5rem !important;
+  }
+  
+  .race-results-tabs {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.25rem !important;
+  }
+  
+  .race-results-leaderboard {
+    padding: 0.5rem !important;
+  }
+  
+  .race-results-share {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra small mobile improvements */
+  .race-xs-typing-text {
+    font-size: 0.875rem !important;
+    line-height: 1.4 !important;
+  }
+  
+  .race-xs-progress-bar {
+    height: 0.25rem !important;
+  }
+  
+  .race-xs-button {
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.875rem !important;
+  }
+  
+  .race-xs-stats-number {
+    font-size: 1.25rem !important;
+  }
+}
+
+/* Landscape mobile improvements */
+@media (max-width: 640px) and (orientation: landscape) {
+  .race-landscape-typing {
+    max-height: 120px !important;
+  }
+  
+  .race-landscape-progress {
+    padding: 0.25rem !important;
+  }
+  
+  .race-landscape-chat {
+    height: 3rem !important;
+  }
+}
+
+/* Touch-optimized interactions */
+@media (hover: none) and (pointer: coarse) {
+  .race-touch-button {
+    min-height: 2.5rem !important;
+    min-width: 2.5rem !important;
+  }
+  
+  .race-touch-input {
+    min-height: 2.5rem !important;
+    font-size: 1rem !important;
+  }
+  
+  .race-touch-target {
+    padding: 0.5rem !important;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .race-high-dpi-text {
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+  }
+}
+
+/* Reduced data mode for mobile */
+@media (prefers-reduced-data: reduce) {
+  .race-reduced-data * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================================================ */
+/* Mobile-specific responsive improvements for racing features */
+@media (max-width: 640px) {
+  /* Race page mobile adjustments */
+  .race-mobile-container {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+  
+  .race-mobile-typing-area {
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+    max-height: 180px !important;
+    padding: 1rem !important;
+  }
+  
+  .race-mobile-progress-card {
+    padding: 0.75rem !important;
+  }
+  
+  .race-mobile-timer {
+    font-size: 1rem !important;
+    padding: 0.5rem 0.75rem !important;
+  }
+  
+  .race-mobile-countdown {
+    font-size: 2.5rem !important;
+  }
+  
+  .race-mobile-stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+  
+  .race-mobile-stats-card {
+    padding: 0.75rem !important;
+  }
+  
+  .race-mobile-leaderboard-entry {
+    padding: 0.75rem !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+  
+  .race-mobile-share-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+  
+  .race-mobile-tabs {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.25rem !important;
+  }
+  
+  .race-mobile-tab-text {
+    display: none !important;
+  }
+  
+  .race-mobile-action-buttons {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra small mobile adjustments */
+  .race-xs-typing-area {
+    font-size: 0.875rem !important;
+    line-height: 1.5 !important;
+    padding: 0.75rem !important;
+  }
+  
+  .race-xs-timer {
+    font-size: 0.875rem !important;
+    padding: 0.375rem 0.5rem !important;
+  }
+  
+  .race-xs-countdown {
+    font-size: 2rem !important;
+  }
+  
+  .race-xs-stats-number {
+    font-size: 1.5rem !important;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+  /* Tablet adjustments */
+  .race-tablet-typing-area {
+    font-size: 1.125rem !important;
+    line-height: 1.7 !important;
+  }
+  
+  .race-tablet-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* Ensure proper touch targets on mobile */
+@media (max-width: 640px) {
+  .race-mobile-button {
+    min-height: 2.75rem !important;
+    padding: 0.75rem 1rem !important;
+  }
+  
+  .race-mobile-input {
+    min-height: 2.75rem !important;
+    font-size: 1rem !important;
+  }
+  
+  .race-mobile-avatar {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+  }
+}
+
+/* High contrast mode for mobile */
+@media (max-width: 640px) and (prefers-contrast: high) {
+  .race-mobile-high-contrast {
+    border-width: 2px !important;
+  }
+}
+
+/* Reduced motion for mobile */
+@media (max-width: 640px) and (prefers-reduced-motion: reduce) {
+  .race-mobile-reduced-motion * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ============================================================================ */
 /* High-performance typing caret - GPU accelerated */
 .caret-element {
   --caret-transition-duration: 60ms;

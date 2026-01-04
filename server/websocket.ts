@@ -196,7 +196,19 @@ class RaceWebSocketServer {
   }
 
   initialize(server: Server) {
-    this.wss = new WebSocketServer({ server, path: "/ws/race" });
+    this.wss = new WebSocketServer({ noServer: true });
+    
+    // Handle upgrade requests manually to avoid conflicts with Vite HMR
+    server.on('upgrade', (request, socket, head) => {
+      const pathname = request.url ? new URL(request.url, `http://${request.headers.host}`).pathname : '';
+      
+      if (pathname === '/ws/race') {
+        this.wss!.handleUpgrade(request, socket, head, (ws) => {
+          this.wss!.emit('connection', ws, request);
+        });
+      }
+      // Don't destroy socket for other paths - let other handlers process them
+    });
 
     raceCache.initialize(async (updates) => {
       await this.flushProgressToDatabase(updates);
