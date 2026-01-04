@@ -589,24 +589,47 @@ export function CodeCertificate({
         }, "image/png");
       });
 
-      await navigator.clipboard.write([
-        new ClipboardItem({ "image/png": blob })
-      ]);
+      // Check if clipboard API with images is supported
+      if (navigator.clipboard && 'write' in navigator.clipboard) {
+        await navigator.clipboard.write([
+          new ClipboardItem({ "image/png": blob })
+        ]);
 
-      setImageCopied(true);
-      setTimeout(() => setImageCopied(false), 2000);
-      triggerCelebration('small');
+        setImageCopied(true);
+        setTimeout(() => setImageCopied(false), 2000);
+        triggerCelebration('small');
 
-      toast({
-        title: "Certificate Copied!",
-        description: "Paste directly into Twitter, Discord, or LinkedIn!",
-      });
+        toast({
+          title: "Certificate Copied!",
+          description: "Paste directly into Twitter, Discord, or LinkedIn!",
+        });
+      } else {
+        // Fallback: trigger download on mobile/unsupported browsers
+        const link = document.createElement("a");
+        link.download = `TypeMasterAI_Certificate_${wpm}WPM.png`;
+        link.href = URL.createObjectURL(blob);
+        link.click();
+        URL.revokeObjectURL(link.href);
+        
+        setImageCopied(true);
+        setTimeout(() => setImageCopied(false), 2000);
+        
+        toast({
+          title: "Certificate Downloaded!",
+          description: "Image copy not supported - downloaded instead.",
+        });
+      }
     } catch (error) {
-      toast({
-        title: "Copy Failed",
-        description: "Your browser doesn't support image copying. Please download instead.",
-        variant: "destructive",
-      });
+      // Ultimate fallback: try to download using canvas data URL
+      try {
+        downloadCertificate("png");
+      } catch {
+        toast({
+          title: "Copy Failed",
+          description: "Please use the Download button instead.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
@@ -633,27 +656,27 @@ export function CodeCertificate({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                className="w-full gap-1.5 sm:gap-2 h-10 sm:h-11 text-xs sm:text-sm text-white font-semibold"
+                className="w-full gap-1.5 sm:gap-2 min-h-[44px] h-10 sm:h-11 text-xs sm:text-sm text-white font-semibold active:scale-[0.98] transition-all touch-manipulation"
                 style={{
                   background: `linear-gradient(135deg, ${tierVisuals.borderGradient[0]}, ${tierVisuals.primaryColor}, ${tierVisuals.borderGradient[2]})`,
                 }}
                 data-testid="button-download-certificate"
               >
                 <Download className="w-3.5 sm:w-4 h-3.5 sm:h-4 shrink-0" />
-                <span className="truncate">Download Certificate</span>
+                <span className="truncate">Download</span>
                 <ChevronDown className="w-3 sm:w-4 h-3 sm:h-4 ml-auto shrink-0" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-44 sm:w-48">
-              <DropdownMenuItem onClick={() => downloadCertificate("png")} className="cursor-pointer text-xs sm:text-sm">
+            <DropdownMenuContent align="center" className="w-44 sm:w-48 z-[110]">
+              <DropdownMenuItem onClick={() => downloadCertificate("png")} className="cursor-pointer text-xs sm:text-sm min-h-[40px] touch-manipulation">
                 <FileImage className="w-4 h-4 mr-2 shrink-0" />
                 Download as PNG
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => downloadCertificate("jpg")} className="cursor-pointer text-xs sm:text-sm">
+              <DropdownMenuItem onClick={() => downloadCertificate("jpg")} className="cursor-pointer text-xs sm:text-sm min-h-[40px] touch-manipulation">
                 <FileImage className="w-4 h-4 mr-2 shrink-0" />
                 Download as JPG
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => downloadCertificate("pdf")} className="cursor-pointer text-xs sm:text-sm">
+              <DropdownMenuItem onClick={() => downloadCertificate("pdf")} className="cursor-pointer text-xs sm:text-sm min-h-[40px] touch-manipulation">
                 <FileText className="w-4 h-4 mr-2 shrink-0" />
                 Download as PDF
               </DropdownMenuItem>
@@ -675,7 +698,7 @@ export function CodeCertificate({
               <Button
                 onClick={copyImageToClipboard}
                 variant="outline"
-                className="gap-1.5 sm:gap-2 h-9 sm:h-10 text-xs sm:text-sm bg-zinc-800/50 border-zinc-600 hover:bg-zinc-700/50 hover:border-zinc-500"
+                className="gap-1.5 sm:gap-2 min-h-[44px] h-9 sm:h-10 text-xs sm:text-sm bg-zinc-800/50 border-zinc-600 hover:bg-zinc-700/50 hover:border-zinc-500 active:scale-[0.98] transition-all touch-manipulation"
                 data-testid="button-copy-certificate"
               >
                 {imageCopied ? <Check className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-green-500 shrink-0" /> : <Clipboard className="w-3.5 sm:w-4 h-3.5 sm:h-4 shrink-0" style={{ color: tierVisuals.primaryColor }} />}
@@ -685,7 +708,7 @@ export function CodeCertificate({
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="outline"
-                    className="gap-1.5 sm:gap-2 h-9 sm:h-10 text-xs sm:text-sm bg-zinc-800/50 border-zinc-600 hover:bg-zinc-700/50 hover:border-zinc-500"
+                    className="gap-1.5 sm:gap-2 min-h-[44px] h-9 sm:h-10 text-xs sm:text-sm bg-zinc-800/50 border-zinc-600 hover:bg-zinc-700/50 hover:border-zinc-500 active:scale-[0.98] transition-all touch-manipulation"
                     data-testid="button-download-certificate"
                   >
                     <Download className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-purple-400 shrink-0" />
@@ -693,16 +716,16 @@ export function CodeCertificate({
                     <ChevronDown className="w-2.5 sm:w-3 h-2.5 sm:h-3 ml-auto shrink-0" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-44 sm:w-48">
-                  <DropdownMenuItem onClick={() => downloadCertificate("png")} className="cursor-pointer text-xs sm:text-sm">
+                <DropdownMenuContent align="center" className="w-44 sm:w-48 z-[110]">
+                  <DropdownMenuItem onClick={() => downloadCertificate("png")} className="cursor-pointer text-xs sm:text-sm min-h-[40px] touch-manipulation">
                     <FileImage className="w-4 h-4 mr-2 shrink-0" />
                     Download as PNG
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => downloadCertificate("jpg")} className="cursor-pointer text-xs sm:text-sm">
+                  <DropdownMenuItem onClick={() => downloadCertificate("jpg")} className="cursor-pointer text-xs sm:text-sm min-h-[40px] touch-manipulation">
                     <FileImage className="w-4 h-4 mr-2 shrink-0" />
                     Download as JPG
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => downloadCertificate("pdf")} className="cursor-pointer text-xs sm:text-sm">
+                  <DropdownMenuItem onClick={() => downloadCertificate("pdf")} className="cursor-pointer text-xs sm:text-sm min-h-[40px] touch-manipulation">
                     <FileText className="w-4 h-4 mr-2 shrink-0" />
                     Download as PDF
                   </DropdownMenuItem>
@@ -715,14 +738,14 @@ export function CodeCertificate({
             <Button
               onClick={shareCertificate}
               disabled={isSharing}
-              className="w-full gap-1.5 sm:gap-2 h-10 sm:h-11 text-xs sm:text-sm text-white font-semibold"
+              className="w-full gap-1.5 sm:gap-2 min-h-[48px] h-10 sm:h-11 text-xs sm:text-sm text-white font-semibold active:scale-[0.98] transition-all touch-manipulation"
               style={{
                 background: `linear-gradient(135deg, ${tierVisuals.borderGradient[0]}, ${tierVisuals.primaryColor}, ${tierVisuals.borderGradient[2]})`,
               }}
               data-testid="button-share-certificate"
             >
               <Share2 className="w-3.5 sm:w-4 h-3.5 sm:h-4 shrink-0" />
-              <span className="truncate">{isSharing ? "Sharing..." : "Share Certificate"}</span>
+              <span className="truncate">{isSharing ? "Sharing..." : "Share"}</span>
             </Button>
           )}
 

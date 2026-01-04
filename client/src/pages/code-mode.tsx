@@ -392,6 +392,39 @@ export default function CodeMode() {
     }
   }, [isMobile]);
 
+  // Certificate helpers (for Certificate Tab actions)
+  const getCertificateCanvas = useCallback(() => {
+    return document.querySelector('[data-testid="certificate-canvas"]') as HTMLCanvasElement | null;
+  }, []);
+
+  const downloadCertificateFromCanvas = useCallback((format: "png" | "jpg" | "pdf" = "png") => {
+    const canvas = getCertificateCanvas();
+    if (!canvas) {
+      toast({ title: "Certificate not ready", description: "Please try again.", variant: "destructive" });
+      return;
+    }
+
+    const langName = PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name || language;
+    const baseFileName = `TypeMasterAI_Code_Certificate_${langName}_${wpm}WPM`;
+
+    if (format === "pdf") {
+      try {
+        const imgData = canvas.toDataURL("image/png");
+        const pdf = new jsPDF({ orientation: "landscape", unit: "px", format: [canvas.width, canvas.height] });
+        pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
+        pdf.save(`${baseFileName}.pdf`);
+      } catch (e) {
+        toast({ title: "PDF Download Failed", description: "Please try PNG or JPG instead.", variant: "destructive" });
+      }
+      return;
+    }
+
+    const link = document.createElement("a");
+    link.download = `${baseFileName}.${format}`;
+    link.href = format === "jpg" ? canvas.toDataURL("image/jpeg", 0.95) : canvas.toDataURL("image/png");
+    link.click();
+  }, [getCertificateCanvas, language, wpm, toast]);
+
   // Anti-cheat constants
   const MIN_KEYSTROKE_INTERVAL_MS = 20; // Humanly impossible to type faster than 50 chars/second
   const MAX_SUSPICIOUS_EVENTS = 10; // Flag after 10 suspicious rapid keystrokes
@@ -3632,10 +3665,10 @@ Understanding your baseline code typing speed can help identify opportunities fo
             <Tabs value={shareDialogTab} onValueChange={(v) => setShareDialogTab(v as typeof shareDialogTab)} className="w-full">
               {/* Hide tabs when in certificate-only mode (opened from Get Certificate button) */}
               {!certificateOnlyMode && (
-                <TabsList className="grid w-full grid-cols-3 sm:grid-cols-4 mb-3 sm:mb-4 h-auto">
+                <TabsList className={`grid w-full mb-3 sm:mb-4 h-auto ${user ? 'grid-cols-4' : 'grid-cols-3'}`}>
                   <TabsTrigger value="quick" className="text-[10px] sm:text-sm py-1.5 sm:py-2" data-testid="tab-quick-share">Share</TabsTrigger>
                   <TabsTrigger value="visual" className="text-[10px] sm:text-sm py-1.5 sm:py-2" data-testid="tab-visual-card">Card</TabsTrigger>
-                  {user && <TabsTrigger value="certificate" className="text-[10px] sm:text-sm py-1.5 sm:py-2 hidden sm:flex" data-testid="tab-certificate">Certificate</TabsTrigger>}
+                  {user && <TabsTrigger value="certificate" className="text-[10px] sm:text-sm py-1.5 sm:py-2" data-testid="tab-certificate"><span className="sm:hidden">Cert</span><span className="hidden sm:inline">Certificate</span></TabsTrigger>}
                   <TabsTrigger value="challenge" className="text-[10px] sm:text-sm py-1.5 sm:py-2" data-testid="tab-challenge">Challenge</TabsTrigger>
                 </TabsList>
               )}
@@ -3869,8 +3902,8 @@ Understanding your baseline code typing speed can help identify opportunities fo
                     </div>
                   </div>
 
-                  {/* Hidden pre-rendered certificate for sharing */}
-                  <div className="absolute -z-50 w-0 h-0 overflow-hidden opacity-0 pointer-events-none" aria-hidden="true">
+                  {/* Hidden pre-rendered certificate for sharing - positioned off-screen with real dimensions for canvas to render */}
+                  <div className="fixed -left-[9999px] -top-[9999px] w-[1200px] h-[675px] pointer-events-none" aria-hidden="true" style={{ visibility: 'hidden' }}>
                     <CodeCertificate
                       wpm={wpm}
                       rawWpm={rawWpm}
@@ -3889,8 +3922,12 @@ Understanding your baseline code typing speed can help identify opportunities fo
                   {/* View, Download & Share Certificate Buttons */}
                   <div className="grid grid-cols-2 gap-2 sm:gap-3">
                     <button
-                      onClick={() => setShowCertificate(true)}
-                      className="py-2.5 sm:py-3 bg-gradient-to-r from-purple-500 to-cyan-500 text-white text-xs sm:text-sm font-bold rounded-lg sm:rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5 sm:gap-2 shadow-lg shadow-purple-500/25"
+                      onClick={() => {
+                        // Close share dialog first to avoid overlapping modals and body scroll lock
+                        setShareDialogOpen(false);
+                        setTimeout(() => setShowCertificate(true), 50);
+                      }}
+                      className="min-h-[44px] py-2.5 sm:py-3 bg-gradient-to-r from-purple-500 to-cyan-500 text-white text-xs sm:text-sm font-bold rounded-lg sm:rounded-xl hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-lg shadow-purple-500/25 touch-manipulation"
                       data-testid="button-view-certificate-share"
                     >
                       <Award className="w-4 sm:w-5 h-4 sm:h-5 shrink-0" />
@@ -3907,19 +3944,30 @@ Understanding your baseline code typing speed can help identify opportunities fo
                           const blob = await new Promise<Blob>((resolve, reject) => {
                             certCanvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error("Failed")), "image/png");
                           });
-                          await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-                          setCertificateImageCopied(true);
-                          setTimeout(() => setCertificateImageCopied(false), 2000);
-                          toast({ title: "Certificate Copied!", description: "Paste directly into Twitter, Discord, or LinkedIn!" });
+                          // Check if clipboard API with images is supported
+                          if (navigator.clipboard && 'write' in navigator.clipboard) {
+                            await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+                            setCertificateImageCopied(true);
+                            setTimeout(() => setCertificateImageCopied(false), 2000);
+                            toast({ title: "Certificate Copied!", description: "Paste directly into Twitter, Discord, or LinkedIn!" });
+                          } else {
+                            // Fallback: trigger download on mobile
+                            const link = document.createElement("a");
+                            link.download = `TypeMasterAI_Certificate_${wpm}WPM.png`;
+                            link.href = URL.createObjectURL(blob);
+                            link.click();
+                            URL.revokeObjectURL(link.href);
+                            toast({ title: "Certificate Downloaded!", description: "Image copy not supported - downloaded instead." });
+                          }
                         } catch {
-                          toast({ title: "Copy Failed", description: "Please download instead.", variant: "destructive" });
+                          toast({ title: "Copy Failed", description: "Please use Share or Download instead.", variant: "destructive" });
                         }
                       }}
-                      className="py-2.5 sm:py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs sm:text-sm font-bold rounded-lg sm:rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5 sm:gap-2 shadow-lg shadow-green-500/25"
+                      className="min-h-[44px] py-2.5 sm:py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs sm:text-sm font-bold rounded-lg sm:rounded-xl hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-lg shadow-green-500/25 touch-manipulation"
                       data-testid="button-copy-certificate-image"
                     >
                       {certificateImageCopied ? <Check className="w-4 sm:w-5 h-4 sm:h-5 shrink-0" /> : <Copy className="w-4 sm:w-5 h-4 sm:h-5 shrink-0" />}
-                      <span className="truncate">{certificateImageCopied ? "Copied!" : "Copy Image"}</span>
+                      <span className="truncate">{certificateImageCopied ? "Copied!" : "Copy"}</span>
                     </button>
                   </div>
 
@@ -3927,24 +3975,24 @@ Understanding your baseline code typing speed can help identify opportunities fo
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
-                        className="w-full gap-1.5 sm:gap-2 h-10 sm:h-11 text-xs sm:text-sm text-white font-semibold bg-gradient-to-r from-blue-500 to-indigo-600 hover:opacity-90"
+                        className="w-full gap-1.5 sm:gap-2 min-h-[44px] h-10 sm:h-11 text-xs sm:text-sm text-white font-semibold bg-gradient-to-r from-blue-500 to-indigo-600 hover:opacity-90 active:scale-[0.98] transition-all touch-manipulation"
                         data-testid="button-download-certificate-format"
                       >
                         <Download className="w-4 sm:w-5 h-4 sm:h-5 shrink-0" />
-                        <span className="truncate">Download Certificate</span>
+                        <span className="truncate">Download</span>
                         <ChevronDown className="w-3 sm:w-4 h-3 sm:h-4 ml-auto shrink-0" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48 sm:w-56">
-                      <DropdownMenuItem onClick={() => downloadCertificate("png")} className="cursor-pointer text-xs sm:text-sm">
+                    <DropdownMenuContent align="center" className="w-48 sm:w-56 z-[110]">
+                      <DropdownMenuItem onClick={() => downloadCertificateFromCanvas("png")} className="cursor-pointer text-xs sm:text-sm min-h-[40px] touch-manipulation">
                         <FileImage className="w-4 h-4 mr-2 shrink-0" />
                         Download as PNG
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => downloadCertificate("jpg")} className="cursor-pointer text-xs sm:text-sm">
+                      <DropdownMenuItem onClick={() => downloadCertificateFromCanvas("jpg")} className="cursor-pointer text-xs sm:text-sm min-h-[40px] touch-manipulation">
                         <FileImage className="w-4 h-4 mr-2 shrink-0" />
                         Download as JPG
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => downloadCertificate("pdf")} className="cursor-pointer text-xs sm:text-sm">
+                      <DropdownMenuItem onClick={() => downloadCertificateFromCanvas("pdf")} className="cursor-pointer text-xs sm:text-sm min-h-[40px] touch-manipulation">
                         <FileText className="w-4 h-4 mr-2 shrink-0" />
                         Download as PDF
                       </DropdownMenuItem>
@@ -3974,21 +4022,30 @@ Understanding your baseline code typing speed can help identify opportunities fo
                               files: [file],
                             });
                             toast({ title: "Certificate Shared!", description: "Your achievement is on its way!" });
+                          } else {
+                            // Fallback: share without file if file sharing not supported
+                            const rating = getCodePerformanceRating(wpm, accuracy);
+                            await navigator.share({
+                              title: `TypeMasterAI Code Certificate - ${wpm} WPM`,
+                              text: `🎓 I earned a ${rating.badge} Code Typing Certificate!\n\n⚡ ${wpm} WPM | ✨ ${accuracy}% Accuracy\n💻 ${PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name}\n🏆 ${rating.title}\n\nCan you beat my score?\n\n🔗 typemasterai.com/code-mode`,
+                              url: 'https://typemasterai.com/code-mode',
+                            });
+                            toast({ title: "Share Link Opened!", description: "Download the certificate to attach it manually." });
                           }
                         } catch (error: any) {
                           if (error.name !== 'AbortError') {
-                            toast({ title: "Share failed", description: "Please try Copy Image instead.", variant: "destructive" });
+                            toast({ title: "Share failed", description: "Please try Download instead.", variant: "destructive" });
                           }
                         } finally {
                           setIsSharingCertificate(false);
                         }
                       }}
                       disabled={isSharingCertificate}
-                      className="w-full py-3 sm:py-4 bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 text-white text-xs sm:text-sm font-bold rounded-lg sm:rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5 sm:gap-2 shadow-lg shadow-orange-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full min-h-[48px] py-3 sm:py-4 bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 text-white text-xs sm:text-sm font-bold rounded-lg sm:rounded-xl hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-lg shadow-orange-500/30 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
                       data-testid="button-share-certificate-with-image"
                     >
                       <Share2 className="w-4 sm:w-5 h-4 sm:h-5 shrink-0" />
-                      <span className="truncate">{isSharingCertificate ? "Preparing..." : "Share Certificate with Image"}</span>
+                      <span className="truncate">{isSharingCertificate ? "Preparing..." : "Share with Image"}</span>
                     </button>
                   )}
 
@@ -4041,10 +4098,10 @@ Understanding your baseline code typing speed can help identify opportunities fo
                         navigator.clipboard.writeText(text);
                         toast({ title: "Certificate Message Copied!", description: "Paste into your social media post" });
                       }}
-                      className="absolute top-3 right-3 p-1.5 rounded-md bg-background/80 hover:bg-background border border-border/50 transition-colors"
+                      className="absolute top-2 right-2 p-2 min-w-[36px] min-h-[36px] rounded-md bg-background/80 hover:bg-background active:scale-[0.95] border border-border/50 transition-all touch-manipulation flex items-center justify-center"
                       data-testid="button-copy-cert-message"
                     >
-                      <Copy className="w-3.5 h-3.5 text-muted-foreground" />
+                      <Copy className="w-4 h-4 text-muted-foreground" />
                     </button>
                   </div>
 
@@ -4053,7 +4110,7 @@ Understanding your baseline code typing speed can help identify opportunities fo
                     <p className="text-[10px] sm:text-xs font-medium text-center text-muted-foreground uppercase tracking-wide">
                       Share Certificate On
                     </p>
-                    <div className="grid grid-cols-2 xs:grid-cols-3 gap-1.5 sm:gap-2">
+                    <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
                       <button
                         onClick={() => {
                           const rating = getCodePerformanceRating(wpm, accuracy);
@@ -4062,11 +4119,11 @@ Understanding your baseline code typing speed can help identify opportunities fo
 #TypeMasterAI #CodeTyping #Certified`);
                           window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent('https://typemasterai.com/code-mode')}`, '_blank', 'width=600,height=400');
                         }}
-                        className="flex items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#1DA1F2]/10 hover:bg-[#1DA1F2]/25 border border-[#1DA1F2]/20 transition-all"
+                        className="flex items-center justify-center gap-1 sm:gap-2 min-h-[40px] p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#1DA1F2]/10 hover:bg-[#1DA1F2]/25 active:scale-[0.98] border border-[#1DA1F2]/20 transition-all touch-manipulation"
                         data-testid="button-cert-share-twitter"
                       >
                         <Twitter className="w-4 h-4 text-[#1DA1F2] shrink-0" />
-                        <span className="text-[10px] sm:text-xs font-medium truncate">X</span>
+                        <span className="text-[10px] sm:text-xs font-medium truncate hidden xs:inline">X</span>
                       </button>
                       <button
                         onClick={() => {
@@ -4083,22 +4140,22 @@ Achieved ${wpm} WPM with ${accuracy}% accuracy typing ${PROGRAMMING_LANGUAGES[la
 Ready to earn yours? 🚀`);
                           window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://typemasterai.com/code-mode')}&quote=${text}`, '_blank', 'width=600,height=400');
                         }}
-                        className="flex items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#1877F2]/10 hover:bg-[#1877F2]/25 border border-[#1877F2]/20 transition-all"
+                        className="flex items-center justify-center gap-1 sm:gap-2 min-h-[40px] p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#1877F2]/10 hover:bg-[#1877F2]/25 active:scale-[0.98] border border-[#1877F2]/20 transition-all touch-manipulation"
                         data-testid="button-cert-share-facebook"
                       >
                         <Facebook className="w-4 h-4 text-[#1877F2] shrink-0" />
-                        <span className="text-[10px] sm:text-xs font-medium truncate">Facebook</span>
+                        <span className="text-[10px] sm:text-xs font-medium truncate hidden xs:inline">FB</span>
                       </button>
                       <button
                         onClick={() => {
                           const rating = getCodePerformanceRating(wpm, accuracy);
                           window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://typemasterai.com/code-mode')}`, '_blank', 'width=600,height=400');
                         }}
-                        className="flex items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#0A66C2]/10 hover:bg-[#0A66C2]/25 border border-[#0A66C2]/20 transition-all"
+                        className="flex items-center justify-center gap-1 sm:gap-2 min-h-[40px] p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#0A66C2]/10 hover:bg-[#0A66C2]/25 active:scale-[0.98] border border-[#0A66C2]/20 transition-all touch-manipulation"
                         data-testid="button-cert-share-linkedin"
                       >
                         <Linkedin className="w-4 h-4 text-[#0A66C2] shrink-0" />
-                        <span className="text-[10px] sm:text-xs font-medium truncate">LinkedIn</span>
+                        <span className="text-[10px] sm:text-xs font-medium truncate hidden xs:inline">In</span>
                       </button>
                       <button
                         onClick={() => {
@@ -4106,11 +4163,11 @@ Ready to earn yours? 🚀`);
                           const waText = `*TypeMasterAI Code Certificate*\n\nSpeed: *${wpm} WPM*\nAccuracy: *${accuracy}%*\nLanguage: ${PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name}\nLevel: ${rating.title}\nBadge: ${rating.badge}\n\nGet yours: https://typemasterai.com/code-mode`;
                           window.open(`https://wa.me/?text=${encodeURIComponent(waText)}`, '_blank', 'width=600,height=400');
                         }}
-                        className="flex items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/25 border border-[#25D366]/20 transition-all"
+                        className="flex items-center justify-center gap-1 sm:gap-2 min-h-[40px] p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/25 active:scale-[0.98] border border-[#25D366]/20 transition-all touch-manipulation"
                         data-testid="button-cert-share-whatsapp"
                       >
                         <MessageCircle className="w-4 h-4 text-[#25D366] shrink-0" />
-                        <span className="text-[10px] sm:text-xs font-medium truncate">WhatsApp</span>
+                        <span className="text-[10px] sm:text-xs font-medium truncate hidden xs:inline">WA</span>
                       </button>
                       <button
                         onClick={() => {
@@ -4118,11 +4175,11 @@ Ready to earn yours? 🚀`);
                           const text = `🎓 CERTIFIED!\n\n⚡ ${wpm} WPM | ✨ ${accuracy}% Accuracy\n💻 ${PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name}\n🏆 ${rating.title} | 🎯 ${rating.badge} Badge\n\nJust earned my official code typing certificate! Can you beat it? 😎`;
                           window.open(`https://t.me/share/url?url=${encodeURIComponent('https://typemasterai.com/code-mode')}&text=${encodeURIComponent(text)}`, '_blank', 'width=600,height=400');
                         }}
-                        className="flex items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#0088cc]/10 hover:bg-[#0088cc]/25 border border-[#0088cc]/20 transition-all"
+                        className="flex items-center justify-center gap-1 sm:gap-2 min-h-[40px] p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#0088cc]/10 hover:bg-[#0088cc]/25 active:scale-[0.98] border border-[#0088cc]/20 transition-all touch-manipulation"
                         data-testid="button-cert-share-telegram"
                       >
                         <Send className="w-4 h-4 text-[#0088cc] shrink-0" />
-                        <span className="text-[10px] sm:text-xs font-medium truncate">Telegram</span>
+                        <span className="text-[10px] sm:text-xs font-medium truncate hidden xs:inline">TG</span>
                       </button>
                       <button
                         onClick={() => {
@@ -4131,11 +4188,11 @@ Ready to earn yours? 🚀`);
                           const body = encodeURIComponent(`Hello!\n\nI'm excited to share that I've earned an official TypeMasterAI Code Typing Certificate!\n\n📜 CERTIFICATE DETAILS:\n━━━━━━━━━━━━━━━━━━━━\n⚡ Typing Speed: ${wpm} WPM\n✨ Accuracy Rate: ${accuracy}%\n💻 Language: ${PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name}\n🏆 Performance Level: ${rating.title}\n🎯 Badge Earned: ${rating.badge}\n📅 Date: ${new Date().toLocaleDateString()}\n\nThis certification validates my code typing proficiency!\n\n👉 Get certified: https://typemasterai.com/code-mode\n\nBest regards!`);
                           window.open(`mailto:?subject=${subject}&body=${body}`);
                         }}
-                        className="flex items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gray-500/10 hover:bg-gray-500/25 border border-gray-500/20 transition-all"
+                        className="flex items-center justify-center gap-1 sm:gap-2 min-h-[40px] p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gray-500/10 hover:bg-gray-500/25 active:scale-[0.98] border border-gray-500/20 transition-all touch-manipulation"
                         data-testid="button-cert-share-email"
                       >
                         <Mail className="w-4 h-4 text-gray-400 shrink-0" />
-                        <span className="text-[10px] sm:text-xs font-medium truncate">Email</span>
+                        <span className="text-[10px] sm:text-xs font-medium truncate hidden xs:inline">Mail</span>
                       </button>
                     </div>
                   </div>
@@ -4154,34 +4211,6 @@ Ready to earn yours? 🚀`);
                     </div>
                   </div>
                 </TabsContent>
-              )}
-
-              {/* View Certificate Dialog */}
-              {showCertificate && user && (
-                <Dialog open={showCertificate} onOpenChange={setShowCertificate}>
-                  <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto">
-                    <DialogHeader>
-                      <DialogTitle className="flex items-center gap-2">
-                        <Award className="w-5 h-5 text-yellow-400" />
-                        Your Code Typing Certificate
-                      </DialogTitle>
-                    </DialogHeader>
-                    <CodeCertificate
-                      wpm={wpm}
-                      rawWpm={rawWpm}
-                      accuracy={accuracy}
-                      consistency={consistency}
-                      language={language}
-                      languageName={PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name || language}
-                      difficulty={difficulty}
-                      characters={userInput.length}
-                      errors={errors}
-                      time={formatTime(elapsedTime)}
-                      minimal={true}
-                      username={user?.username}
-                    />
-                  </DialogContent>
-                </Dialog>
               )}
 
               {/* Challenge Tab */}
@@ -4352,6 +4381,34 @@ Ready to earn yours? 🚀`);
                   )}
               </TabsContent>
             </Tabs>
+          </DialogContent>
+        </Dialog>
+
+        {/* View Certificate Dialog - Rendered as sibling to Share Dialog for proper z-index */}
+        <Dialog open={showCertificate && !!user} onOpenChange={setShowCertificate}>
+          <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto p-3 sm:p-6 z-[120]">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-sm sm:text-base">
+                <Award className="w-4 sm:w-5 h-4 sm:h-5 text-yellow-400" />
+                Your Code Typing Certificate
+              </DialogTitle>
+            </DialogHeader>
+            <div className="mt-2">
+              <CodeCertificate
+                wpm={wpm}
+                rawWpm={rawWpm}
+                accuracy={accuracy}
+                consistency={consistency}
+                language={language}
+                languageName={PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name || language}
+                difficulty={difficulty}
+                characters={userInput.length}
+                errors={errors}
+                time={formatTime(elapsedTime)}
+                minimal={true}
+                username={user?.username}
+              />
+            </div>
           </DialogContent>
         </Dialog>
 

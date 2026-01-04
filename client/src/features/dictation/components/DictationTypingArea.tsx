@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useMemo } from 'react';
+import React, { useRef, useEffect, useMemo, useState } from 'react';
 import { HelpCircle, RotateCcw, Eye, EyeOff, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -52,19 +52,59 @@ export function DictationTypingArea({
   const maxReplays = modeConfig.maxReplays;
   const replaysRemaining = maxReplays !== undefined ? maxReplays - replayCount : undefined;
   const replayLimitReached = replaysRemaining !== undefined && replaysRemaining <= 0;
+  const [localText, setLocalText] = useState(typedText);
+  const debounceRef = useRef<number | null>(null);
+  const lastFlushRef = useRef(0);
   
   // Focus input when ready
   useEffect(() => {
     if (isReady && !isSpeaking && inputRef.current) {
       inputRef.current.focus();
+      try {
+        inputRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } catch {}
     }
   }, [isReady, isSpeaking]);
+
+  useEffect(() => {
+    setLocalText(typedText);
+  }, [typedText]);
+
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) {
+        window.clearTimeout(debounceRef.current);
+        debounceRef.current = null;
+      }
+    };
+  }, []);
   
   // Handle keyboard shortcuts
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && e.ctrlKey && !isSpeaking && isReady) {
       e.preventDefault();
       onSubmit();
+    }
+  };
+
+  const handleChange = (value: string) => {
+    setLocalText(value);
+    const now = performance.now();
+    const sinceLast = now - lastFlushRef.current;
+    if (sinceLast >= 50) {
+      lastFlushRef.current = now;
+      onTypedTextChange(value);
+      if (debounceRef.current) {
+        window.clearTimeout(debounceRef.current);
+        debounceRef.current = null;
+      }
+    } else {
+      if (debounceRef.current) window.clearTimeout(debounceRef.current);
+      debounceRef.current = window.setTimeout(() => {
+        lastFlushRef.current = performance.now();
+        onTypedTextChange(value);
+        debounceRef.current = null;
+      }, 50 - sinceLast);
     }
   };
   
@@ -272,8 +312,8 @@ export function DictationTypingArea({
               <div className="relative">
                 <Textarea
                   ref={inputRef}
-                  value={typedText}
-                  onChange={(e) => onTypedTextChange(e.target.value)}
+                  value={localText}
+                  onChange={(e) => handleChange(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Type here... (Ctrl+Enter to submit)"
                   className="text-lg p-4 min-h-[120px] resize-none"

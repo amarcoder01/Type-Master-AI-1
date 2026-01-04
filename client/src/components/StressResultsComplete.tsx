@@ -217,7 +217,7 @@ export default function StressResultsComplete(props: Props) {
 
   return (
     <TooltipProvider delayDuration={200}>
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto px-3 sm:px-0">
         {/* Header */}
         <div className="text-center mb-8">
           <Tooltip>
@@ -243,7 +243,7 @@ export default function StressResultsComplete(props: Props) {
             <span className="text-sm text-muted-foreground uppercase tracking-wider">
               {tier.name} Tier
             </span>
-            <span className="text-5xl font-bold" style={{ color: tier.color }}>
+            <span className="text-4xl sm:text-5xl font-bold" style={{ color: tier.color }}>
               {stressScore}
             </span>
             <span className="text-sm text-muted-foreground">Stress Score</span>
@@ -252,12 +252,12 @@ export default function StressResultsComplete(props: Props) {
 
         {/* Stats Grid */}
         <Card className="mb-6 overflow-hidden">
-          <div className="grid grid-cols-3 sm:grid-cols-6 divide-x divide-border">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 divide-x divide-y sm:divide-y-0 divide-border">
             {/* WPM */}
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="p-4 text-center bg-gradient-to-b from-blue-500/5 to-transparent cursor-help hover:bg-blue-500/10 transition-colors">
-                  <div className="text-2xl sm:text-3xl font-bold text-blue-400">{Math.round(wpm)}</div>
+                  <div className="text-2xl sm:text-3xl font-bold tabular-nums text-blue-400">{Math.round(wpm)}</div>
                   <div className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide mt-1">WPM</div>
               </div>
               </TooltipTrigger>
@@ -270,7 +270,7 @@ export default function StressResultsComplete(props: Props) {
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="p-4 text-center bg-gradient-to-b from-green-500/5 to-transparent cursor-help hover:bg-green-500/10 transition-colors">
-                  <div className={`text-2xl sm:text-3xl font-bold ${accuracy >= 90 ? 'text-green-400' : accuracy >= 70 ? 'text-yellow-400' : 'text-red-400'}`}>
+                  <div className={`text-2xl sm:text-3xl font-bold tabular-nums ${accuracy >= 90 ? 'text-green-400' : accuracy >= 70 ? 'text-yellow-400' : 'text-red-400'}`}>
                     {accuracy.toFixed(1)}%
             </div>
                   <div className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide mt-1">Accuracy</div>
@@ -285,7 +285,7 @@ export default function StressResultsComplete(props: Props) {
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="p-4 text-center bg-gradient-to-b from-orange-500/5 to-transparent cursor-help hover:bg-orange-500/10 transition-colors">
-                  <div className={`text-2xl sm:text-3xl font-bold ${completionRate >= 100 ? 'text-green-400' : 'text-orange-400'}`}>
+                  <div className={`text-2xl sm:text-3xl font-bold tabular-nums ${completionRate >= 100 ? 'text-green-400' : 'text-orange-400'}`}>
                     {completionRate.toFixed(0)}%
               </div>
                   <div className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide mt-1">Done</div>
@@ -300,7 +300,7 @@ export default function StressResultsComplete(props: Props) {
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="p-4 text-center bg-gradient-to-b from-cyan-500/5 to-transparent cursor-help hover:bg-cyan-500/10 transition-colors">
-                  <div className="text-2xl sm:text-3xl font-bold text-cyan-400">{Math.round(survivalTime)}s</div>
+                  <div className="text-2xl sm:text-3xl font-bold tabular-nums text-cyan-400">{Math.round(survivalTime)}s</div>
                   <div className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide mt-1">Survival</div>
           </div>
               </TooltipTrigger>
@@ -313,7 +313,7 @@ export default function StressResultsComplete(props: Props) {
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="p-4 text-center bg-gradient-to-b from-purple-500/5 to-transparent cursor-help hover:bg-purple-500/10 transition-colors">
-                  <div className="text-2xl sm:text-3xl font-bold text-purple-400">{maxCombo}</div>
+                  <div className="text-2xl sm:text-3xl font-bold tabular-nums text-purple-400">{maxCombo}</div>
                   <div className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide mt-1">Combo</div>
               </div>
               </TooltipTrigger>
@@ -326,7 +326,7 @@ export default function StressResultsComplete(props: Props) {
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="p-4 text-center bg-gradient-to-b from-red-500/5 to-transparent cursor-help hover:bg-red-500/10 transition-colors">
-                  <div className={`text-2xl sm:text-3xl font-bold ${errors === 0 ? 'text-green-400' : 'text-red-400'}`}>{errors}</div>
+                  <div className={`text-2xl sm:text-3xl font-bold tabular-nums ${errors === 0 ? 'text-green-400' : 'text-red-400'}`}>{errors}</div>
                   <div className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide mt-1">Errors</div>
             </div>
               </TooltipTrigger>
@@ -397,21 +397,21 @@ export default function StressResultsComplete(props: Props) {
         <Card className="mb-6">
           <CardContent className="p-4">
             <Tabs value={shareDialogTab} onValueChange={(v) => setShareDialogTab(v as typeof shareDialogTab)} className="w-full">
-              <TabsList className="grid w-full grid-cols-4 mb-4 h-auto">
-                <TabsTrigger value="quick" className="text-[10px] sm:text-sm py-1.5 sm:py-2 gap-1" data-testid="tab-quick-share">
-                  <Share2 className="w-3 h-3 sm:w-4 sm:h-4" />
+              <TabsList className="grid w-full grid-cols-4 mb-4 h-auto p-1">
+                <TabsTrigger value="quick" className="text-xs sm:text-sm py-2 sm:py-2.5 px-1 sm:px-3 gap-1.5 flex-col sm:flex-row" data-testid="tab-quick-share">
+                  <Share2 className="w-4 h-4 sm:w-4 sm:h-4" />
                   <span className="hidden sm:inline">Share</span>
                 </TabsTrigger>
-                <TabsTrigger value="visual" className="text-[10px] sm:text-sm py-1.5 sm:py-2 gap-1" data-testid="tab-visual-card">
-                  <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
+                <TabsTrigger value="visual" className="text-xs sm:text-sm py-2 sm:py-2.5 px-1 sm:px-3 gap-1.5 flex-col sm:flex-row" data-testid="tab-visual-card">
+                  <Sparkles className="w-4 h-4 sm:w-4 sm:h-4" />
                   <span className="hidden sm:inline">Card</span>
                 </TabsTrigger>
-                <TabsTrigger value="certificate" className="text-[10px] sm:text-sm py-1.5 sm:py-2 gap-1" disabled={!username} data-testid="tab-certificate">
-                  <Award className="w-3 h-3 sm:w-4 sm:h-4" />
+                <TabsTrigger value="certificate" className="text-xs sm:text-sm py-2 sm:py-2.5 px-1 sm:px-3 gap-1.5 flex-col sm:flex-row" disabled={!username} data-testid="tab-certificate">
+                  <Award className="w-4 h-4 sm:w-4 sm:h-4" />
                   <span className="hidden sm:inline">Certificate</span>
                 </TabsTrigger>
-                <TabsTrigger value="challenge" className="text-[10px] sm:text-sm py-1.5 sm:py-2 gap-1" data-testid="tab-challenge">
-                  <Zap className="w-3 h-3 sm:w-4 sm:h-4" />
+                <TabsTrigger value="challenge" className="text-xs sm:text-sm py-2 sm:py-2.5 px-1 sm:px-3 gap-1.5 flex-col sm:flex-row" data-testid="tab-challenge">
+                  <Zap className="w-4 h-4 sm:w-4 sm:h-4" />
                   <span className="hidden sm:inline">Challenge</span>
                 </TabsTrigger>
               </TabsList>
@@ -478,7 +478,7 @@ export default function StressResultsComplete(props: Props) {
                   <p className="text-[10px] sm:text-xs font-medium text-center text-muted-foreground uppercase tracking-wide">
                     Click to Share
                   </p>
-                  <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 sm:gap-2">
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <button
@@ -487,7 +487,7 @@ export default function StressResultsComplete(props: Props) {
                           data-testid="button-share-twitter"
                         >
                           <Twitter className="w-4 h-4 text-[#1DA1F2]" />
-                          <span className="text-xs font-medium">X (Twitter)</span>
+                          <span className="hidden sm:inline text-xs font-medium">X (Twitter)</span>
                         </button>
                       </TooltipTrigger>
                       <TooltipContent>
@@ -502,7 +502,7 @@ export default function StressResultsComplete(props: Props) {
                           data-testid="button-share-facebook"
                         >
                           <Facebook className="w-4 h-4 text-[#1877F2]" />
-                          <span className="text-xs font-medium">Facebook</span>
+                          <span className="hidden sm:inline text-xs font-medium">Facebook</span>
                         </button>
                       </TooltipTrigger>
                       <TooltipContent>
@@ -517,7 +517,7 @@ export default function StressResultsComplete(props: Props) {
                           data-testid="button-share-linkedin"
                         >
                           <Linkedin className="w-4 h-4 text-[#0A66C2]" />
-                          <span className="text-xs font-medium">LinkedIn</span>
+                          <span className="hidden sm:inline text-xs font-medium">LinkedIn</span>
                         </button>
                       </TooltipTrigger>
                       <TooltipContent>
@@ -532,7 +532,7 @@ export default function StressResultsComplete(props: Props) {
                           data-testid="button-share-whatsapp"
                         >
                           <MessageCircle className="w-4 h-4 text-[#25D366]" />
-                          <span className="text-xs font-medium">WhatsApp</span>
+                          <span className="hidden sm:inline text-xs font-medium">WhatsApp</span>
                         </button>
                       </TooltipTrigger>
                       <TooltipContent>
@@ -549,7 +549,7 @@ export default function StressResultsComplete(props: Props) {
                           <svg className="w-4 h-4 text-[#5865F2]" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
                           </svg>
-                          <span className="text-xs font-medium">Discord</span>
+                          <span className="hidden sm:inline text-xs font-medium">Discord</span>
                         </button>
                       </TooltipTrigger>
                       <TooltipContent>
@@ -564,7 +564,7 @@ export default function StressResultsComplete(props: Props) {
                           data-testid="button-share-telegram"
                         >
                           <Send className="w-4 h-4 text-[#0088cc]" />
-                          <span className="text-xs font-medium">Telegram</span>
+                          <span className="hidden sm:inline text-xs font-medium">Telegram</span>
                         </button>
                       </TooltipTrigger>
                       <TooltipContent>
@@ -712,7 +712,7 @@ export default function StressResultsComplete(props: Props) {
                     <p className="text-xs font-medium text-center text-muted-foreground uppercase tracking-wide">
                       Share Certificate On
                     </p>
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       <button
                         onClick={() => {
                           const text = encodeURIComponent(`⚡ Just earned my TypeMasterAI Stress Test Certificate! ${stressScore} pts on ${difficultyName} difficulty 🔥\n\n#TypeMasterAI #StressTest #Certified`);
@@ -722,7 +722,7 @@ export default function StressResultsComplete(props: Props) {
                         data-testid="button-cert-share-twitter"
                       >
                         <Twitter className="w-4 h-4 text-[#1DA1F2]" />
-                        <span className="text-xs font-medium">X</span>
+                        <span className="hidden sm:inline text-xs font-medium">X</span>
                       </button>
                       <button
                         onClick={() => {
@@ -732,7 +732,7 @@ export default function StressResultsComplete(props: Props) {
                         data-testid="button-cert-share-facebook"
                       >
                         <Facebook className="w-4 h-4 text-[#1877F2]" />
-                        <span className="text-xs font-medium">Facebook</span>
+                        <span className="hidden sm:inline text-xs font-medium">Facebook</span>
                       </button>
                       <button
                         onClick={() => {
@@ -742,7 +742,7 @@ export default function StressResultsComplete(props: Props) {
                         data-testid="button-cert-share-linkedin"
                       >
                         <Linkedin className="w-4 h-4 text-[#0A66C2]" />
-                        <span className="text-xs font-medium">LinkedIn</span>
+                        <span className="hidden sm:inline text-xs font-medium">LinkedIn</span>
                       </button>
                       <button
                         onClick={() => {
@@ -753,7 +753,7 @@ export default function StressResultsComplete(props: Props) {
                         data-testid="button-cert-share-whatsapp"
                       >
                         <MessageCircle className="w-4 h-4 text-[#25D366]" />
-                        <span className="text-xs font-medium">WhatsApp</span>
+                        <span className="hidden sm:inline text-xs font-medium">WhatsApp</span>
                       </button>
                       <button
                         onClick={() => {
@@ -764,7 +764,7 @@ export default function StressResultsComplete(props: Props) {
                         data-testid="button-cert-share-telegram"
                       >
                         <Send className="w-4 h-4 text-[#0088cc]" />
-                        <span className="text-xs font-medium">Telegram</span>
+                        <span className="hidden sm:inline text-xs font-medium">Telegram</span>
                       </button>
                       <button
                         onClick={() => {
@@ -776,7 +776,7 @@ export default function StressResultsComplete(props: Props) {
                         data-testid="button-cert-share-email"
                       >
                         <Mail className="w-4 h-4 text-gray-400" />
-                        <span className="text-xs font-medium">Email</span>
+                        <span className="hidden sm:inline text-xs font-medium">Email</span>
                         </button>
                     </div>
                   </div>
@@ -843,7 +843,7 @@ export default function StressResultsComplete(props: Props) {
                     <Input 
                       value={challengeLink}
                       readOnly
-                      className="flex-1 font-mono text-sm"
+                      className="flex-1 font-mono text-xs sm:text-sm"
                     />
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -898,7 +898,7 @@ export default function StressResultsComplete(props: Props) {
                 </div>
 
                 {/* Challenge Social Share */}
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   <button
                     onClick={() => {
                       const text = encodeURIComponent(`🔥 I challenge you to beat my Stress Test score!\n\n⚡ ${stressScore} pts | ${difficultyName}\n\nCan you handle the chaos? 😈`);
@@ -907,7 +907,7 @@ export default function StressResultsComplete(props: Props) {
                     className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#1DA1F2]/10 hover:bg-[#1DA1F2]/25 border border-[#1DA1F2]/20 transition-all"
                   >
                     <Twitter className="w-4 h-4 text-[#1DA1F2]" />
-                    <span className="text-xs font-medium">X</span>
+                    <span className="hidden sm:inline text-xs font-medium">X</span>
                   </button>
                   <button
                     onClick={() => {
@@ -917,7 +917,7 @@ export default function StressResultsComplete(props: Props) {
                     className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/25 border border-[#25D366]/20 transition-all"
                   >
                     <MessageCircle className="w-4 h-4 text-[#25D366]" />
-                    <span className="text-xs font-medium">WhatsApp</span>
+                    <span className="hidden sm:inline text-xs font-medium">WhatsApp</span>
                   </button>
                   <button
                     onClick={() => {
@@ -927,7 +927,7 @@ export default function StressResultsComplete(props: Props) {
                     className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#0088cc]/10 hover:bg-[#0088cc]/25 border border-[#0088cc]/20 transition-all"
                   >
                     <Send className="w-4 h-4 text-[#0088cc]" />
-                    <span className="text-xs font-medium">Telegram</span>
+                    <span className="hidden sm:inline text-xs font-medium">Telegram</span>
                   </button>
                 </div>
 

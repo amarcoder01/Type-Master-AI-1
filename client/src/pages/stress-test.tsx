@@ -25,6 +25,7 @@ import StressResultsComplete from '@/components/StressResultsComplete';
 import { TormentGrid, type TormentType } from '@/components/TormentIndicator';
 import { TormentsMatrix } from '@/components/TormentsMatrix';
 import { getStressPerformanceRating, buildStressShareText } from '@/lib/share-utils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 type Difficulty = 'beginner' | 'intermediate' | 'expert' | 'nightmare' | 'impossible';
 
@@ -341,6 +342,7 @@ export default function StressTest() {
   const { toast } = useToast();
   const { user } = useAuth();
   const [copied, setCopied] = useState(false);
+  const isMobile = useIsMobile();
   
   const lastToastTimeRef = useRef<Record<string, number>>({});
   const showDebouncedToast = useCallback((key: string, title: string, description: string, variant: "default" | "destructive" = "default", debounceMs = 2000) => {
@@ -831,7 +833,7 @@ export default function StressTest() {
             startTimeRef.current = Date.now();
             
             setTimeout(() => {
-              inputRef.current?.focus();
+              inputRef.current?.focus({ preventScroll: true });
             }, 100);
           }
           return 0;
@@ -896,19 +898,20 @@ export default function StressTest() {
       shakeIntervalRef.current = setInterval(() => {
         if (testSessionRef.current !== currentSession || !isTestActiveRef.current) return;
         
-        const intensity = config.baseShakeIntensity * (1 + stressLevelRef.current / 100);
+        const intensityBase = config.baseShakeIntensity * (1 + stressLevelRef.current / 100);
+        const intensity = isMobile ? intensityBase * 0.7 : intensityBase;
         setShakeOffset({
           x: (Math.random() - 0.5) * intensity,
           y: (Math.random() - 0.5) * intensity,
         });
-      }, 50);
+      }, isMobile ? 80 : 50);
     }
     
     stressIntervalRef.current = setInterval(() => {
       if (testSessionRef.current !== currentSession || !isTestActiveRef.current) return;
       
       setStressLevel((prev) => Math.min(100, prev + 0.5));
-    }, 500);
+    }, isMobile ? 700 : 500);
     
     if (config.effects.limitedVisibility && config.blurPulse) {
       blurIntervalRef.current = setInterval(() => {
@@ -924,7 +927,7 @@ export default function StressTest() {
         const constantBlur = config.constantBlur || 0;
         const newBlur = constantBlur + pulseValue * (maxBlurValue - constantBlur);
         setBlur(newBlur);
-      }, 100);
+      }, isMobile ? 140 : 100);
     }
     
     effectsIntervalRef.current = setInterval(() => {
@@ -944,7 +947,8 @@ export default function StressTest() {
         };
         
         setParticles((prev) => {
-          const updated = [...prev, newParticle].slice(-MAX_PARTICLES);
+          const limit = isMobile ? Math.min(MAX_PARTICLES, 10) : MAX_PARTICLES;
+          const updated = [...prev, newParticle].slice(-limit);
           return updated;
         });
         
@@ -1053,7 +1057,7 @@ export default function StressTest() {
         setTextWarpAmount((Math.random() - 0.5) * 10);
         safeTimeout(() => setTextWarpAmount(0), 300);
       }
-    }, 200);
+    }, isMobile ? 300 : 200);
     
     clarityIntervalRef.current = setInterval(() => {
       if (testSessionRef.current !== currentSession || !isTestActiveRef.current) return;
@@ -1075,7 +1079,7 @@ export default function StressTest() {
           isClarityWindowRef.current = false;
         }, 2000);
       }
-    }, 5000);
+    }, isMobile ? 6000 : 5000);
     
     return () => {
       if (effectsIntervalRef.current) clearInterval(effectsIntervalRef.current);
@@ -1084,7 +1088,7 @@ export default function StressTest() {
       if (clarityIntervalRef.current) clearInterval(clarityIntervalRef.current);
       if (blurIntervalRef.current) clearInterval(blurIntervalRef.current);
     };
-  }, [isStarted, isFinished, config, prefersReducedMotion, playSound, safeTimeout]);
+  }, [isStarted, isFinished, config, prefersReducedMotion, playSound, safeTimeout, isMobile]);
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     if (!isTestActiveRef.current || isFinished) return;
@@ -1211,7 +1215,7 @@ export default function StressTest() {
   if (!selectedDifficulty || (!isStarted && !isFinished && countdown === 0)) {
     return (
       <TooltipProvider delayDuration={200}>
-        <div className="min-h-screen bg-background">
+        <div className="min-h-[100svh] bg-background">
           {/* Header */}
           <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-sm">
             <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -1492,7 +1496,7 @@ export default function StressTest() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <div 
-                  className={`text-[10rem] font-bold leading-none cursor-help ${!prefersReducedMotion ? 'animate-pulse' : ''}`}
+                  className={`text-7xl sm:text-8xl md:text-9xl font-bold leading-none cursor-help ${!prefersReducedMotion ? 'animate-pulse' : ''}`}
                   style={{ color: config?.color }}
                 >
                   {countdown}
@@ -1549,7 +1553,7 @@ export default function StressTest() {
 
     return (
       <TooltipProvider delayDuration={200}>
-        <div className="min-h-screen bg-background">
+        <div className="min-h-[100svh] bg-background">
           <div className="container mx-auto px-4 py-12">
             <StressResultsComplete
               username={user?.username || null}
@@ -1590,33 +1594,43 @@ export default function StressTest() {
   return (
     <TooltipProvider delayDuration={300}>
       <div
-        ref={containerRef}
-        onClick={() => inputRef.current?.focus()}
-        className={`min-h-screen flex items-center justify-center p-4 cursor-text transition-all duration-100 ${
-          backgroundFlash ? 'bg-red-500/20' : 'bg-background'
-        }`}
-        style={{
-          transform: prefersReducedMotion ? 'none' : `translate(${shakeOffset.x}px, ${shakeOffset.y}px) rotate(${rotation}deg) scale(${zoomScale}) ${screenFlipped ? 'rotateX(180deg)' : ''} skewX(${realityWarp}deg)`,
-          filter: prefersReducedMotion ? 'none' : `${glitchActive ? 'hue-rotate(180deg) saturate(3)' : ''} ${screenInverted ? 'invert(1) hue-rotate(180deg)' : ''} ${chaosWaveIntensity > 0 ? `contrast(${1 + chaosWaveIntensity * 0.3})` : ''}`,
-        }}
-        role="main"
-        aria-label="Stress test in progress - May cause extreme frustration!"
+        className="fixed inset-0 z-40 overflow-hidden bg-background"
+        style={{ top: '56px' }}
       >
+        <div
+          ref={containerRef}
+          onClick={() => inputRef.current?.focus({ preventScroll: true })}
+          className={`w-full h-full flex items-center justify-center p-4 cursor-text transition-all duration-100 ${
+            backgroundFlash ? 'bg-red-500/20' : 'bg-background'
+          }`}
+          style={{
+            transform: prefersReducedMotion ? 'none' : `translate(${shakeOffset.x}px, ${shakeOffset.y}px) rotate(${rotation}deg) scale(${zoomScale}) ${screenFlipped ? 'rotateX(180deg)' : ''} skewX(${realityWarp}deg)`,
+            filter: prefersReducedMotion ? 'none' : `${glitchActive ? 'hue-rotate(180deg) saturate(3)' : ''} ${screenInverted ? 'invert(1) hue-rotate(180deg)' : ''} ${chaosWaveIntensity > 0 ? `contrast(${1 + chaosWaveIntensity * 0.3})` : ''}`,
+            willChange: 'transform, filter',
+            touchAction: 'manipulation',
+            overscrollBehavior: 'contain',
+          }}
+          role="main"
+          aria-label="Stress test in progress - May cause extreme frustration!"
+        >
         {!prefersReducedMotion && particles.map((particle) => (
           <Particle key={particle.id} particle={particle} />
         ))}
 
         <div className="w-full max-w-4xl">
           {/* HUD */}
-          <div className="mb-6 p-4 rounded-xl bg-card border flex items-center justify-between gap-4 flex-wrap" role="status" aria-live="polite">
+          <div className="mb-6 p-4 rounded-xl bg-card border grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4" role="status" aria-live="polite">
             {/* Timer */}
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className={`flex items-center gap-2 px-4 py-2 rounded-lg cursor-help ${
+                <div className={`col-span-2 sm:col-span-1 px-4 py-3 rounded-lg border cursor-help ${
                   isUrgent ? 'bg-red-500/10 text-red-500' : 'bg-primary/10 text-primary'
-                } ${isUrgent && !prefersReducedMotion ? 'animate-pulse' : ''}`}>
+                } ${isUrgent && !prefersReducedMotion ? 'animate-pulse' : ''} flex items-center gap-2`}>
                   <Timer className="w-5 h-5" />
-                  <span className="text-2xl font-mono font-bold" aria-label={`${timeLeft} seconds remaining`}>{timeLeft}s</span>
+                  <div className="leading-tight">
+                    <div className="text-xl sm:text-2xl font-mono font-bold tabular-nums" aria-label={`${timeLeft} seconds remaining`}>{timeLeft}s</div>
+                    <div className="text-xs opacity-80">Timer</div>
+                  </div>
                 </div>
               </TooltipTrigger>
               <TooltipContent side="bottom">
@@ -1627,12 +1641,12 @@ export default function StressTest() {
             {/* Combo */}
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className={`flex items-center gap-2 px-4 py-2 rounded-lg cursor-help ${
-                  combo >= 10 ? 'bg-yellow-500/10 text-yellow-600' : 'bg-muted'
-                } ${comboExplosion && !prefersReducedMotion ? 'scale-110' : ''} transition-transform`}>
+                <div className={`px-4 py-3 rounded-lg border cursor-help ${
+                  combo >= 10 ? 'bg-yellow-500/10 text-yellow-600 border-yellow-700/30' : 'bg-muted'
+                } ${comboExplosion && !prefersReducedMotion ? 'scale-110' : ''} flex items-center gap-2 transition-transform`}>
                   <Flame className="w-5 h-5" />
-                  <div className="text-center">
-                    <div className="text-xl font-bold">{combo}</div>
+                  <div className="leading-tight">
+                    <div className="text-xl sm:text-2xl font-mono font-bold tabular-nums">{combo}</div>
                     <div className="text-xs text-muted-foreground">Combo</div>
                   </div>
                 </div>
@@ -1645,12 +1659,12 @@ export default function StressTest() {
             {/* Errors */}
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className={`flex items-center gap-2 px-4 py-2 rounded-lg cursor-help ${
+                <div className={`px-4 py-3 rounded-lg border cursor-help ${
                   errors > 0 ? 'bg-red-500/10 text-red-500' : 'bg-muted'
-                }`}>
+                } flex items-center gap-2`}>
                   <XCircle className="w-5 h-5" />
-                  <div className="text-center">
-                    <div className="text-xl font-bold">{errors}</div>
+                  <div className="leading-tight">
+                    <div className="text-xl sm:text-2xl font-mono font-bold tabular-nums">{errors}</div>
                     <div className="text-xs text-muted-foreground">Errors</div>
                   </div>
                 </div>
@@ -1663,12 +1677,12 @@ export default function StressTest() {
             {/* Stress Level */}
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-muted cursor-help">
+                <div className="col-span-2 sm:col-span-1 px-4 py-3 rounded-lg bg-muted border cursor-help flex items-center gap-3">
                   <Zap className="w-5 h-5 text-purple-500" />
-                  <div className="w-24">
+                  <div className="flex-1 min-w-[120px]">
                     <Progress value={stressLevel} className="h-2" />
+                    <div className="text-xs text-muted-foreground mt-1">{Math.round(stressLevel)}%</div>
                   </div>
-                  <span className="text-sm font-medium">{Math.round(stressLevel)}%</span>
                 </div>
               </TooltipTrigger>
               <TooltipContent side="bottom">
@@ -1705,19 +1719,19 @@ export default function StressTest() {
                   filter: `blur(${blur}px)`,
                 }}
               >
-                <CardContent className="p-8 relative overflow-hidden">
+                <CardContent className="p-4 sm:p-6 md:p-8 relative overflow-hidden">
                   {/* Chromatic Aberration Effect */}
                   {(chromaticOffset.r !== 0 || chromaticOffset.b !== 0) && !prefersReducedMotion && (
                     <>
                       <div 
-                        className="absolute inset-0 pointer-events-none text-2xl font-mono leading-relaxed whitespace-pre-wrap select-none mix-blend-screen opacity-30 p-8"
+                        className="absolute inset-0 pointer-events-none text-lg sm:text-xl md:text-2xl font-mono leading-relaxed whitespace-pre-wrap select-none mix-blend-screen opacity-30 p-4 sm:p-6 md:p-8"
                         style={{ transform: `translate(${chromaticOffset.r}px, ${chromaticOffset.r * 0.5}px)`, color: 'red' }}
                         aria-hidden="true"
                       >
                         {displayText}
                       </div>
                       <div 
-                        className="absolute inset-0 pointer-events-none text-2xl font-mono leading-relaxed whitespace-pre-wrap select-none mix-blend-screen opacity-30 p-8"
+                        className="absolute inset-0 pointer-events-none text-lg sm:text-xl md:text-2xl font-mono leading-relaxed whitespace-pre-wrap select-none mix-blend-screen opacity-30 p-4 sm:p-6 md:p-8"
                         style={{ transform: `translate(${chromaticOffset.b}px, ${chromaticOffset.b * 0.5}px)`, color: 'blue' }}
                         aria-hidden="true"
                       >
@@ -1729,7 +1743,7 @@ export default function StressTest() {
                   {/* Double Vision Effect */}
                   {(doubleVisionOffset.x !== 0 || doubleVisionOffset.y !== 0) && !prefersReducedMotion && (
                     <div 
-                      className="absolute inset-0 pointer-events-none text-2xl font-mono leading-relaxed whitespace-pre-wrap select-none opacity-40 p-8"
+                      className="absolute inset-0 pointer-events-none text-lg sm:text-xl md:text-2xl font-mono leading-relaxed whitespace-pre-wrap select-none opacity-40 p-4 sm:p-6 md:p-8"
                       style={{ transform: `translate(${doubleVisionOffset.x}px, ${doubleVisionOffset.y}px)`, filter: 'blur(0.5px)' }}
                       aria-hidden="true"
                     >
@@ -1739,7 +1753,7 @@ export default function StressTest() {
                   
                   {/* Main Text */}
                   <div 
-                    className="text-2xl font-mono leading-relaxed whitespace-pre-wrap select-none relative z-10"
+                    className="text-lg sm:text-xl md:text-2xl font-mono leading-relaxed whitespace-pre-wrap select-none relative z-10"
                     style={{
                       ...(textScrambleActive && !prefersReducedMotion ? { letterSpacing: `${Math.random() * 5}px`, wordSpacing: `${Math.random() * 10}px` } : {}),
                       ...(textWarpAmount !== 0 && !prefersReducedMotion ? { transform: `skewX(${textWarpAmount}deg) skewY(${textWarpAmount * 0.3}deg)` } : {}),
@@ -1779,7 +1793,7 @@ export default function StressTest() {
             onCut={(e) => e.preventDefault()}
             onBlur={() => {
               if (isStarted && !isFinished && isTestActiveRef.current) {
-                setTimeout(() => inputRef.current?.focus(), 10);
+                setTimeout(() => inputRef.current?.focus({ preventScroll: true }), 10);
               }
             }}
             className="sr-only"
@@ -1787,6 +1801,8 @@ export default function StressTest() {
             autoCapitalize="off"
             autoCorrect="off"
             spellCheck={false}
+            inputMode="text"
+            enterKeyHint="done"
             aria-label="Type the text shown above"
           />
           
@@ -1800,6 +1816,7 @@ export default function StressTest() {
               <p>Press Escape key to end the test early. Your progress will still be saved!</p>
             </TooltipContent>
           </Tooltip>
+        </div>
         </div>
       </div>
     </TooltipProvider>

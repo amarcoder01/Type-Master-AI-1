@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface UseStreamingTTSOptions {
   voice?: string;
@@ -38,16 +38,62 @@ export function useStreamingTTS(options: UseStreamingTTSOptions = {}): UseStream
   const isPlayingRef = useRef(false);
   const scheduledTimeRef = useRef(0);
   const sourceNodesRef = useRef<AudioBufferSourceNode[]>([]);
+  const unlockHandlersAddedRef = useRef(false);
+  const unlockedRef = useRef(false);
 
   const getAudioContext = useCallback(() => {
     if (!audioContextRef.current || audioContextRef.current.state === 'closed') {
-      audioContextRef.current = new AudioContext({
+      const AudioContextCtor: typeof AudioContext =
+        (window as any).AudioContext || (window as any).webkitAudioContext;
+      audioContextRef.current = new AudioContextCtor({
         latencyHint: 'interactive',
         sampleRate: SAMPLE_RATE,
       });
     }
     return audioContextRef.current;
   }, []);
+
+  const tryUnlockAudioContext = useCallback(async () => {
+    if (unlockedRef.current) return;
+    try {
+      const ctx = getAudioContext();
+      if (ctx.state === 'suspended') {
+        await ctx.resume();
+      }
+      const buffer = ctx.createBuffer(CHANNELS, 1, SAMPLE_RATE);
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      source.connect(ctx.destination);
+      try {
+        source.start(0);
+      } catch (_) {
+      }
+      unlockedRef.current = true;
+    } catch (e) {
+    }
+  }, [getAudioContext]);
+
+  useEffect(() => {
+    if (unlockHandlersAddedRef.current) return;
+    unlockHandlersAddedRef.current = true;
+
+    const handler = () => {
+      tryUnlockAudioContext();
+    };
+
+    const opts: AddEventListenerOptions = { once: true, passive: true };
+    window.addEventListener('pointerdown', handler, opts);
+    window.addEventListener('touchend', handler, opts as any);
+    window.addEventListener('click', handler, opts);
+    window.addEventListener('keydown', handler, opts);
+
+    return () => {
+      window.removeEventListener('pointerdown', handler);
+      window.removeEventListener('touchend', handler as any);
+      window.removeEventListener('click', handler);
+      window.removeEventListener('keydown', handler);
+    };
+  }, [tryUnlockAudioContext]);
 
   const cleanup = useCallback(() => {
     sourceNodesRef.current.forEach(node => {

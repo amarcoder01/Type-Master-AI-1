@@ -144,6 +144,12 @@ function DictationModeContent() {
         timer.start();
       }
     },
+    onSpeechError: (err) => {
+      toast({
+        title: 'Audio blocked',
+        description: 'Your browser blocked autoplay. Tap Replay to play the sentence.',
+      });
+    },
   });
   
   // Auto-advance countdown
@@ -517,13 +523,9 @@ function DictationModeContent() {
       });
       
       // Use streaming TTS for ultra-low latency (~500ms vs 3-5s)
-      // Audio starts playing as chunks arrive from the server
-      // This also preloads for instant replays in the background
-      setTimeout(() => {
-        if (isMountedRef.current) {
-          audio.speakStreaming(sentence.sentence);
-        }
-      }, 50);
+      if (isMountedRef.current) {
+        audio.speakStreaming(sentence.sentence);
+      }
     } else {
       toast({
         title: 'Failed to load sentence',
@@ -573,16 +575,14 @@ function DictationModeContent() {
       dispatch({ type: 'SET_PREFETCHED_SENTENCE', payload: null });
       
       // Play preloaded audio immediately (should be instant!)
-      setTimeout(() => {
-        if (isMountedRef.current) {
-          if (prefetchedAudioReadyRef.current || audio.hasPreloadedAudio(sentence.sentence)) {
-            prefetchedAudioReadyRef.current = false;
-            audio.speakPreloaded(sentence.sentence);
-          } else {
-            audio.speakStreaming(sentence.sentence);
-          }
+      if (isMountedRef.current) {
+        if (prefetchedAudioReadyRef.current || audio.hasPreloadedAudio(sentence.sentence)) {
+          prefetchedAudioReadyRef.current = false;
+          audio.speakPreloaded(sentence.sentence);
+        } else {
+          audio.speakStreaming(sentence.sentence);
         }
-      }, 50);
+      }
     } else {
       // Fallback to fetching if prefetch failed
       await loadNextSentence();
@@ -789,16 +789,14 @@ function DictationModeContent() {
       dispatch({ type: 'SET_PREFETCHED_SENTENCE', payload: null });
       
       // Play preloaded audio immediately
-      setTimeout(() => {
-        if (isMountedRef.current) {
-          if (prefetchedAudioReadyRef.current || audio.hasPreloadedAudio(sentence.sentence)) {
-            prefetchedAudioReadyRef.current = false;
-            audio.speakPreloaded(sentence.sentence);
-          } else {
-            audio.speakStreaming(sentence.sentence);
-          }
+      if (isMountedRef.current) {
+        if (prefetchedAudioReadyRef.current || audio.hasPreloadedAudio(sentence.sentence)) {
+          prefetchedAudioReadyRef.current = false;
+          audio.speakPreloaded(sentence.sentence);
+        } else {
+          audio.speakStreaming(sentence.sentence);
         }
-      }, 50);
+      }
     } else {
       // Fallback to fetching if prefetch failed
       await loadNextSentence();
@@ -1624,9 +1622,7 @@ function DictationModeContent() {
                 },
               });
               timer.reset();
-              setTimeout(() => {
-                audio.speak(state.testState.sentence!.sentence);
-              }, 500);
+              audio.speak(state.testState.sentence!.sentence);
             }}
           />
         ) : (
