@@ -106,7 +106,7 @@ export function BadgeCard({ badge, unlocked, progress = 0, currentValue = 0, unl
       <TooltipTrigger asChild>
         <Card
           className={cn(
-        "relative p-4 transition-all duration-300",
+        "relative p-2 sm:p-4 transition-all duration-300",
         unlocked
           ? `border-2 ${getTierBorder(badge.tier)} bg-gradient-to-br ${getTierColor(badge.tier)} bg-opacity-10 hover:scale-105 shadow-lg`
           : isHiddenSecret
@@ -116,11 +116,11 @@ export function BadgeCard({ badge, unlocked, progress = 0, currentValue = 0, unl
       )}
       data-testid={`badge-${badge.id}`}
     >
-      <div className="absolute top-2 right-2">
+      <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2">
         <Badge
           variant={unlocked ? "default" : "secondary"}
           className={cn(
-            "text-[10px] px-2 py-0.5",
+            "text-[8px] sm:text-[10px] px-1.5 sm:px-2 py-0.5",
             unlocked && `bg-gradient-to-r ${getTierColor(badge.tier)} border-0 text-white`,
             isHiddenSecret && "bg-indigo-500/20 text-indigo-400 border-indigo-500/30"
           )}
@@ -129,10 +129,10 @@ export function BadgeCard({ badge, unlocked, progress = 0, currentValue = 0, unl
         </Badge>
       </div>
 
-      <div className="flex flex-col items-center justify-center space-y-3">
+      <div className="flex flex-col items-center justify-center space-y-2 sm:space-y-3">
         <div
           className={cn(
-            "w-20 h-20 rounded-full flex items-center justify-center",
+            "w-12 h-12 sm:w-20 sm:h-20 rounded-full flex items-center justify-center",
             unlocked
               ? `bg-gradient-to-br ${getTierColor(badge.tier)} shadow-md`
               : isHiddenSecret
@@ -141,23 +141,23 @@ export function BadgeCard({ badge, unlocked, progress = 0, currentValue = 0, unl
           )}
         >
           {unlocked ? (
-            <IconComponent className="w-10 h-10 text-white drop-shadow-lg" />
+            <IconComponent className="w-6 h-6 sm:w-10 sm:h-10 text-white drop-shadow-lg" />
           ) : isHiddenSecret ? (
-            <HelpCircle className="w-10 h-10 text-indigo-400" />
+            <HelpCircle className="w-6 h-6 sm:w-10 sm:h-10 text-indigo-400" />
           ) : (
-            <Lock className="w-8 h-8 text-muted-foreground" />
+            <Lock className="w-5 h-5 sm:w-8 sm:h-8 text-muted-foreground" />
           )}
         </div>
 
-        <div className="text-center space-y-1">
+        <div className="text-center space-y-0.5 sm:space-y-1">
           <h3 className={cn(
-            "font-bold text-sm", 
+            "font-bold text-[11px] sm:text-sm", 
             unlocked ? "text-foreground" : isHiddenSecret ? "text-indigo-400" : "text-muted-foreground"
           )}>
             {isHiddenSecret ? "???" : badge.name}
           </h3>
           <p className={cn(
-            "text-xs line-clamp-2",
+            "text-[10px] sm:text-xs line-clamp-2",
             isHiddenSecret ? "text-indigo-400/70 italic" : "text-muted-foreground"
           )}>
             {isHiddenSecret ? "Unlock to reveal this secret badge!" : badge.description}
@@ -165,14 +165,14 @@ export function BadgeCard({ badge, unlocked, progress = 0, currentValue = 0, unl
         </div>
 
         {!unlocked && progress > 0 && (
-          <div className="w-full space-y-1">
-            <div className="flex justify-between text-xs text-muted-foreground">
+          <div className="w-full space-y-0.5 sm:space-y-1">
+            <div className="flex justify-between text-[10px] sm:text-xs text-muted-foreground">
               <span>Progress</span>
               <span>
-                {currentValue} / {badge.requirement.value}
+                {currentValue}/{badge.requirement.value}
               </span>
             </div>
-            <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+            <div className="w-full h-1.5 sm:h-2 bg-secondary rounded-full overflow-hidden">
               <div
                 className={cn(
                   "h-full transition-all duration-500",
@@ -189,13 +189,13 @@ export function BadgeCard({ badge, unlocked, progress = 0, currentValue = 0, unl
         )}
 
         {unlocked && (
-          <div className="flex flex-col items-center gap-1">
-            <div className="flex items-center gap-1 text-xs text-green-500 font-semibold">
-              <span className="text-base">✓</span>
+          <div className="flex flex-col items-center gap-0.5 sm:gap-1">
+            <div className="flex items-center gap-1 text-[10px] sm:text-xs text-green-500 font-semibold">
+              <span className="text-sm sm:text-base">✓</span>
               Unlocked
             </div>
             {unlockedAt && (
-              <span className="text-[10px] text-muted-foreground">
+              <span className="text-[9px] sm:text-[10px] text-muted-foreground">
                 {new Date(unlockedAt).toLocaleDateString()}
               </span>
             )}
@@ -203,27 +203,27 @@ export function BadgeCard({ badge, unlocked, progress = 0, currentValue = 0, unl
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-6 px-2 text-[10px] text-muted-foreground hover:text-primary mt-1"
+                className="h-5 sm:h-6 px-1.5 sm:px-2 text-[9px] sm:text-[10px] text-muted-foreground hover:text-primary mt-0.5 sm:mt-1"
                 onClick={(e) => {
                   e.stopPropagation();
                   onShare(badge);
                 }}
                 data-testid={`button-share-badge-${badge.id}`}
               >
-                <Share2 className="w-3 h-3 mr-1" />
+                <Share2 className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5 sm:mr-1" />
                 Share
               </Button>
             )}
           </div>
         )}
 
-        <div className={cn("text-xs font-semibold", getCategoryColor(badge.category))}>
+        <div className={cn("text-[10px] sm:text-xs font-semibold", getCategoryColor(badge.category))}>
           +{badge.points} XP
         </div>
       </div>
         </Card>
       </TooltipTrigger>
-      <TooltipContent side="top" className="p-3">
+      <TooltipContent side="top" className="p-2 sm:p-3">
         {tooltipContent}
       </TooltipContent>
     </Tooltip>

@@ -163,16 +163,18 @@ export default function ProfileEdit() {
 
   return (
     <TooltipProvider delayDuration={200}>
-      <div className="max-w-2xl mx-auto space-y-6">
-        <div className="flex items-center gap-4">
-          <BackButton to="/profile" label="Profile" />
-          <div>
-            <h1 className="text-3xl font-bold">Edit Profile</h1>
-            <p className="text-muted-foreground">Customize your typing profile</p>
+      <div className="max-w-2xl mx-auto space-y-4 sm:space-y-6 px-4 sm:px-0">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <BackButton to="/profile" label="Profile" />
+            <div>
+              <h1 className="text-xl sm:text-3xl font-bold">Edit Profile</h1>
+              <p className="text-xs sm:text-base text-muted-foreground">Customize your typing profile</p>
+            </div>
           </div>
           {hasUnsavedChanges && (
-            <div className="ml-auto flex items-center gap-2 text-amber-500 text-sm">
-              <AlertCircle className="w-4 h-4" />
+            <div className="sm:ml-auto flex items-center gap-2 text-amber-500 text-xs sm:text-sm">
+              <AlertCircle className="w-3 h-3 sm:w-4 sm:h-4" />
               <span>Unsaved changes</span>
             </div>
           )}
@@ -214,12 +216,12 @@ export default function ProfileEdit() {
               </div>
               <CardDescription>Choose a color for your avatar</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center gap-4">
+            <CardContent className="space-y-3 sm:space-y-4">
+              <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Avatar className="w-20 h-20 border-4 border-background shadow-xl cursor-pointer">
-                      <AvatarFallback className={cn(avatarColor, "text-primary-foreground text-2xl")}>
+                    <Avatar className="w-16 h-16 sm:w-20 sm:h-20 border-4 border-background shadow-xl cursor-pointer flex-shrink-0">
+                      <AvatarFallback className={cn(avatarColor, "text-primary-foreground text-xl sm:text-2xl")}>
                         {user.username[0].toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
@@ -228,8 +230,8 @@ export default function ProfileEdit() {
                     <p>This is how your avatar will appear to others</p>
                   </TooltipContent>
                 </Tooltip>
-                <div className="flex-1">
-                  <div className="grid grid-cols-8 gap-2">
+                <div className="flex-1 w-full">
+                  <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
                     {AVATAR_COLORS.map((color) => (
                       <Tooltip key={color.value}>
                         <TooltipTrigger asChild>
@@ -237,7 +239,7 @@ export default function ProfileEdit() {
                             type="button"
                             onClick={() => setAvatarColor(color.value)}
                             className={cn(
-                              "w-10 h-10 rounded-full border-2 transition-all",
+                              "w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 transition-all",
                               color.class,
                               avatarColor === color.value
                                 ? "border-foreground scale-110 ring-2 ring-foreground/20"
@@ -246,7 +248,7 @@ export default function ProfileEdit() {
                             data-testid={`color-${color.label.toLowerCase()}`}
                           >
                             {avatarColor === color.value && (
-                              <Check className="w-5 h-5 mx-auto text-white drop-shadow-sm" />
+                              <Check className="w-4 h-4 sm:w-5 sm:h-5 mx-auto text-white drop-shadow-sm" />
                             )}
                           </button>
                         </TooltipTrigger>
@@ -408,50 +410,55 @@ export default function ProfileEdit() {
             </CardContent>
           </Card>
 
-          <div className="flex gap-3 justify-end items-center">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-end items-stretch sm:items-center">
             {hasUnsavedChanges && (
-              <span className="text-sm text-muted-foreground mr-auto">
+              <span className="text-xs sm:text-sm text-muted-foreground sm:mr-auto text-center sm:text-left order-last sm:order-first">
                 Don't forget to save your changes!
               </span>
             )}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setLocation("/profile")}
-                  disabled={updateProfileMutation.isPending}
-                  data-testid="button-cancel"
-                >
-                  Cancel
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Discard changes and return to profile</p>
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  type="submit"
-                  disabled={updateProfileMutation.isPending || !hasUnsavedChanges}
-                  data-testid="button-save-profile"
-                  className="min-w-[120px]"
-                >
-                  {updateProfileMutation.isPending ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Saving...
-                    </>
-                  ) : (
-                    "Save Changes"
-                  )}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{hasUnsavedChanges ? "Save your profile changes" : "No changes to save"}</p>
-              </TooltipContent>
-            </Tooltip>
+            <div className="flex gap-2 sm:gap-3">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 sm:flex-none text-xs sm:text-sm"
+                    onClick={() => setLocation("/profile")}
+                    disabled={updateProfileMutation.isPending}
+                    data-testid="button-cancel"
+                  >
+                    Cancel
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Discard changes and return to profile</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type="submit"
+                    size="sm"
+                    disabled={updateProfileMutation.isPending || !hasUnsavedChanges}
+                    data-testid="button-save-profile"
+                    className="flex-1 sm:flex-none min-w-[100px] sm:min-w-[120px] text-xs sm:text-sm"
+                  >
+                    {updateProfileMutation.isPending ? (
+                      <>
+                        <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      "Save Changes"
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{hasUnsavedChanges ? "Save your profile changes" : "No changes to save"}</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
           </div>
         </form>
       </div>

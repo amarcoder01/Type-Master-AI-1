@@ -4,14 +4,16 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/lib/auth-context";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Loader2, User as UserIcon, TrendingUp, MapPin, Keyboard, Edit, Award, Flame, Star, Target, ChevronRight, Trophy, Sparkles, Check, Zap, Share2, Moon, Sunrise, Rocket, Timer, HelpCircle, MessageSquare, Download, RefreshCw, Filter, FileText } from "lucide-react";
+import { Loader2, User as UserIcon, TrendingUp, MapPin, Keyboard, Edit, Award, Flame, Star, Target, ChevronRight, Trophy, Sparkles, Check, Zap, Share2, Moon, Sunrise, Rocket, Timer, HelpCircle, MessageSquare, Download, RefreshCw, Filter, FileText, ChevronDown } from "lucide-react";
 import { useUserCertificates, useDeleteCertificate } from "@/hooks/useCertificates";
 import { DictationCertificate } from "@/components/DictationCertificate";
 import { StressCertificate } from "@/components/StressCertificate";
@@ -312,10 +314,12 @@ export default function Profile() {
   });
 
   const queryClient = useQueryClient();
+  const isMobile = useIsMobile();
   const [showShowcaseModal, setShowShowcaseModal] = useState(false);
   const [selectedShowcaseBadges, setSelectedShowcaseBadges] = useState<string[]>([]);
   const [badgeToShare, setBadgeToShare] = useState<BadgeType | null>(null);
   const [showBadgeShareCard, setShowBadgeShareCard] = useState(false);
+  const [achievementTab, setAchievementTab] = useState<string>("all");
   const [certificateFilter, setCertificateFilter] = useState<string>("all");
   const [selectedCertificate, setSelectedCertificate] = useState<any>(null);
 
@@ -679,7 +683,7 @@ export default function Profile() {
                     </TooltipContent>
                   </Tooltip>
                 </div>
-                <div className="flex gap-2 flex-wrap">
+                <div className="flex gap-1.5 sm:gap-2 flex-wrap">
                   {showcaseBadges.length > 0 ? (
                     showcaseBadges.map((badgeKey) => {
                       const badge = BADGES.find(b => b.id === badgeKey);
@@ -689,19 +693,19 @@ export default function Profile() {
                           <TooltipTrigger asChild>
                             <div
                               className={cn(
-                                "relative group flex items-center gap-2 px-3 py-2 rounded-lg border-2 transition-all hover:scale-105 cursor-pointer",
+                                "relative group flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg border-2 transition-all hover:scale-105 cursor-pointer",
                                 getTierBorder(badge.tier),
                                 `bg-gradient-to-br ${getTierColor(badge.tier)} bg-opacity-20`
                               )}
                               data-testid={`showcase-badge-${badge.id}`}
                             >
                               <div className={cn(
-                                "w-7 h-7 rounded-md flex items-center justify-center",
+                                "w-5 h-5 sm:w-7 sm:h-7 rounded-md flex items-center justify-center",
                                 `bg-gradient-to-br ${getTierColor(badge.tier)}`
                               )}>
-                                <BadgeIcon iconName={badge.icon} className="w-4 h-4 text-white drop-shadow-sm" />
+                                <BadgeIcon iconName={badge.icon} className="w-3 h-3 sm:w-4 sm:h-4 text-white drop-shadow-sm" />
                               </div>
-                              <span className="text-sm font-medium">{badge.name}</span>
+                              <span className="text-xs sm:text-sm font-medium">{badge.name}</span>
                             </div>
                           </TooltipTrigger>
                           <TooltipContent side="bottom" className="max-w-xs">
@@ -876,34 +880,34 @@ export default function Profile() {
         )}
 
         <Card className="border-border/50 bg-card/60 backdrop-blur-md">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Award className="w-6 h-6 text-primary" />
+          <CardHeader className="px-4 sm:px-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <Award className="w-5 h-5 sm:w-6 sm:h-6 text-primary flex-shrink-0" />
                 <div>
-                  <CardTitle>Achievements & Badges</CardTitle>
-                  <p className="text-sm text-muted-foreground mt-1">
+                  <CardTitle className="text-base sm:text-lg">Achievements & Badges</CardTitle>
+                  <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1">
                     Unlock badges by reaching milestones
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
                 {badgeData?.badgeData && (
                   <>
-                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/10 border border-primary/20">
-                      <Flame className="w-5 h-5 text-orange-500" />
-                      <span className="text-sm font-semibold">
-                        {badgeData.badgeData.currentStreak} Day Streak
+                    <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-2 rounded-lg bg-primary/10 border border-primary/20">
+                      <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" />
+                      <span className="text-xs sm:text-sm font-semibold">
+                        {badgeData.badgeData.currentStreak} <span className="hidden sm:inline">Day </span>Streak
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                      <Star className="w-5 h-5 text-amber-500" />
-                      <span className="text-sm font-semibold">
+                    <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                      <Star className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500" />
+                      <span className="text-xs sm:text-sm font-semibold">
                         {totalPoints} XP
                       </span>
                     </div>
-                    <Badge variant="outline" className="text-base px-4 py-2">
-                      {unlockedCount} / {TOTAL_BADGES} Unlocked
+                    <Badge variant="outline" className="text-xs sm:text-base px-2 sm:px-4 py-1 sm:py-2">
+                      {unlockedCount}/{TOTAL_BADGES}
                     </Badge>
                   </>
                 )}
@@ -911,18 +915,35 @@ export default function Profile() {
             </div>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="all" className="w-full">
-              <TabsList className="grid w-full grid-cols-7">
-                <TabsTrigger value="all">All</TabsTrigger>
-                <TabsTrigger value="speed">Speed</TabsTrigger>
-                <TabsTrigger value="accuracy">Accuracy</TabsTrigger>
-                <TabsTrigger value="consistency">Consistency</TabsTrigger>
-                <TabsTrigger value="streak">Streaks</TabsTrigger>
-                <TabsTrigger value="special">Special</TabsTrigger>
-                <TabsTrigger value="secret" className="text-indigo-400">Secret</TabsTrigger>
-              </TabsList>
-              <TabsContent value="all" className="mt-6">
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <Tabs value={achievementTab} onValueChange={setAchievementTab} className="w-full">
+              {isMobile ? (
+                <Select value={achievementTab} onValueChange={setAchievementTab}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Badges</SelectItem>
+                    <SelectItem value="speed">Speed</SelectItem>
+                    <SelectItem value="accuracy">Accuracy</SelectItem>
+                    <SelectItem value="consistency">Consistency</SelectItem>
+                    <SelectItem value="streak">Streaks</SelectItem>
+                    <SelectItem value="special">Special</SelectItem>
+                    <SelectItem value="secret">Secret</SelectItem>
+                  </SelectContent>
+                </Select>
+              ) : (
+                <TabsList className="grid w-full grid-cols-7">
+                  <TabsTrigger value="all">All</TabsTrigger>
+                  <TabsTrigger value="speed">Speed</TabsTrigger>
+                  <TabsTrigger value="accuracy">Accuracy</TabsTrigger>
+                  <TabsTrigger value="consistency">Consistency</TabsTrigger>
+                  <TabsTrigger value="streak">Streaks</TabsTrigger>
+                  <TabsTrigger value="special">Special</TabsTrigger>
+                  <TabsTrigger value="secret" className="text-indigo-400">Secret</TabsTrigger>
+                </TabsList>
+              )}
+              <TabsContent value="all" className="mt-4 sm:mt-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
                   {badgeProgress.map((item) => (
                     <BadgeCard
                       key={item.badge.id}
@@ -936,8 +957,8 @@ export default function Profile() {
                   ))}
                 </div>
               </TabsContent>
-              <TabsContent value="speed" className="mt-6">
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <TabsContent value="speed" className="mt-4 sm:mt-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
                   {badgeProgress
                     .filter((item) => item.badge.category === "speed")
                     .map((item) => (
@@ -953,8 +974,8 @@ export default function Profile() {
                     ))}
                 </div>
               </TabsContent>
-              <TabsContent value="accuracy" className="mt-6">
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <TabsContent value="accuracy" className="mt-4 sm:mt-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
                   {badgeProgress
                     .filter((item) => item.badge.category === "accuracy")
                     .map((item) => (
@@ -970,8 +991,8 @@ export default function Profile() {
                     ))}
                 </div>
               </TabsContent>
-              <TabsContent value="consistency" className="mt-6">
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <TabsContent value="consistency" className="mt-4 sm:mt-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
                   {badgeProgress
                     .filter((item) => item.badge.category === "consistency")
                     .map((item) => (
@@ -987,8 +1008,8 @@ export default function Profile() {
                     ))}
                 </div>
               </TabsContent>
-              <TabsContent value="streak" className="mt-6">
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <TabsContent value="streak" className="mt-4 sm:mt-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
                   {badgeProgress
                     .filter((item) => item.badge.category === "streak")
                     .map((item) => (
@@ -1004,8 +1025,8 @@ export default function Profile() {
                     ))}
                 </div>
               </TabsContent>
-              <TabsContent value="special" className="mt-6">
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <TabsContent value="special" className="mt-4 sm:mt-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
                   {badgeProgress
                     .filter((item) => item.badge.category === "special")
                     .map((item) => (
@@ -1021,13 +1042,13 @@ export default function Profile() {
                     ))}
                 </div>
               </TabsContent>
-              <TabsContent value="secret" className="mt-6">
+              <TabsContent value="secret" className="mt-4 sm:mt-6">
                 <div className="mb-4 p-4 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
                   <p className="text-sm text-indigo-400">
                     Secret badges are hidden until you unlock them. Explore different ways to practice typing to discover them!
                   </p>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
                   {badgeProgress
                     .filter((item) => item.badge.category === "secret")
                     .map((item) => (
@@ -1048,38 +1069,53 @@ export default function Profile() {
         </Card>
 
         <Card className="border-border/50 bg-card/60 backdrop-blur-md">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <FileText className="w-6 h-6 text-primary" />
+          <CardHeader className="px-4 sm:px-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-primary flex-shrink-0" />
                 <div>
-                  <CardTitle>Certificates</CardTitle>
-                  <p className="text-sm text-muted-foreground mt-1">
+                  <CardTitle className="text-base sm:text-lg">Certificates</CardTitle>
+                  <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1">
                     Your typing achievement certificates
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 {certificatesData && certificatesData.length > 0 && (
-                  <Badge variant="outline" className="text-base px-4 py-2">
-                    {certificatesData.length} Certificate{certificatesData.length !== 1 ? 's' : ''}
+                  <Badge variant="outline" className="text-xs sm:text-base px-2 sm:px-4 py-1 sm:py-2">
+                    {certificatesData.length} Cert{certificatesData.length !== 1 ? 's' : ''}
                   </Badge>
                 )}
               </div>
             </div>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="all" className="w-full" onValueChange={(value) => setCertificateFilter(value)}>
-              <TabsList className="grid w-full grid-cols-5">
-                <TabsTrigger value="all">All</TabsTrigger>
-                <TabsTrigger value="standard">Standard</TabsTrigger>
-                <TabsTrigger value="code">Code</TabsTrigger>
-                {/* HIDDEN: Book mode temporarily disabled */}
-                {/* <TabsTrigger value="book">Book</TabsTrigger> */}
-                <TabsTrigger value="dictation">Dictation</TabsTrigger>
-                <TabsTrigger value="stress">Stress</TabsTrigger>
-              </TabsList>
-              <TabsContent value={certificateFilter} className="mt-6">
+            <Tabs value={certificateFilter} onValueChange={setCertificateFilter} className="w-full">
+              {isMobile ? (
+                <Select value={certificateFilter} onValueChange={setCertificateFilter}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select certificate type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Certificates</SelectItem>
+                    <SelectItem value="standard">Standard</SelectItem>
+                    <SelectItem value="code">Code</SelectItem>
+                    <SelectItem value="dictation">Dictation</SelectItem>
+                    <SelectItem value="stress">Stress</SelectItem>
+                  </SelectContent>
+                </Select>
+              ) : (
+                <TabsList className="grid w-full grid-cols-5">
+                  <TabsTrigger value="all">All</TabsTrigger>
+                  <TabsTrigger value="standard">Standard</TabsTrigger>
+                  <TabsTrigger value="code">Code</TabsTrigger>
+                  {/* HIDDEN: Book mode temporarily disabled */}
+                  {/* <TabsTrigger value="book">Book</TabsTrigger> */}
+                  <TabsTrigger value="dictation">Dictation</TabsTrigger>
+                  <TabsTrigger value="stress">Stress</TabsTrigger>
+                </TabsList>
+              )}
+              <TabsContent value={certificateFilter} className="mt-4 sm:mt-6">
                 {certificatesLoading ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[1, 2, 3, 4].map((i) => (
@@ -1103,40 +1139,40 @@ export default function Profile() {
                     <p className="text-sm mt-2">Complete typing tests to earn certificates</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6">
                     {certificatesData.map((cert: any) => (
-                      <div key={cert.id} className="space-y-3">
-                        <div className="p-4 rounded-xl border-2 border-border/50 bg-card/50">
-                          <div className="flex items-start justify-between mb-3">
+                      <div key={cert.id} className="space-y-2 sm:space-y-3">
+                        <div className="p-3 sm:p-4 rounded-lg sm:rounded-xl border-2 border-border/50 bg-card/50">
+                          <div className="flex items-start justify-between mb-2 sm:mb-3">
                             <div>
-                              <h3 className="font-semibold capitalize">{cert.certificateType} Test</h3>
-                              <p className="text-xs text-muted-foreground">
+                              <h3 className="font-semibold capitalize text-sm sm:text-base">{cert.certificateType} Test</h3>
+                              <p className="text-[10px] sm:text-xs text-muted-foreground">
                                 {new Date(cert.createdAt).toLocaleDateString()}
                               </p>
                             </div>
-                            <Badge variant="outline" className="capitalize">
+                            <Badge variant="outline" className="capitalize text-[10px] sm:text-xs px-1.5 sm:px-2">
                               {cert.metadata?.tier || 'Bronze'}
                             </Badge>
                           </div>
-                          <div className="grid grid-cols-2 gap-2 text-sm">
+                          <div className="grid grid-cols-2 gap-2 text-xs sm:text-sm">
                             <div>
                               <span className="text-muted-foreground">WPM:</span>
-                              <span className="ml-2 font-semibold">{cert.wpm}</span>
+                              <span className="ml-1 sm:ml-2 font-semibold">{cert.wpm}</span>
                             </div>
                             <div>
-                              <span className="text-muted-foreground">Accuracy:</span>
-                              <span className="ml-2 font-semibold">{cert.accuracy.toFixed(1)}%</span>
+                              <span className="text-muted-foreground">Acc:</span>
+                              <span className="ml-1 sm:ml-2 font-semibold">{cert.accuracy.toFixed(1)}%</span>
                             </div>
                           </div>
-                          <div className="flex gap-2 mt-4">
+                          <div className="flex gap-2 mt-3 sm:mt-4">
                             <Button
                               size="sm"
                               variant="outline"
-                              className="flex-1"
+                              className="flex-1 text-xs sm:text-sm h-8 sm:h-9"
                               onClick={() => setSelectedCertificate(cert)}
                               data-testid={`button-view-certificate-${cert.id}`}
                             >
-                              <FileText className="w-4 h-4 mr-2" />
+                              <FileText className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                               View
                             </Button>
                           </div>
@@ -1151,10 +1187,10 @@ export default function Profile() {
         </Card>
 
         <Dialog open={selectedCertificate !== null} onOpenChange={(open) => !open && setSelectedCertificate(null)}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
             <DialogHeader>
-              <DialogTitle className="capitalize">{selectedCertificate?.certificateType} Test Certificate</DialogTitle>
-              <DialogDescription>
+              <DialogTitle className="capitalize text-base sm:text-lg">{selectedCertificate?.certificateType} Test Certificate</DialogTitle>
+              <DialogDescription className="text-xs sm:text-sm">
                 Earned on {selectedCertificate && new Date(selectedCertificate.createdAt).toLocaleDateString()}
               </DialogDescription>
             </DialogHeader>
@@ -1281,27 +1317,27 @@ export default function Profile() {
         </Dialog>
 
         <Dialog open={showShowcaseModal} onOpenChange={setShowShowcaseModal}>
-          <DialogContent className="max-w-2xl max-h-[85vh] overflow-hidden flex flex-col" data-testid="showcase-modal">
+          <DialogContent className="w-[95vw] max-w-2xl max-h-[85vh] overflow-hidden flex flex-col p-4 sm:p-6" data-testid="showcase-modal">
             <DialogHeader className="flex-shrink-0">
-              <DialogTitle className="flex items-center gap-2">
-                <Trophy className="w-5 h-5 text-amber-500" />
+              <DialogTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500" />
                 Select Badges to Showcase
               </DialogTitle>
-              <DialogDescription>
+              <DialogDescription className="text-xs sm:text-sm">
                 Choose up to 5 unlocked badges to display prominently on your profile. These badges will be visible to other users.
               </DialogDescription>
             </DialogHeader>
 
             <TooltipProvider delayDuration={300}>
-              <div className="flex-1 overflow-hidden flex flex-col py-4">
-                <div className="flex items-center justify-between mb-4 flex-shrink-0">
+              <div className="flex-1 overflow-hidden flex flex-col py-3 sm:py-4">
+                <div className="flex items-center justify-between mb-3 sm:mb-4 flex-shrink-0">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium">
+                      <span className="text-xs sm:text-sm font-medium">
                         {selectedShowcaseBadges.length} / 5 badges selected
                       </span>
                       {selectedShowcaseBadges.length === 5 && (
-                        <Badge variant="secondary" className="text-[10px]">Maximum reached</Badge>
+                        <Badge variant="secondary" className="text-[9px] sm:text-[10px]">Maximum</Badge>
                       )}
                     </div>
                   </div>
@@ -1311,6 +1347,7 @@ export default function Profile() {
                         <Button
                           variant="ghost"
                           size="sm"
+                          className="text-xs sm:text-sm h-7 sm:h-8 px-2 sm:px-3"
                           onClick={() => setSelectedShowcaseBadges([])}
                           data-testid="button-clear-selection"
                         >
@@ -1325,7 +1362,7 @@ export default function Profile() {
                 </div>
 
                 <div className="flex-1 overflow-y-auto pr-2 -mr-2">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                     {badgeProgress
                       .filter((item) => item.unlocked)
                       .map((item) => {
@@ -1424,13 +1461,15 @@ export default function Profile() {
               </div>
             </TooltipProvider>
 
-            <div className="flex justify-between items-center gap-3 pt-4 border-t flex-shrink-0">
-              <div className="text-xs text-muted-foreground">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-3 pt-3 sm:pt-4 border-t flex-shrink-0">
+              <div className="text-[10px] sm:text-xs text-muted-foreground">
                 {badgeProgress.filter(item => item.unlocked).length} badge{badgeProgress.filter(item => item.unlocked).length !== 1 ? 's' : ''} available
               </div>
-              <div className="flex gap-3">
+              <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
                 <Button
                   variant="outline"
+                  size="sm"
+                  className="flex-1 sm:flex-none text-xs sm:text-sm"
                   onClick={() => setShowShowcaseModal(false)}
                   data-testid="button-cancel-showcase"
                 >
@@ -1438,21 +1477,24 @@ export default function Profile() {
                 </Button>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <span className="inline-flex">
+                    <span className="inline-flex flex-1 sm:flex-none">
                       <Button
+                        size="sm"
+                        className="w-full text-xs sm:text-sm"
                         onClick={() => showcaseMutation.mutate(selectedShowcaseBadges)}
                         disabled={showcaseMutation.isPending}
                         data-testid="button-save-showcase"
                       >
                         {showcaseMutation.isPending ? (
                           <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            Saving...
+                            <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 animate-spin" />
+                            <span className="hidden sm:inline">Saving...</span>
+                            <span className="sm:hidden">...</span>
                           </>
                         ) : (
                           <>
-                            <Check className="w-4 h-4 mr-2" />
-                            Save Showcase
+                            <Check className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                            Save
                           </>
                         )}
                       </Button>

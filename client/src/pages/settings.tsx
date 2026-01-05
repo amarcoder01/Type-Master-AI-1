@@ -425,7 +425,7 @@ export default function Settings() {
               <CardDescription>Manage theme and visual preferences</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <Label htmlFor="theme" className="flex flex-col gap-1">
                   <div className="flex items-center gap-1.5">
                     <span>Theme</span>
@@ -449,7 +449,7 @@ export default function Settings() {
                   <span className="font-normal text-xs text-muted-foreground">Select your preferred color scheme</span>
                 </Label>
                 <Select value={theme} onValueChange={(value) => setTheme(value as any)}>
-                  <SelectTrigger className="w-[140px] sm:w-[180px]" data-testid="select-theme">
+                  <SelectTrigger className="w-full sm:w-[180px]" data-testid="select-theme">
                     <SelectValue placeholder="Select theme" />
                   </SelectTrigger>
                   <SelectContent>
@@ -461,7 +461,7 @@ export default function Settings() {
                 </Select>
               </div>
 
-              <div className="flex items-center justify-between">
+              <div className="flex items-start sm:items-center justify-between gap-4">
                 <Label htmlFor="blur" className="flex flex-col gap-1">
                   <div className="flex items-center gap-1.5">
                     <span>Blur Effects</span>
@@ -479,7 +479,7 @@ export default function Settings() {
                   </div>
                   <span className="font-normal text-xs text-muted-foreground">Enable glassmorphism blur</span>
                 </Label>
-                <Switch id="blur" defaultChecked data-testid="switch-blur" />
+                <Switch id="blur" defaultChecked data-testid="switch-blur" className="shrink-0" />
               </div>
             </CardContent>
           </Card>
@@ -493,7 +493,7 @@ export default function Settings() {
               <CardDescription>Audio feedback on keystrokes</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="flex items-center justify-between">
+              <div className="flex items-start sm:items-center justify-between gap-4">
                 <Label htmlFor="sound-enabled" className="flex flex-col gap-1">
                   <div className="flex items-center gap-1.5">
                     <span>Keyboard Sounds</span>
@@ -516,10 +516,11 @@ export default function Settings() {
                   checked={soundEnabled}
                   onCheckedChange={handleSoundEnabledChange}
                   data-testid="switch-sound-enabled"
+                  className="shrink-0"
                 />
               </div>
 
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <Label htmlFor="sound-type" className="flex flex-col gap-1">
                   <div className="flex items-center gap-1.5">
                     <span>Sound Type</span>
@@ -547,7 +548,7 @@ export default function Settings() {
                   onValueChange={(value) => handleSoundTypeChange(value as SoundType)}
                   disabled={!soundEnabled}
                 >
-                  <SelectTrigger className="w-[140px] sm:w-[180px]" data-testid="select-sound-type">
+                  <SelectTrigger className="w-full sm:w-[180px]" data-testid="select-sound-type">
                     <SelectValue placeholder="Select sound" />
                   </SelectTrigger>
                   <SelectContent>
@@ -559,7 +560,7 @@ export default function Settings() {
                 </Select>
               </div>
 
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <Label className="flex flex-col gap-1">
                   <div className="flex items-center gap-1.5">
                     <span>Test Sound</span>
@@ -582,6 +583,7 @@ export default function Settings() {
                   onClick={() => keyboardSound.play()}
                   disabled={!soundEnabled}
                   data-testid="button-test-sound"
+                  className="w-full sm:w-auto"
                 >
                   <Volume2 className="w-4 h-4 mr-2" />
                   Play Sound
@@ -599,7 +601,7 @@ export default function Settings() {
               <CardDescription>Adjust how the test behaves</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="flex items-center justify-between">
+              <div className="flex items-start sm:items-center justify-between gap-4">
                 <Label htmlFor="smooth-caret" className="flex flex-col gap-1">
                   <div className="flex items-center gap-1.5">
                     <span>Smooth Caret</span>
@@ -622,10 +624,11 @@ export default function Settings() {
                   checked={smoothCaret}
                   onCheckedChange={handleSmoothCaretChange}
                   data-testid="switch-smooth-caret"
+                  className="shrink-0"
                 />
               </div>
 
-              <div className="flex items-center justify-between">
+              <div className="flex items-start sm:items-center justify-between gap-4">
                 <Label htmlFor="quick-restart" className="flex flex-col gap-1">
                   <div className="flex items-center gap-1.5">
                     <span>Quick Restart</span>
@@ -648,6 +651,7 @@ export default function Settings() {
                   checked={quickRestart}
                   onCheckedChange={handleQuickRestartChange}
                   data-testid="switch-quick-restart"
+                  className="shrink-0"
                 />
               </div>
 
@@ -690,14 +694,14 @@ export default function Settings() {
               <CardDescription>Manage browser push notifications and preferences</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div className="space-y-1">
                   <p className="text-sm font-medium">Notification Settings</p>
-                  <p className="text-xs text-muted-foreground truncate max-w-[200px] sm:max-w-none">
+                  <p className="text-xs text-muted-foreground">
                     Configure daily reminders, streak warnings, and more
                   </p>
                 </div>
-                <Button variant="outline" size="sm" onClick={() => navigate("/notifications")}>
+                <Button variant="outline" size="sm" onClick={() => navigate("/notifications")} className="w-full sm:w-auto">
                   Manage
                 </Button>
               </div>
@@ -721,15 +725,15 @@ export default function Settings() {
                 ) : (
                   <div className="space-y-3">
                     {/* Google */}
-                    <div className="flex items-center justify-between p-3 rounded-lg border bg-card">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 rounded-lg border bg-card">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0">
                           <GoogleIcon className="w-5 h-5" />
                         </div>
-                        <div>
+                        <div className="min-w-0">
                           <p className="text-sm font-medium">Google</p>
                           {isProviderLinked("google") ? (
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-muted-foreground truncate">
                               {getProviderInfo("google")?.email || "Connected"}
                             </p>
                           ) : (
@@ -744,6 +748,7 @@ export default function Settings() {
                           onClick={() => handleUnlinkProvider("google")}
                           disabled={unlinkProviderMutation.isPending}
                           data-testid="button-unlink-google"
+                          className="w-full sm:w-auto"
                         >
                           {unlinkProviderMutation.isPending ? (
                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -760,6 +765,7 @@ export default function Settings() {
                           size="sm"
                           onClick={() => handleLinkProvider("google")}
                           data-testid="button-link-google"
+                          className="w-full sm:w-auto"
                         >
                           <Link2 className="w-4 h-4 mr-2" />
                           Link
@@ -770,15 +776,15 @@ export default function Settings() {
                     </div>
 
                     {/* GitHub */}
-                    <div className="flex items-center justify-between p-3 rounded-lg border bg-card">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 rounded-lg border bg-card">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0">
                           <Github className="w-5 h-5" />
                         </div>
-                        <div>
+                        <div className="min-w-0">
                           <p className="text-sm font-medium">GitHub</p>
                           {isProviderLinked("github") ? (
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-muted-foreground truncate">
                               {getProviderInfo("github")?.profileName || "Connected"}
                             </p>
                           ) : (
@@ -793,6 +799,7 @@ export default function Settings() {
                           onClick={() => handleUnlinkProvider("github")}
                           disabled={unlinkProviderMutation.isPending}
                           data-testid="button-unlink-github"
+                          className="w-full sm:w-auto"
                         >
                           {unlinkProviderMutation.isPending ? (
                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -809,6 +816,7 @@ export default function Settings() {
                           size="sm"
                           onClick={() => handleLinkProvider("github")}
                           data-testid="button-link-github"
+                          className="w-full sm:w-auto"
                         >
                           <Link2 className="w-4 h-4 mr-2" />
                           Link
@@ -819,15 +827,15 @@ export default function Settings() {
                     </div>
 
                     {/* Facebook */}
-                    <div className="flex items-center justify-between p-3 rounded-lg border bg-card">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 rounded-lg border bg-card">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0">
                           <FacebookIcon className="w-5 h-5" />
                         </div>
-                        <div>
+                        <div className="min-w-0">
                           <p className="text-sm font-medium">Facebook</p>
                           {isProviderLinked("facebook") ? (
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-muted-foreground truncate">
                               {getProviderInfo("facebook")?.profileName || "Connected"}
                             </p>
                           ) : (
@@ -842,6 +850,7 @@ export default function Settings() {
                           onClick={() => handleUnlinkProvider("facebook")}
                           disabled={unlinkProviderMutation.isPending}
                           data-testid="button-unlink-facebook"
+                          className="w-full sm:w-auto"
                         >
                           {unlinkProviderMutation.isPending ? (
                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -858,6 +867,7 @@ export default function Settings() {
                           size="sm"
                           onClick={() => handleLinkProvider("facebook")}
                           data-testid="button-link-facebook"
+                          className="w-full sm:w-auto"
                         >
                           <Link2 className="w-4 h-4 mr-2" />
                           Link
@@ -973,7 +983,7 @@ export default function Settings() {
                       disabled={!currentPassword || !newPassword || !confirmPassword || changePasswordMutation.isPending || validatePassword().length > 0}
                       data-testid="button-change-password"
                       size="sm"
-                      className="mt-2"
+                      className="mt-2 w-full sm:w-auto"
                     >
                       {changePasswordMutation.isPending ? "Updating..." : "Update Password"}
                     </Button>
@@ -981,9 +991,9 @@ export default function Settings() {
                 </div>
 
                 {/* Danger Zone */}
-                <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-4 space-y-3">
-                  <div className="flex items-start gap-3">
-                    <div className="rounded-full bg-destructive/10 p-2">
+                <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-3 sm:p-4 space-y-3">
+                  <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+                    <div className="rounded-full bg-destructive/10 p-2 shrink-0 w-fit">
                       <AlertCircle className="w-4 h-4 text-destructive" />
                     </div>
                     <div className="flex-1 space-y-1">
@@ -999,41 +1009,41 @@ export default function Settings() {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="border-destructive/30 text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                        className="w-full sm:w-auto border-destructive/30 text-destructive hover:bg-destructive hover:text-destructive-foreground"
                         data-testid="button-delete-account"
                       >
                         <Trash2 className="w-3.5 h-3.5 mr-2" />
                         Delete My Account
                       </Button>
                     </AlertDialogTrigger>
-                    <AlertDialogContent>
+                    <AlertDialogContent className="max-w-[95vw] sm:max-w-lg">
                       <AlertDialogHeader>
                         <AlertDialogTitle className="flex items-center gap-2">
-                          <div className="rounded-full bg-destructive/10 p-2">
+                          <div className="rounded-full bg-destructive/10 p-2 shrink-0">
                             <AlertCircle className="w-5 h-5 text-destructive" />
                           </div>
                           Delete Account?
                         </AlertDialogTitle>
                         <AlertDialogDescription className="space-y-3">
-                          <p>This will permanently delete your TypeMasterAI account and remove all your data from our servers.</p>
+                          <p className="text-sm">This will permanently delete your TypeMasterAI account and remove all your data from our servers.</p>
 
                           <div className="rounded-md bg-muted p-3 space-y-2">
                             <p className="text-xs font-medium text-foreground">This includes:</p>
                             <ul className="text-xs space-y-1 text-muted-foreground">
                               <li className="flex items-center gap-2">
-                                <span className="w-1 h-1 rounded-full bg-current"></span>
+                                <span className="w-1 h-1 rounded-full bg-current shrink-0"></span>
                                 All typing test results and statistics
                               </li>
                               <li className="flex items-center gap-2">
-                                <span className="w-1 h-1 rounded-full bg-current"></span>
+                                <span className="w-1 h-1 rounded-full bg-current shrink-0"></span>
                                 AI chat conversation history
                               </li>
                               <li className="flex items-center gap-2">
-                                <span className="w-1 h-1 rounded-full bg-current"></span>
+                                <span className="w-1 h-1 rounded-full bg-current shrink-0"></span>
                                 Profile information and preferences
                               </li>
                               <li className="flex items-center gap-2">
-                                <span className="w-1 h-1 rounded-full bg-current"></span>
+                                <span className="w-1 h-1 rounded-full bg-current shrink-0"></span>
                                 Leaderboard rankings and achievements
                               </li>
                             </ul>
@@ -1042,11 +1052,11 @@ export default function Settings() {
                           <p className="text-xs font-medium text-destructive">This action cannot be undone.</p>
                         </AlertDialogDescription>
                       </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel data-testid="button-cancel-delete">Cancel</AlertDialogCancel>
+                      <AlertDialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0">
+                        <AlertDialogCancel data-testid="button-cancel-delete" className="w-full sm:w-auto">Cancel</AlertDialogCancel>
                         <AlertDialogAction
                           onClick={() => deleteAccountMutation.mutate()}
-                          className="bg-destructive hover:bg-destructive/90"
+                          className="w-full sm:w-auto bg-destructive hover:bg-destructive/90"
                           data-testid="button-confirm-delete"
                         >
                           {deleteAccountMutation.isPending ? "Deleting..." : "Yes, Delete My Account"}
