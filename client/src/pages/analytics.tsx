@@ -3507,7 +3507,7 @@ Make goals progressive and appropriate for ${skillLevel.level.toLowerCase()} lev
         <TabsContent value="insights" className="space-y-4">
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <CardTitle className="flex items-center gap-2">
                     <Brain className="w-5 h-5" />
@@ -3518,6 +3518,9 @@ Make goals progressive and appropriate for ${skillLevel.level.toLowerCase()} lev
                 <Button
                   onClick={generateAIInsights}
                   disabled={loadingInsights}
+                  size="sm"
+                  className="w-full sm:w-auto"
+                  aria-busy={loadingInsights}
                   data-testid="button-generate-insights"
                 >
                   {loadingInsights ? (
@@ -3597,9 +3600,9 @@ Make goals progressive and appropriate for ${skillLevel.level.toLowerCase()} lev
                             </Badge>
                           </div>
                           <div className="flex-1 space-y-2">
-                            <div className="flex items-center gap-2">
+                            <div className="flex flex-wrap items-center gap-2">
                               <span className="text-sm opacity-70">{categoryIcons[insight.category]}</span>
-                              <p className="text-sm font-medium">{insight.message}</p>
+                              <p className="text-sm font-medium break-words">{insight.message}</p>
                             </div>
                             {(insight.dataPoint || insight.benchmark) && (
                               <div className="flex flex-wrap gap-2 text-xs">
@@ -3628,9 +3631,9 @@ Make goals progressive and appropriate for ${skillLevel.level.toLowerCase()} lev
                   })}
                 </div>
               ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  <Brain className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                  <p>Click "Generate Insights" to get AI-powered recommendations</p>
+                <div className="text-center py-8 px-3 text-muted-foreground max-w-sm mx-auto">
+                  <Brain className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 opacity-50" />
+                  <p className="text-sm">Click "Generate Insights" to get AI-powered recommendations</p>
                   <p className="text-xs mt-2 text-muted-foreground/70">
                     Analyzes your speed, accuracy, rhythm, and technique with industry benchmarks
                   </p>
