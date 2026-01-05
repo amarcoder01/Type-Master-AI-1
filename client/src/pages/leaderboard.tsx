@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Trophy, Medal, Clock, Target, ChevronLeft, ChevronRight, ShieldCheck, User, AlertCircle, RefreshCw, Info, Wifi, WifiOff, Ban, Globe, HelpCircle } from "lucide-react";
+import { useSEO, SEO_CONFIGS } from '@/lib/seo';
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { motion } from "framer-motion";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
@@ -205,6 +206,7 @@ const LANGUAGE_DESCRIPTIONS: Record<string, string> = {
 };
 
 function LeaderboardContent() {
+  useSEO(SEO_CONFIGS.leaderboard);
   const [timeframe, setTimeframe] = useState<Timeframe>("all");
   const [offset, setOffset] = useState(0);
   const [language, setLanguage] = useState<string>("en");

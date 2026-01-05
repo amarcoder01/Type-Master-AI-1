@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/auth-context";
 import { useLocation, useSearch } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertCircle, Mail, Lock, User, Bell } from "lucide-react";
+import { useSEO } from '@/lib/seo';
 import { notificationManager } from "@/lib/notification-manager";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -30,6 +31,14 @@ interface ProviderAvailability {
 }
 
 export default function Register() {
+  useSEO({
+    title: 'Create Account | TypeMasterAI',
+    description: 'Create a free TypeMasterAI account to save your typing progress, earn achievements, and compete on leaderboards.',
+    keywords: 'register, sign up, create account, typemasterai, free account',
+    canonical: 'https://typemaster-ai.replit.app/register',
+    ogUrl: 'https://typemaster-ai.replit.app/register',
+    noindex: true,
+  });
   const [, setLocation] = useLocation();
   const searchString = useSearch();
   const { register } = useAuth();

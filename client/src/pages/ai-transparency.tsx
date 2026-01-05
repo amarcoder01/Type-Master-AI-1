@@ -1,6 +1,15 @@
 import { Link } from "wouter";
+import { useSEO } from '@/lib/seo';
 
 export default function AITransparency() {
+  useSEO({
+    title: 'AI Transparency | How We Use AI - TypeMasterAI',
+    description: 'Learn how TypeMasterAI uses artificial intelligence to power analytics, generate content, and provide personalized recommendations.',
+    keywords: 'ai transparency, artificial intelligence, ai disclosure, typemasterai ai, machine learning',
+    canonical: 'https://typemaster-ai.replit.app/ai-transparency',
+    ogUrl: 'https://typemaster-ai.replit.app/ai-transparency',
+  });
+
   return (
     <div className="max-w-4xl mx-auto" data-testid="page-ai-transparency">
       <div className="mb-8">

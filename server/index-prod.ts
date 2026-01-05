@@ -5,6 +5,7 @@ import path from "node:path";
 import express, { type Express, type Request } from "express";
 
 import runApp from "./app";
+import { createSEOPrerender } from "./seo-prerender";
 
 export async function serveStatic(app: Express, server: Server) {
   const distPath = path.resolve(import.meta.dirname, "public");
@@ -14,6 +15,10 @@ export async function serveStatic(app: Express, server: Server) {
       `Could not find the build directory: ${distPath}, make sure to build the client first`,
     );
   }
+
+  // SEO Pre-rendering middleware for search engine crawlers
+  // This injects proper meta tags for bots that don't execute JavaScript
+  app.use(createSEOPrerender(distPath));
 
   app.use(express.static(distPath));
 

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo, memo, useLayoutEffect } from 'react';
 import { Link, useLocation } from 'wouter';
 import { ArrowLeft, Zap, Trophy, Volume2, VolumeX, AlertTriangle, Clock, Target, Flame, XCircle, Timer, BarChart3, RefreshCw, Home, LogIn, WifiOff, Award, X, ChevronRight, Play, Sparkles, Eye, HelpCircle, Share2, Twitter, MessageCircle, Linkedin, Send, Copy, Check } from 'lucide-react';
+import { useSEO, SEO_CONFIGS } from '@/lib/seo';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -339,6 +340,7 @@ function getSharedAudioContext(): AudioContext | null {
 }
 
 export default function StressTest() {
+  useSEO(SEO_CONFIGS.stressTest);
   const { toast } = useToast();
   const { user } = useAuth();
   const [copied, setCopied] = useState(false);

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useSEO, SEO_CONFIGS } from '@/lib/seo';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -237,6 +238,7 @@ interface UserAchievement {
 }
 
 export default function Profile() {
+  useSEO(SEO_CONFIGS.profile);
   const { user } = useAuth();
   const [, setLocation] = useLocation();
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRoute } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Code, Trophy, Zap, Target, Clock, AlertCircle, Award, Share2, Copy, Twitter, MessageCircle, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { CodeCertificate } from "@/components/CodeCertificate";
+import { useSEO } from '@/lib/seo';
 
 interface SharedResult {
   id: number;
@@ -34,6 +35,13 @@ interface SharedResult {
 }
 
 export default function SharedResult() {
+  useSEO({
+    title: 'Shared Code Typing Result | TypeMasterAI',
+    description: 'View this shared code typing test result from TypeMasterAI. See WPM, accuracy, and programming language statistics.',
+    keywords: 'shared result, code typing result, wpm result, typing stats',
+    canonical: 'https://typemaster-ai.replit.app/',
+    ogUrl: 'https://typemaster-ai.replit.app/',
+  });
   const [, params] = useRoute("/share/:shareId");
   const shareId = params?.shareId;
   const { toast } = useToast();

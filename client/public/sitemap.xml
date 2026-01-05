@@ -237,5 +237,82 @@
     <priority>0.3</priority>
     <mobile:mobile/>
   </url>
+  
+  <!-- Additional Content Pages -->
+  <url>
+    <loc>https://typemaster-ai.replit.app/about</loc>
+    <lastmod>2026-01-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <mobile:mobile/>
+  </url>
+  
+  <url>
+    <loc>https://typemaster-ai.replit.app/contact</loc>
+    <lastmod>2026-01-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <mobile:mobile/>
+  </url>
+  
+  <url>
+    <loc>https://typemaster-ai.replit.app/learn</loc>
+    <lastmod>2026-01-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <mobile:mobile/>
+  </url>
+  
+  <url>
+    <loc>https://typemaster-ai.replit.app/chat</loc>
+    <lastmod>2026-01-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <mobile:mobile/>
+  </url>
+  
+  <!-- Additional Test Modes -->
+  <url>
+    <loc>https://typemaster-ai.replit.app/dictation-mode</loc>
+    <lastmod>2026-01-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <mobile:mobile/>
+  </url>
+  
+  <!-- Additional Leaderboards -->
+  <url>
+    <loc>https://typemaster-ai.replit.app/stress-leaderboard</loc>
+    <lastmod>2026-01-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+    <mobile:mobile/>
+  </url>
+  
+  <url>
+    <loc>https://typemaster-ai.replit.app/leaderboards</loc>
+    <lastmod>2026-01-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+    <mobile:mobile/>
+  </url>
+  
+  <!-- Verification & Certificates -->
+  <url>
+    <loc>https://typemaster-ai.replit.app/verify</loc>
+    <lastmod>2026-01-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+    <mobile:mobile/>
+  </url>
+  
+  <!-- User Account Pages -->
+  <url>
+    <loc>https://typemaster-ai.replit.app/notifications</loc>
+    <lastmod>2026-01-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+    <mobile:mobile/>
+  </url>
 
 </urlset>

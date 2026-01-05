@@ -11,6 +11,7 @@ export interface SEOConfig {
   twitterDescription?: string;
   canonical?: string;
   structuredData?: object;
+  noindex?: boolean;
 }
 
 /**
@@ -53,6 +54,11 @@ export function useSEO(config: SEOConfig) {
     // Add structured data if provided
     if (config.structuredData) {
       addStructuredData(config.structuredData);
+    }
+
+    // Handle noindex pages
+    if (config.noindex) {
+      updateMetaTag('name', 'robots', 'noindex, nofollow');
     }
   }, [config]);
 }

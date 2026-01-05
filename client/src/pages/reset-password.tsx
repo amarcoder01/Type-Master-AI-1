@@ -7,8 +7,17 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Keyboard, AlertCircle, CheckCircle2, XCircle, Eye, EyeOff, Shield } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
+import { useSEO } from '@/lib/seo';
 
 export default function ResetPassword() {
+  useSEO({
+    title: 'Reset Password | TypeMasterAI',
+    description: 'Create a new password for your TypeMasterAI account.',
+    keywords: 'reset password, new password, account recovery',
+    canonical: 'https://typemaster-ai.replit.app/reset-password',
+    ogUrl: 'https://typemaster-ai.replit.app/reset-password',
+    noindex: true,
+  });
   const [, setLocation] = useLocation();
   const searchString = useSearch();
   const [token, setToken] = useState("");

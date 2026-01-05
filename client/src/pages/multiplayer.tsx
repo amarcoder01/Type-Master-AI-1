@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/lib/auth-context";
 import { useNetwork } from "@/lib/network-context";
+import { useSEO, SEO_CONFIGS } from '@/lib/seo';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -92,6 +93,7 @@ function formatDuration(seconds: number): string {
 }
 
 export default function MultiplayerPage() {
+  useSEO(SEO_CONFIGS.multiplayer);
   const { user } = useAuth();
   const { isOnline } = useNetwork();
   const [, setLocation] = useLocation();

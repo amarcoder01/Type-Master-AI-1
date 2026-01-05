@@ -6,8 +6,17 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Keyboard, AlertCircle, CheckCircle2, ArrowLeft } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useSEO } from '@/lib/seo';
 
 export default function ForgotPassword() {
+  useSEO({
+    title: 'Forgot Password | TypeMasterAI',
+    description: 'Reset your TypeMasterAI password. Enter your email to receive a password reset link.',
+    keywords: 'forgot password, reset password, account recovery',
+    canonical: 'https://typemaster-ai.replit.app/forgot-password',
+    ogUrl: 'https://typemaster-ai.replit.app/forgot-password',
+    noindex: true,
+  });
   const [, setLocation] = useLocation();
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");

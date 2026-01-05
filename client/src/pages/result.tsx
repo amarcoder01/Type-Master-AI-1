@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRoute } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Zap, Target, Clock, AlertCircle, TrendingUp, Share2, Copy, Twitter, MessageCircle, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useSEO } from '@/lib/seo';
 
 interface SharedResult {
   id: number;
@@ -24,6 +25,13 @@ interface SharedResult {
 }
 
 export default function Result() {
+  useSEO({
+    title: 'Typing Test Result | TypeMasterAI',
+    description: 'View your typing test result with detailed statistics including WPM, accuracy, and keystroke analytics.',
+    keywords: 'typing result, wpm result, test result, typing stats',
+    canonical: 'https://typemaster-ai.replit.app/',
+    ogUrl: 'https://typemaster-ai.replit.app/',
+  });
   const [, params] = useRoute("/result/:shareToken");
   const shareToken = params?.shareToken;
   const { toast } = useToast();

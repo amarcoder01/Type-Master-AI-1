@@ -1,6 +1,15 @@
 import { Link } from "wouter";
+import { useSEO } from '@/lib/seo';
 
 export default function PrivacyPolicy() {
+  useSEO({
+    title: 'Privacy Policy | TypeMasterAI',
+    description: 'Read TypeMasterAI\'s privacy policy. Learn how we collect, use, and protect your data while you use our typing test platform.',
+    keywords: 'privacy policy, data protection, typemasterai privacy, user data, GDPR',
+    canonical: 'https://typemaster-ai.replit.app/privacy-policy',
+    ogUrl: 'https://typemaster-ai.replit.app/privacy-policy',
+  });
+
   return (
     <div className="max-w-4xl mx-auto" data-testid="page-privacy-policy">
       <div className="mb-12">

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Moon, Volume2, Keyboard, Shield, Trash2, Eye, EyeOff, CheckCircle2, XCircle, AlertCircle, HelpCircle, Link2, Unlink, Github, Loader2, Bell } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
+import { useSEO } from '@/lib/seo';
 import { useTheme } from "@/lib/theme-context";
 import { useState, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -65,6 +66,13 @@ interface ProviderAvailability {
 }
 
 export default function Settings() {
+  useSEO({
+    title: 'Settings | Customize Your Experience - TypeMasterAI',
+    description: 'Customize your TypeMasterAI experience. Adjust themes, test duration, language preferences, and notification settings.',
+    keywords: 'typing test settings, customize typing test, typemasterai settings, preferences',
+    canonical: 'https://typemaster-ai.replit.app/settings',
+    ogUrl: 'https://typemaster-ai.replit.app/settings',
+  });
   const { user, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const { toast } = useToast();

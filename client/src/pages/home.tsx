@@ -1,12 +1,22 @@
 import TypingTest from "@/components/typing-test";
 import generatedImage from '@assets/generated_images/subtle_dark_geometric_pattern_background_for_typing_app.png';
+import { useSEO, SEO_CONFIGS } from '@/lib/seo';
 
 export default function Home() {
+  useSEO(SEO_CONFIGS.home);
   return (
       <div className="relative">
-         {/* Ambient Background */}
+         {/* Ambient Background - Optimized for LCP */}
         <div className="fixed inset-0 z-[-1] opacity-20 pointer-events-none">
-           <img src={generatedImage} alt="" className="w-full h-full object-cover" />
+           <img 
+             src={generatedImage} 
+             alt="" 
+             className="w-full h-full object-cover" 
+             loading="eager"
+             decoding="async"
+             fetchPriority="low"
+             aria-hidden="true"
+           />
            <div className="absolute inset-0 bg-background/80 backdrop-blur-[2px]" />
         </div>
 

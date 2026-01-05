@@ -3,10 +3,19 @@ import { useLocation, useSearch } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle2, XCircle, Loader2, Mail } from "lucide-react";
+import { useSEO } from '@/lib/seo';
 
 type VerificationState = "loading" | "success" | "error" | "expired";
 
 export default function VerifyEmail() {
+  useSEO({
+    title: 'Verify Email | TypeMasterAI',
+    description: 'Verify your email address to complete your TypeMasterAI account setup.',
+    keywords: 'verify email, email verification, account verification',
+    canonical: 'https://typemaster-ai.replit.app/verify-email',
+    ogUrl: 'https://typemaster-ai.replit.app/verify-email',
+    noindex: true,
+  });
   const [, setLocation] = useLocation();
   const searchString = useSearch();
   const [state, setState] = useState<VerificationState>("loading");

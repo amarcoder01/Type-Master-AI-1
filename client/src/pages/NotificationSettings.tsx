@@ -10,6 +10,7 @@ import { Bell, BellOff, Loader2, CheckCircle2, XCircle, Clock, Globe } from 'luc
 import { useToast } from '@/hooks/use-toast';
 import { notificationManager } from '@/lib/notification-manager';
 import { BackButton } from '@/components/back-button';
+import { useSEO } from '@/lib/seo';
 
 const TIMEZONES = [
   { value: 'UTC', label: 'UTC (Coordinated Universal Time)' },
@@ -49,6 +50,13 @@ interface NotificationPreferences {
 }
 
 export default function NotificationSettings() {
+  useSEO({
+    title: 'Notification Settings | TypeMasterAI',
+    description: 'Manage your TypeMasterAI notification preferences. Control daily reminders, streak alerts, and achievement notifications.',
+    keywords: 'notification settings, typing reminders, practice alerts, push notifications',
+    canonical: 'https://typemaster-ai.replit.app/notifications',
+    ogUrl: 'https://typemaster-ai.replit.app/notifications',
+  });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [subscribed, setSubscribed] = useState(false);

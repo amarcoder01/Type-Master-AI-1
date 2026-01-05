@@ -1,6 +1,14 @@
 import { Button } from "@/components/ui/button";
+import { useSEO } from '@/lib/seo';
 
 export default function Contact() {
+  useSEO({
+    title: 'Contact Us | TypeMasterAI Support',
+    description: 'Get in touch with the TypeMasterAI team. We are here to help with questions, feedback, and support for our typing test platform.',
+    keywords: 'contact typemasterai, typing test support, typing test help, typemasterai email, customer support',
+    canonical: 'https://typemaster-ai.replit.app/contact',
+    ogUrl: 'https://typemaster-ai.replit.app/contact',
+  });
   return (
     <div className="max-w-4xl mx-auto" data-testid="page-contact">
       <div className="mb-16 text-center">

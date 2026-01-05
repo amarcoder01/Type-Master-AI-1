@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Check, HelpCircle, Loader2, AlertCircle, RefreshCw } from "lucide-react";
+import { useSEO } from '@/lib/seo';
 import { cn } from "@/lib/utils";
 import { SearchableSelect } from "@/components/searchable-select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -57,6 +58,14 @@ const COUNTRY_OPTIONS = [
 const KEYBOARD_LAYOUTS = ["QWERTY", "DVORAK", "COLEMAK", "AZERTY", "QWERTZ", "Other"];
 
 export default function ProfileEdit() {
+  useSEO({
+    title: 'Edit Profile | TypeMasterAI',
+    description: 'Update your TypeMasterAI profile information, avatar, and display settings.',
+    keywords: 'edit profile, update profile, account settings',
+    canonical: 'https://typemaster-ai.replit.app/profile/edit',
+    ogUrl: 'https://typemaster-ai.replit.app/profile/edit',
+    noindex: true,
+  });
   const { user } = useAuth();
   const [, setLocation] = useLocation();
   const { toast } = useToast();

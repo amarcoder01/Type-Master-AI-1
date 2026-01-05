@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/auth-context";
 import { useLocation, useSearch } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertCircle, Mail, Lock, Bell } from "lucide-react";
+import { useSEO } from '@/lib/seo';
 import { notificationManager } from "@/lib/notification-manager";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -30,6 +31,14 @@ interface ProviderAvailability {
 }
 
 export default function Login() {
+  useSEO({
+    title: 'Login | TypeMasterAI',
+    description: 'Log in to your TypeMasterAI account to access your typing history, achievements, and personalized analytics.',
+    keywords: 'login, sign in, typemasterai account',
+    canonical: 'https://typemaster-ai.replit.app/login',
+    ogUrl: 'https://typemaster-ai.replit.app/login',
+    noindex: true,
+  });
   const [, setLocation] = useLocation();
   const searchString = useSearch();
   const { login } = useAuth();

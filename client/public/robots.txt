@@ -16,6 +16,17 @@ Disallow: /*?*token=*
 Disallow: /race/
 Disallow: /*.json$
 
+# Block private user account pages
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /verify-email
+Disallow: /profile/edit
+
+# Block admin pages
+Disallow: /admin/
+
 # Allow important resources for rendering
 Allow: /manifest.json
 Allow: /*.js$

@@ -1,6 +1,15 @@
 import { Link } from "wouter";
+import { useSEO } from '@/lib/seo';
 
 export default function TermsOfService() {
+  useSEO({
+    title: 'Terms of Service | TypeMasterAI',
+    description: 'Read TypeMasterAI\'s terms of service. Understand the rules and guidelines for using our typing test platform.',
+    keywords: 'terms of service, terms and conditions, typemasterai terms, user agreement',
+    canonical: 'https://typemaster-ai.replit.app/terms-of-service',
+    ogUrl: 'https://typemaster-ai.replit.app/terms-of-service',
+  });
+
   return (
     <div className="max-w-4xl mx-auto" data-testid="page-terms-of-service">
       <div className="mb-8">

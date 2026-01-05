@@ -1,6 +1,15 @@
 import { Link } from "wouter";
+import { useSEO } from '@/lib/seo';
 
 export default function CookiePolicy() {
+  useSEO({
+    title: 'Cookie Policy | TypeMasterAI',
+    description: 'Learn about how TypeMasterAI uses cookies to improve your experience on our typing test platform.',
+    keywords: 'cookie policy, cookies, typemasterai cookies, tracking',
+    canonical: 'https://typemaster-ai.replit.app/cookie-policy',
+    ogUrl: 'https://typemaster-ai.replit.app/cookie-policy',
+  });
+
   return (
     <div className="max-w-4xl mx-auto" data-testid="page-cookie-policy">
       <div className="mb-8">

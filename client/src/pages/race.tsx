@@ -3,6 +3,7 @@ import { useLocation, useRoute } from "wouter";
 import { useAuth } from "@/lib/auth-context";
 import { useNetwork } from "@/lib/network-context";
 import { Button } from "@/components/ui/button";
+import { useSEO } from '@/lib/seo';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -817,6 +818,13 @@ function RaceFinishBanner({
 }
 
 export default function RacePage() {
+  useSEO({
+    title: 'Typing Race | TypeMasterAI',
+    description: 'Join this multiplayer typing race and compete against other typists in real-time!',
+    keywords: 'typing race, multiplayer race, compete typing, live race',
+    canonical: 'https://typemaster-ai.replit.app/multiplayer',
+    ogUrl: 'https://typemaster-ai.replit.app/multiplayer',
+  });
   const [, params] = useRoute("/race/:id");
   const [, setLocation] = useLocation();
   const { user } = useAuth();

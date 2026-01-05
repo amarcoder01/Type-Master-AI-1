@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo, useCallback, Component, ReactNode, ErrorInfo } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useSEO, SEO_CONFIGS } from '@/lib/seo';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as ChartTooltip, Legend, ResponsiveContainer, Area, AreaChart } from "recharts";
@@ -839,6 +840,7 @@ const buildComprehensiveAnalyticsPayload = (
 };
 
 function AnalyticsContent() {
+  useSEO(SEO_CONFIGS.analytics);
   const { user, isLoading: authLoading } = useAuth();
   const [selectedDays, setSelectedDays] = useState<number>(ANALYTICS_CONFIG.defaultTimeRange);
   const [aiInsights, setAiInsights] = useState<AIInsight[]>([]);

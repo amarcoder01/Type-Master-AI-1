@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/lib/auth-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useSEO } from '@/lib/seo';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -185,6 +186,14 @@ const sentimentColors: Record<string, string> = {
 const CHART_COLORS = ["#3b82f6", "#22c55e", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899"];
 
 export default function AdminFeedbackDashboard() {
+  useSEO({
+    title: 'Admin Feedback Dashboard | TypeMasterAI',
+    description: 'Admin dashboard for managing user feedback and suggestions.',
+    keywords: 'admin, feedback, dashboard, typemasterai',
+    canonical: 'https://typemaster-ai.replit.app/admin/feedback',
+    ogUrl: 'https://typemaster-ai.replit.app/admin/feedback',
+    noindex: true,
+  });
   const { user } = useAuth();
   const queryClient = useQueryClient();
 

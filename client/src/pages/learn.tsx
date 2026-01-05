@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
+import { useSEO } from '@/lib/seo';
 import {
   BookOpen,
   Zap,
@@ -59,6 +60,24 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Separator } from "@/components/ui/separator";
 
 export default function LearnPage() {
+  useSEO({
+    title: 'Learn Touch Typing | Free Typing Lessons - TypeMasterAI',
+    description: 'Learn touch typing with our comprehensive free lessons. Master proper finger placement, build muscle memory, and increase your typing speed systematically.',
+    keywords: 'learn touch typing, typing lessons, typing tutorial, learn to type, typing course free, touch typing guide, keyboard lessons',
+    canonical: 'https://typemaster-ai.replit.app/learn',
+    ogUrl: 'https://typemaster-ai.replit.app/learn',
+    structuredData: {
+      '@context': 'https://schema.org',
+      '@type': 'Course',
+      'name': 'Learn Touch Typing with TypeMasterAI',
+      'description': 'Comprehensive touch typing course with AI-powered practice and real-time feedback',
+      'provider': {
+        '@type': 'Organization',
+        'name': 'TypeMasterAI'
+      },
+      'isAccessibleForFree': true
+    }
+  });
   const [activeSection, setActiveSection] = useState("getting-started");
 
   const sections = [

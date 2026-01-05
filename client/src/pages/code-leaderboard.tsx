@@ -6,6 +6,7 @@ import { Trophy, Code, Zap, Target, Medal, AlertCircle, RefreshCw } from "lucide
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { useSEO } from '@/lib/seo';
 
 const PROGRAMMING_LANGUAGES = {
   all: "All Languages",
@@ -19,6 +20,13 @@ const PROGRAMMING_LANGUAGES = {
 };
 
 function CodeLeaderboardContent() {
+  useSEO({
+    title: 'Code Typing Leaderboard | Best Developer Typists - TypeMasterAI',
+    description: 'View the fastest code typists! Browse rankings by programming language and see who types code the fastest.',
+    keywords: 'code typing leaderboard, programmer typing rankings, developer typing speed, coding speed rankings, fastest coders',
+    canonical: 'https://typemaster-ai.replit.app/code-leaderboard',
+    ogUrl: 'https://typemaster-ai.replit.app/code-leaderboard',
+  });
   const [selectedLanguage, setSelectedLanguage] = useState<string>("all");
   const [offset, setOffset] = useState(0);
   const limit = 20;

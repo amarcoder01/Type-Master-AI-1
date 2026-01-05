@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'wouter';
 import { motion } from "framer-motion";
 import { ArrowLeft, Trophy, Zap, Award, Target, BarChart3, CheckCircle2, Medal, Crown, AlertCircle, RefreshCw, Play, AlertTriangle, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { useSEO } from '@/lib/seo';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -44,6 +45,13 @@ const DIFFICULTY_LABELS: Record<Exclude<Difficulty, 'all'>, string> = {
 };
 
 function StressLeaderboardContent() {
+  useSEO({
+    title: 'Stress Test Leaderboard | Top Performers Under Pressure - TypeMasterAI',
+    description: 'See who types the fastest under pressure! Browse the stress test leaderboard and compare your performance against the best.',
+    keywords: 'stress test leaderboard, hard typing rankings, focus test rankings, pressure typing rankings',
+    canonical: 'https://typemaster-ai.replit.app/stress-leaderboard',
+    ogUrl: 'https://typemaster-ai.replit.app/stress-leaderboard',
+  });
   const { user } = useAuth();
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>('all');
   const [offset, setOffset] = useState(0);

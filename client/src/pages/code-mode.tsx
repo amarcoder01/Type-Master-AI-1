@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSEO, SEO_CONFIGS } from '@/lib/seo';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -253,6 +254,7 @@ function getCelebratoryMessage(wpm: number, accuracy: number) {
 }
 
 export default function CodeMode() {
+  useSEO(SEO_CONFIGS.codeMode);
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();

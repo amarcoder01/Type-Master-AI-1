@@ -3,6 +3,7 @@ import { useLocation, useSearch } from "wouter";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { useSEO } from '@/lib/seo';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -37,6 +38,13 @@ function useSearchParams() {
 }
 
 function UnifiedLeaderboardContent() {
+  useSEO({
+    title: 'Unified Leaderboards | All Typing Rankings - TypeMasterAI',
+    description: 'Browse all TypeMasterAI leaderboards in one place. Compare rankings across standard typing, code typing, stress tests, and multiplayer races.',
+    keywords: 'typing leaderboards, all rankings, typing competition, wpm rankings, unified leaderboard',
+    canonical: 'https://typemaster-ai.replit.app/leaderboards',
+    ogUrl: 'https://typemaster-ai.replit.app/leaderboards',
+  });
   const [, setLocation] = useLocation();
   const searchParams = useSearchParams();
   

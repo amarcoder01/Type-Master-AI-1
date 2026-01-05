@@ -1,6 +1,15 @@
 import { Link } from "wouter";
+import { useSEO } from '@/lib/seo';
 
 export default function AccessibilityStatement() {
+  useSEO({
+    title: 'Accessibility Statement | TypeMasterAI',
+    description: 'TypeMasterAI\'s commitment to accessibility. Learn about our efforts to make our typing test platform accessible to all users.',
+    keywords: 'accessibility, wcag, accessible typing test, disability support, a11y',
+    canonical: 'https://typemaster-ai.replit.app/accessibility',
+    ogUrl: 'https://typemaster-ai.replit.app/accessibility',
+  });
+
   return (
     <div className="max-w-4xl mx-auto" data-testid="page-accessibility">
       <div className="mb-8">

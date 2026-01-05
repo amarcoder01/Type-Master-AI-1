@@ -3,6 +3,7 @@ import { useAuth } from "@/lib/auth-context";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useSEO } from '@/lib/seo';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -628,6 +629,13 @@ interface Conversation {
 }
 
 export default function Chat() {
+  useSEO({
+    title: 'AI Typing Coach | Get Personalized Tips - TypeMasterAI',
+    description: 'Chat with our AI typing coach to get personalized tips and recommendations for improving your typing speed and accuracy.',
+    keywords: 'ai typing coach, typing tips, typing advice, improve typing speed, typing help, ai assistant, typing improvement',
+    canonical: 'https://typemaster-ai.replit.app/chat',
+    ogUrl: 'https://typemaster-ai.replit.app/chat',
+  });
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const { toast } = useToast();
