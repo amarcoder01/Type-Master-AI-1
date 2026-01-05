@@ -42,11 +42,11 @@ export function LeaderboardSkeleton({ rows = 10, showHeader = true }: Leaderboar
                     <div className="h-3 w-16 rounded bg-muted/50 animate-pulse mt-1.5" />
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {Array.from({ length: 4 }).map((__, i) => (
                     <div key={i} className="flex flex-col items-center gap-1">
-                      <div className="h-2 w-12 rounded bg-muted/60 animate-pulse" />
-                      <div className="h-5 w-12 rounded bg-muted animate-pulse" />
+                      <div className="h-2 w-10 sm:w-12 rounded bg-muted/60 animate-pulse" />
+                      <div className="h-5 w-10 sm:w-12 rounded bg-muted animate-pulse" />
                     </div>
                   ))}
                 </div>
@@ -98,12 +98,12 @@ export function LeaderboardSkeleton({ rows = 10, showHeader = true }: Leaderboar
         </div>
 
         {/* Pagination Skeleton */}
-        <div className="flex items-center justify-between p-3 md:p-4 border-t border-border/50">
-          <div className="h-4 w-48 rounded bg-muted animate-pulse" />
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 md:p-4 border-t border-border/50">
+          <div className="h-4 w-32 sm:w-48 rounded bg-muted animate-pulse" />
           <div className="flex items-center gap-2">
-            <div className="h-8 w-24 rounded bg-muted animate-pulse" />
-            <div className="h-4 w-20 rounded bg-muted animate-pulse" />
-            <div className="h-8 w-20 rounded bg-muted animate-pulse" />
+            <div className="h-8 w-16 sm:w-24 rounded bg-muted animate-pulse" />
+            <div className="h-4 w-16 sm:w-20 rounded bg-muted animate-pulse" />
+            <div className="h-8 w-16 sm:w-20 rounded bg-muted animate-pulse" />
           </div>
         </div>
       </CardContent>

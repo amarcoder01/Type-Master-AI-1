@@ -524,59 +524,25 @@ function LeaderboardContent() {
 
         <div className="mb-6 flex flex-col gap-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <Tabs value={timeframe} onValueChange={handleTimeframeChange} className="w-full sm:w-auto">
-              <TabsList className="flex w-full sm:w-auto overflow-x-auto whitespace-nowrap bg-slate-900/50 backdrop-blur-sm p-1.5 rounded-lg border border-slate-800/50 gap-1" data-testid="timeframe-tabs">
-                {(["all", "daily", "weekly", "monthly"] as Timeframe[]).map((tf) => {
-                  const isActive = timeframe === tf;
-                  return (
-                    <Tooltip key={tf}>
-                      <TooltipTrigger asChild>
-                        <TabsTrigger 
-                          value={tf} 
-                          data-testid={`tab-${tf}`}
-                          className={`
-                            relative z-0 px-3 py-2.5 rounded-md font-medium text-sm whitespace-nowrap flex-shrink-0
-                            transition-all duration-200 ease-in-out
-                            data-[state=active]:bg-transparent data-[state=active]:shadow-none
-                            overflow-hidden
-                            ${isActive 
-                              ? 'text-white' 
-                              : 'text-slate-400 hover:text-slate-200'
-                            }
-                            hover:bg-slate-800/30
-                            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary
-                          `}
-                        >
-                          {isActive && (
-                            <motion.div
-                              layoutId="active-timeframe-tab"
-                              className="absolute inset-0 bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/20 rounded-md z-[-1]"
-                              transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
-                            />
-                          )}
-                          <span className={`relative z-10 flex items-center justify-center gap-1.5 whitespace-nowrap ${isActive ? 'drop-shadow-sm' : ''}`}>
-                            {isActive && (
-                              <motion.span
-                                initial={{ scale: 0, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                transition={{ type: "spring", bounce: 0.4, duration: 0.4 }}
-                                className="inline-block w-1.5 h-1.5 bg-white rounded-full flex-shrink-0"
-                              />
-                            )}
-                            <span className="truncate">
-                            {tf === "all" ? "All Time" : tf.charAt(0).toUpperCase() + tf.slice(1)}
-                            </span>
-                          </span>
-                        </TabsTrigger>
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom" className="bg-slate-800 border-slate-700">
-                        <p>{TIMEFRAME_TOOLTIPS[tf]}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  );
-                })}
-              </TabsList>
-            </Tabs>
+            <div className="w-full sm:w-auto">
+              <SearchableSelect
+                value={timeframe}
+                onValueChange={(v) => handleTimeframeChange(v)}
+                options={[
+                  { value: "all", label: "All Time" },
+                  { value: "daily", label: "Today" },
+                  { value: "weekly", label: "Weekly" },
+                  { value: "monthly", label: "Monthly" },
+                ]}
+                placeholder="Select period"
+                searchPlaceholder="Search period..."
+                emptyText="No period found."
+                icon={<Clock className="w-4 h-4" />}
+                triggerClassName="w-full sm:w-[200px]"
+                contentClassName="max-h-[300px] overflow-y-auto"
+                data-testid="timeframe-dropdown"
+              />
+            </div>
 
             {userData?.user && (
               <Tooltip>
@@ -984,10 +950,10 @@ function LeaderboardContent() {
                   })}
                 </div>
 
-                <div className="flex items-center justify-between p-4 border-t border-border/50">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 sm:p-4 border-t border-border/50">
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <div className="text-sm text-muted-foreground cursor-help">
+                      <div className="text-xs sm:text-sm text-muted-foreground cursor-help text-center sm:text-left">
                         Showing {Math.min(offset + 1, pagination.total)} - {Math.min(offset + entries.length, pagination.total)} of {pagination.total} results
                         {isFetching && <Loader2 className="inline-block ml-2 w-4 h-4 animate-spin" />}
                       </div>
@@ -1005,16 +971,17 @@ function LeaderboardContent() {
                           onClick={handlePrevPage}
                           disabled={offset === 0 || isFetching}
                           data-testid="prev-page"
+                          className="gap-1"
                         >
-                          <ChevronLeft className="w-4 h-4 mr-1" />
-                          Previous
+                          <ChevronLeft className="w-4 h-4" />
+                          <span className="hidden sm:inline">Previous</span>
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>{offset === 0 ? "You're on the first page" : `Go to page ${safeCurrentPage - 1}`}</p>
                       </TooltipContent>
                     </Tooltip>
-                    <span className="text-sm text-muted-foreground px-2">
+                    <span className="text-xs sm:text-sm text-muted-foreground px-1 sm:px-2">
                       Page {safeCurrentPage} of {totalPages}
                     </span>
                     <Tooltip>
@@ -1025,9 +992,10 @@ function LeaderboardContent() {
                           onClick={handleNextPage}
                           disabled={!pagination.hasMore || offset + limit >= pagination.total || isFetching}
                           data-testid="next-page"
+                          className="gap-1"
                         >
-                          Next
-                          <ChevronRight className="w-4 h-4 ml-1" />
+                          <span className="hidden sm:inline">Next</span>
+                          <ChevronRight className="w-4 h-4" />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>

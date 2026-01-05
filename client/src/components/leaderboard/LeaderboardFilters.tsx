@@ -6,7 +6,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Globe, Code, HelpCircle, Filter } from "lucide-react";
+import { Globe, Code, HelpCircle, Filter, Clock } from "lucide-react";
 import { 
   type LeaderboardMode,
   type LeaderboardFilter,
@@ -44,35 +44,50 @@ export function LeaderboardFilters({ mode, filters, onFilterChange }: Leaderboar
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 flex-wrap w-full">
       {config.filters.map((filter: LeaderboardFilter) => (
-        <div key={filter.key} className="flex items-center gap-2">
-          {filter.type === "tabs" ? (
-            <Tabs 
-              value={filters[filter.key] || filter.defaultValue || "all"} 
+        <div key={filter.key} className="flex items-center gap-2 w-full sm:w-auto">
+          {filter.key === "timeframe" ? (
+            <SearchableSelect
+              value={filters[filter.key] || filter.defaultValue || "all"}
               onValueChange={(v) => onFilterChange(filter.key, v)}
-            >
-              <TabsList className="h-9 p-1 bg-muted/60 w-full overflow-x-auto">
-                {filter.options.map((option) => {
-                  const isActive = (filters[filter.key] || filter.defaultValue || "all") === option.value;
-                  return (
-                    <TabsTrigger 
-                      key={option.value}
-                      value={option.value}
-                      className="text-xs sm:text-sm px-3 whitespace-nowrap relative z-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none transition-none"
-                      data-testid={`filter-${filter.key}-${option.value}`}
-                    >
-                      {isActive && (
-                        <motion.div
-                          layoutId={`active-filter-${filter.key}-tab`}
-                          className="absolute inset-0 bg-background shadow-sm rounded-sm z-[-1]"
-                          transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                        />
-                      )}
-                      <span className="relative z-10">{option.label}</span>
-                    </TabsTrigger>
-                  );
-                })}
-              </TabsList>
-            </Tabs>
+              options={filter.options}
+              placeholder="Select period"
+              searchPlaceholder="Search period..."
+              emptyText="No period found."
+              icon={<Clock className="w-4 h-4" />}
+              triggerClassName="w-full sm:w-[200px]"
+              contentClassName="max-h-[300px] overflow-y-auto"
+              data-testid={`filter-${filter.key}-dropdown`}
+            />
+          ) : filter.type === "tabs" ? (
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <Tabs 
+                value={filters[filter.key] || filter.defaultValue || "all"} 
+                onValueChange={(v) => onFilterChange(filter.key, v)}
+              >
+                <TabsList className="flex h-auto sm:h-9 p-1 bg-muted/60 w-full overflow-x-auto overflow-y-hidden whitespace-nowrap rounded-lg border border-transparent sm:border-slate-800/50 gap-0.5 pr-1 sm:pr-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] snap-x sm:snap-none">
+                  {filter.options.map((option) => {
+                    const isActive = (filters[filter.key] || filter.defaultValue || "all") === option.value;
+                    return (
+                      <TabsTrigger 
+                        key={option.value}
+                        value={option.value}
+                        className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2 whitespace-nowrap flex-shrink-0 overflow-hidden snap-start rounded-md border border-transparent relative z-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none transition-none"
+                        data-testid={`filter-${filter.key}-${option.value}`}
+                      >
+                        {isActive && (
+                          <motion.div
+                            layoutId={`active-filter-${filter.key}-tab`}
+                            className="absolute inset-0 bg-background rounded-sm pointer-events-none z-0 shadow-none md:shadow-sm"
+                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                          />
+                        )}
+                        <span className="relative z-10">{option.label}</span>
+                      </TabsTrigger>
+                    );
+                  })}
+                </TabsList>
+              </Tabs>
+            </div>
           ) : (
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
               <SearchableSelect

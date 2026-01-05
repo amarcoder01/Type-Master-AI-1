@@ -15,6 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/lib/auth-context";
 import { Link } from "wouter";
 
+import { useIsMobile } from "@/hooks/use-mobile";
 // Simple date formatting utilities to avoid dependency issues
 const format = (date: Date | string, formatStr: string): string => {
   const d = typeof date === 'string' ? new Date(date) : date;
@@ -847,6 +848,7 @@ function AnalyticsContent() {
   const [weeklyPlan, setWeeklyPlan] = useState<WeeklyGoal[]>([]);
   const [loadingWeeklyPlan, setLoadingWeeklyPlan] = useState(false);
   const [showAllErrorKeys, setShowAllErrorKeys] = useState(false);
+  const isMobile = useIsMobile();
 
   const { data: analyticsData, isLoading, isError, error, refetch } = useQuery<{ analytics: AnalyticsData }>({
     queryKey: [`/api/analytics?days=${selectedDays}`],
@@ -1996,12 +1998,12 @@ Make goals progressive and appropriate for ${skillLevel.level.toLowerCase()} lev
       </TooltipProvider>
 
       <Tabs defaultValue="performance" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="performance" data-testid="tab-performance">Performance</TabsTrigger>
-          <TabsTrigger value="keystroke" data-testid="tab-keystroke">Keystroke Analysis</TabsTrigger>
-          <TabsTrigger value="mistakes" data-testid="tab-mistakes">Mistakes</TabsTrigger>
-          <TabsTrigger value="insights" data-testid="tab-insights">AI Insights</TabsTrigger>
-          <TabsTrigger value="practice" data-testid="tab-practice">Practice Plan</TabsTrigger>
+        <TabsList className="flex w-full overflow-x-auto sm:overflow-visible gap-2 sm:grid sm:grid-cols-5 justify-start sm:justify-center">
+          <TabsTrigger className="w-auto sm:w-full flex-shrink-0" value="performance" data-testid="tab-performance">Performance</TabsTrigger>
+          <TabsTrigger className="w-auto sm:w-full flex-shrink-0" value="keystroke" data-testid="tab-keystroke">Keystroke Analysis</TabsTrigger>
+          <TabsTrigger className="w-auto sm:w-full flex-shrink-0" value="mistakes" data-testid="tab-mistakes">Mistakes</TabsTrigger>
+          <TabsTrigger className="w-auto sm:w-full flex-shrink-0" value="insights" data-testid="tab-insights">AI Insights</TabsTrigger>
+          <TabsTrigger className="w-auto sm:w-full flex-shrink-0" value="practice" data-testid="tab-practice">Practice Plan</TabsTrigger>
         </TabsList>
 
         <TabsContent value="performance" className="space-y-4">
@@ -2011,7 +2013,7 @@ Make goals progressive and appropriate for ${skillLevel.level.toLowerCase()} lev
               <CardDescription>Your typing speed over time</CardDescription>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width="100%" height={isMobile ? 220 : 300}>
                 <AreaChart data={analytics.wpmOverTime} aria-label="WPM Progress Chart">
                   <defs>
                     <linearGradient id="colorWpm" x1="0" y1="0" x2="0" y2="1">
@@ -2024,10 +2026,11 @@ Make goals progressive and appropriate for ${skillLevel.level.toLowerCase()} lev
                     dataKey="date"
                     stroke="#888"
                     tickFormatter={formatChartDate}
-                    tick={{ fontSize: 12 }}
-                    angle={-45}
-                    textAnchor="end"
-                    height={60}
+                    tick={{ fontSize: isMobile ? 10 : 12 }}
+                    angle={isMobile ? 0 : -45}
+                    textAnchor={isMobile ? "middle" : "end"}
+                    height={isMobile ? 30 : 60}
+                    interval={isMobile ? "preserveStartEnd" : 0}
                   />
                   <YAxis stroke="#888" domain={['dataMin - 5', 'dataMax + 5']} />
                   <ChartTooltip content={<WPMTooltip />} />
@@ -2051,17 +2054,18 @@ Make goals progressive and appropriate for ${skillLevel.level.toLowerCase()} lev
                 <CardDescription>How accurate you've been typing</CardDescription>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={250}>
+                <ResponsiveContainer width="100%" height={isMobile ? 200 : 250}>
                   <LineChart data={analytics.wpmOverTime} aria-label="Accuracy Trend Chart">
                     <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
                     <XAxis
                       dataKey="date"
                       stroke="#888"
                       tickFormatter={formatChartDate}
-                      tick={{ fontSize: 12 }}
-                      angle={-45}
-                      textAnchor="end"
-                      height={60}
+                      tick={{ fontSize: isMobile ? 10 : 12 }}
+                      angle={isMobile ? 0 : -45}
+                      textAnchor={isMobile ? "middle" : "end"}
+                      height={isMobile ? 30 : 60}
+                      interval={isMobile ? "preserveStartEnd" : 0}
                     />
                     <YAxis
                       stroke="#888"
@@ -2217,7 +2221,7 @@ Make goals progressive and appropriate for ${skillLevel.level.toLowerCase()} lev
                   {(trendsData.trends.weeklyAggregates?.length ?? 0) > 1 && (
                     <div data-testid="weekly-chart-container">
                       <h4 className="text-sm font-medium mb-3">Weekly Average WPM</h4>
-                      <ResponsiveContainer width="100%" height={200}>
+                      <ResponsiveContainer width="100%" height={isMobile ? 180 : 200}>
                         <BarChart data={trendsData.trends.weeklyAggregates} aria-label="Weekly WPM Chart">
                           <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
                           <XAxis
@@ -2226,7 +2230,8 @@ Make goals progressive and appropriate for ${skillLevel.level.toLowerCase()} lev
                             tickFormatter={(val) => {
                               try { return format(parseISO(val), 'MMM d'); } catch { return val; }
                             }}
-                            tick={{ fontSize: 11 }}
+                            tick={{ fontSize: isMobile ? 10 : 11 }}
+                            interval={isMobile ? "preserveStartEnd" : 0}
                           />
                           <YAxis stroke="#888" domain={['dataMin - 5', 'dataMax + 5']} />
                           <ChartTooltip
@@ -2585,7 +2590,7 @@ Make goals progressive and appropriate for ${skillLevel.level.toLowerCase()} lev
                         position: idx + 1
                       }))}>
                         <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
-                        <XAxis dataKey="chunk" stroke="#888" />
+                        <XAxis dataKey="chunk" stroke="#888" tick={{ fontSize: isMobile ? 10 : 12 }} />
                         <YAxis stroke="#888" domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
                         <ChartTooltip
                           cursor={{ fill: 'rgba(255, 255, 255, 0.1)' }}
@@ -2742,7 +2747,7 @@ Make goals progressive and appropriate for ${skillLevel.level.toLowerCase()} lev
                           count: count
                         }))}>
                           <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
-                          <XAxis dataKey="finger" stroke="#888" angle={-45} textAnchor="end" height={80} />
+                          <XAxis dataKey="finger" stroke="#888" angle={isMobile ? 0 : -45} textAnchor={isMobile ? "middle" : "end"} height={isMobile ? 40 : 80} tick={{ fontSize: isMobile ? 10 : 12 }} />
                           <YAxis stroke="#888" />
                           <ChartTooltip
                             contentStyle={{ backgroundColor: "#1e293b", border: "1px solid #334155" }}
@@ -3040,7 +3045,7 @@ Make goals progressive and appropriate for ${skillLevel.level.toLowerCase()} lev
                       <CardDescription>Speed consistency over text position</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <ResponsiveContainer width="100%" height={250}>
+                      <ResponsiveContainer width="100%" height={isMobile ? 200 : 250}>
                         <LineChart data={
                           Array.isArray(keystrokeData?.analytics.wpmByPosition)
                             ? keystrokeData?.analytics.wpmByPosition.map((item: { position: number; wpm: number } | number, idx: number) => ({
@@ -3051,7 +3056,7 @@ Make goals progressive and appropriate for ${skillLevel.level.toLowerCase()} lev
                             : []
                         }>
                           <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
-                          <XAxis dataKey="position" stroke="#888" />
+                          <XAxis dataKey="position" stroke="#888" tick={{ fontSize: isMobile ? 10 : 12 }} />
                           <YAxis stroke="#888" />
                           <ChartTooltip
                             contentStyle={{ backgroundColor: "#1e293b", border: "1px solid #334155" }}
@@ -3101,7 +3106,7 @@ Make goals progressive and appropriate for ${skillLevel.level.toLowerCase()} lev
                       <CardDescription>Words typed significantly slower (&gt;30%) than your average pace</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <ScrollArea className="h-[250px]">
+                      <ScrollArea className="h-[220px] sm:h-[250px]">
                         <div className="space-y-2">
                           {(keystrokeData?.analytics?.slowestWords || []).slice(0, 10).map((item: any, idx: number) => {
                             const time = item.time || 0;
@@ -3255,7 +3260,7 @@ Make goals progressive and appropriate for ${skillLevel.level.toLowerCase()} lev
                         </Link>
                       </div>
                     ) : (
-                      <ResponsiveContainer width="100%" height={300}>
+                      <ResponsiveContainer width="100%" height={isMobile ? 220 : 300}>
                         <BarChart
                           data={analytics.mistakesHeatmap.slice(0, 10)}
                           aria-label="Mistake heatmap bar chart"
@@ -3266,8 +3271,8 @@ Make goals progressive and appropriate for ${skillLevel.level.toLowerCase()} lev
                             dataKey="key"
                             stroke="#888"
                             aria-label="Keys"
-                            tick={{ fontSize: 12 }}
-                            interval={0}
+                            tick={{ fontSize: isMobile ? 10 : 12 }}
+                            interval={isMobile ? "preserveStartEnd" : 0}
                           />
                           <YAxis
                             stroke="#888"
@@ -3346,7 +3351,7 @@ Make goals progressive and appropriate for ${skillLevel.level.toLowerCase()} lev
                         </Link>
                       </div>
                     ) : (
-                      <ScrollArea className="h-[300px]">
+                      <ScrollArea className="h-[220px] sm:h-[300px]">
                         <div className="space-y-2">
                           {analytics.commonMistakes.slice(0, 15).map((mistake, idx) => (
                             <TooltipProvider key={idx}>

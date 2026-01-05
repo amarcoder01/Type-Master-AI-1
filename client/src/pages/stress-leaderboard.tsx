@@ -297,12 +297,12 @@ function StressLeaderboardContent() {
 
           {/* Difficulty Filter */}
           <Tabs value={selectedDifficulty} onValueChange={handleDifficultyChange} className="mb-8">
-            <TabsList className="grid w-full grid-cols-6 h-12 p-1 bg-muted/50">
+            <TabsList className="flex w-full overflow-x-auto overflow-y-hidden whitespace-nowrap h-auto sm:h-12 p-1 bg-muted/50 rounded-lg border border-transparent sm:border-slate-800/50 gap-0.5 sm:gap-1 pr-1 sm:pr-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] snap-x sm:snap-none">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <TabsTrigger 
                     value="all" 
-                    className={`relative gap-1 font-bold transition-all duration-300 ${
+                    className={`relative gap-1 font-bold transition-all duration-300 flex-shrink-0 overflow-hidden snap-start rounded-md whitespace-nowrap px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm ${
                       selectedDifficulty === 'all' 
                         ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30' 
                         : 'hover:bg-muted'
@@ -321,7 +321,7 @@ function StressLeaderboardContent() {
                   <TooltipTrigger asChild>
                     <TabsTrigger 
                       value={diff} 
-                      className={`relative gap-1 font-bold transition-all duration-300 ${
+                      className={`relative gap-1 font-bold transition-all duration-300 flex-shrink-0 overflow-hidden snap-start rounded-md whitespace-nowrap px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm ${
                         selectedDifficulty === diff 
                           ? 'text-white shadow-lg' 
                           : 'hover:bg-muted'
