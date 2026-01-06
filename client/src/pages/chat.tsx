@@ -633,8 +633,8 @@ export default function Chat() {
     title: 'AI Typing Coach | Get Personalized Tips - TypeMasterAI',
     description: 'Chat with our AI typing coach to get personalized tips and recommendations for improving your typing speed and accuracy.',
     keywords: 'ai typing coach, typing tips, typing advice, improve typing speed, typing help, ai assistant, typing improvement',
-    canonical: 'https://typemaster-ai.replit.app/chat',
-    ogUrl: 'https://typemaster-ai.replit.app/chat',
+    canonical: 'https://typemasterai.com/chat',
+    ogUrl: 'https://typemasterai.com/chat',
   });
   const { user } = useAuth();
   const queryClient = useQueryClient();
@@ -845,13 +845,21 @@ export default function Chat() {
     ];
 
     if (!validTypes.includes(file.type)) {
-      alert('Unsupported file type. Please upload an image (JPG, PNG, GIF, WebP), PDF, Word document, or text file.');
+      toast({
+        title: "Unsupported file type",
+        description: "Please upload an image (JPG, PNG, GIF, WebP), PDF, Word document, or text file.",
+        variant: "destructive",
+      });
       return;
     }
 
     // Validate file size (10MB limit)
     if (file.size > 10 * 1024 * 1024) {
-      alert('File size must be less than 10MB');
+      toast({
+        title: "File too large",
+        description: "File size must be less than 10MB.",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -1133,8 +1141,6 @@ export default function Chat() {
       const totalTime = Date.now() - requestStartTime;
       if (totalTime > 10000) {
         console.warn(`[Chat] Slow response: ${totalTime}ms`);
-      } else if (totalTime < 1000) {
-        console.log(`[Chat] Fast response (likely cached): ${totalTime}ms`);
       }
     }
   };
@@ -1228,7 +1234,7 @@ export default function Chat() {
       <div className="fixed inset-0 top-14 flex z-40">
         {/* Mobile Backdrop */}
         {isMobile && sidebarOpen && (
-          <div 
+          <div
             className="fixed inset-0 bg-black/60 z-40 md:hidden"
             onClick={() => setSidebarOpen(false)}
           />
@@ -1239,8 +1245,8 @@ export default function Chat() {
             "bg-gradient-to-b from-zinc-950 to-zinc-900 border-r border-zinc-800 transition-all duration-300 flex flex-col",
             // Mobile: absolute overlay
             "fixed md:relative z-50 md:z-auto h-full",
-            sidebarOpen 
-              ? "w-[85%] max-w-[280px] md:w-64 translate-x-0" 
+            sidebarOpen
+              ? "w-[85%] max-w-[280px] md:w-64 translate-x-0"
               : "w-0 -translate-x-full md:translate-x-0"
           )}
         >

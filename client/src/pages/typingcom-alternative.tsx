@@ -10,8 +10,8 @@ export default function TypingComAlternativePage() {
     title: 'Typing.com Alternative | TypeMasterAI - Free Typing Test for Students & Teachers',
     description: 'Looking for a Typing.com alternative? TypeMasterAI offers free typing tests with AI-powered analytics, multiplayer racing, code typing mode, and comprehensive progress tracking. Perfect for students, teachers, and self-learners!',
     keywords: 'typing.com alternative, free typing lessons, typing test for students, typing tutor alternative, typing practice online, learn to type free, typing course alternative, student typing test',
-    canonical: 'https://typemaster-ai.replit.app/typingcom-alternative',
-    ogUrl: 'https://typemaster-ai.replit.app/typingcom-alternative',
+    canonical: 'https://typemasterai.com/typingcom-alternative',
+    ogUrl: 'https://typemasterai.com/typingcom-alternative',
   });
 
   return (

@@ -6,8 +6,8 @@ export default function Contact() {
     title: 'Contact Us | TypeMasterAI Support',
     description: 'Get in touch with the TypeMasterAI team. We are here to help with questions, feedback, and support for our typing test platform.',
     keywords: 'contact typemasterai, typing test support, typing test help, typemasterai email, customer support',
-    canonical: 'https://typemaster-ai.replit.app/contact',
-    ogUrl: 'https://typemaster-ai.replit.app/contact',
+    canonical: 'https://typemasterai.com/contact',
+    ogUrl: 'https://typemasterai.com/contact',
   });
   return (
     <div className="max-w-4xl mx-auto" data-testid="page-contact">

@@ -1,5 +1,5 @@
 import { Link } from 'wouter';
-import { Gauge, Timer, Target, TrendingUp, Zap, ArrowRight, CheckCircle, Calculator, BarChart3 } from 'lucide-react';
+import { Gauge, Timer, Target, TrendingUp, Zap, ArrowRight, CheckCircle, Calculator, BarChart3, Brain } from 'lucide-react';
 import { useSEO, SEO_CONFIGS, getHowToSchema } from '@/lib/seo';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,7 +25,7 @@ export default function WPMTestPage() {
     <div className="min-h-screen">
       <div className="container mx-auto px-4 pt-20 pb-16">
         <Breadcrumbs items={[{ label: 'WPM Test', href: '/wpm-test' }]} />
-        
+
         {/* Hero Section */}
         <section className="max-w-4xl mx-auto text-center pt-8 pb-16">
           <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60 mb-6">

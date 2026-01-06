@@ -28,7 +28,7 @@ export default function NotFound() {
   useSEO({
     title: "Page Not Found | TypeMasterAI - Free Typing Test",
     description: "Oops! The page you're looking for doesn't exist. Try our free typing test, code typing mode, or multiplayer racing instead.",
-    canonical: "https://typemaster-ai.replit.app/404",
+    canonical: "https://typemasterai.com/404",
   });
 
   const popularPages = [

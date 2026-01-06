@@ -4,7 +4,7 @@
  * Supports Bing, Yandex, and other IndexNow-compatible search engines
  */
 
-const BASE_URL = 'https://typemaster-ai.replit.app';
+const BASE_URL = 'https://typemasterai.com';
 
 // IndexNow API key - should be a unique string stored as a file at /{key}.txt on the site
 // For production, store this in environment variables

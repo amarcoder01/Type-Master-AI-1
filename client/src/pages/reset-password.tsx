@@ -14,8 +14,8 @@ export default function ResetPassword() {
     title: 'Reset Password | TypeMasterAI',
     description: 'Create a new password for your TypeMasterAI account.',
     keywords: 'reset password, new password, account recovery',
-    canonical: 'https://typemaster-ai.replit.app/reset-password',
-    ogUrl: 'https://typemaster-ai.replit.app/reset-password',
+    canonical: 'https://typemasterai.com/reset-password',
+    ogUrl: 'https://typemasterai.com/reset-password',
     noindex: true,
   });
   const [, setLocation] = useLocation();

@@ -39,8 +39,8 @@ export default function SharedResult() {
     title: 'Shared Code Typing Result | TypeMasterAI',
     description: 'View this shared code typing test result from TypeMasterAI. See WPM, accuracy, and programming language statistics.',
     keywords: 'shared result, code typing result, wpm result, typing stats',
-    canonical: 'https://typemaster-ai.replit.app/',
-    ogUrl: 'https://typemaster-ai.replit.app/',
+    canonical: 'https://typemasterai.com/',
+    ogUrl: 'https://typemasterai.com/',
   });
   const [, params] = useRoute("/share/:shareId");
   const shareId = params?.shareId;

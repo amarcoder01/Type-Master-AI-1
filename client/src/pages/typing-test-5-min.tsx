@@ -10,8 +10,8 @@ export default function TypingTest5MinPage() {
     title: '5 Minute Typing Test | Free 300 Second WPM Endurance Test - TypeMasterAI',
     description: 'Take a professional 5-minute typing speed test for maximum accuracy. Perfect for advanced typists and job assessments. Get comprehensive performance analytics and stamina evaluation. Start your free 5-minute typing test now!',
     keywords: '5 minute typing test, 300 second typing test, typing test 5 min, five minute typing speed test, typing endurance test, professional typing test',
-    canonical: 'https://typemaster-ai.replit.app/5-minute-typing-test',
-    ogUrl: 'https://typemaster-ai.replit.app/5-minute-typing-test',
+    canonical: 'https://typemasterai.com/5-minute-typing-test',
+    ogUrl: 'https://typemasterai.com/5-minute-typing-test',
     structuredData: {
       '@context': 'https://schema.org',
       '@type': 'HowTo',
@@ -140,6 +140,28 @@ export default function TypingTest5MinPage() {
         {/* SEO Content Section */}
         <section className="max-w-4xl mx-auto py-16">
           <article className="prose prose-invert prose-cyan max-w-none">
+
+            {/* AI Answer / TL;DR Section */}
+            <div className="bg-slate-800/80 border border-purple-500/30 rounded-xl p-6 mb-8 shadow-lg shadow-purple-900/10" data-testid="ai-answer-section">
+              <div className="flex items-center gap-2 mb-4">
+                <Brain className="w-6 h-6 text-purple-400" />
+                <h2 className="text-xl font-bold text-white m-0 !mt-0">Quick Answer: 5 Minute Typing Test</h2>
+              </div>
+              <p className="text-slate-300 text-lg leading-relaxed mb-4">
+                A <strong>5-minute typing test</strong> evaluates your typing endurance and consistency. Unlike shorter tests, it reveals your ability to maintain speed without fatigue.
+              </p>
+              <div className="grid sm:grid-cols-2 gap-4 not-prose">
+                <div>
+                  <h3 className="font-semibold text-purple-400 mb-1">Key Benefit</h3>
+                  <p className="text-sm text-slate-400">Most accurate predictor of <strong>real-world job performance</strong> and typing stamina.</p>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-purple-400 mb-1">Pro Tip</h3>
+                  <p className="text-sm text-slate-400">Pace yourself at <strong>90% of your max speed</strong> to avoid burnout and error spikes in minutes 3-5.</p>
+                </div>
+              </div>
+            </div>
+
             <h2 className="text-3xl font-bold text-white">What is a 5 Minute Typing Test?</h2>
             <p className="text-lg text-slate-300 leading-relaxed">
               A <strong>5 minute typing test</strong> is the professional standard for measuring sustained typing performance. Over 300 seconds, you'll demonstrate not just your peak speed but your ability to maintain consistency, accuracy, and focus during extended typing sessions. This format is used by employers, certification programs, and typing competitions worldwide.
@@ -237,7 +259,7 @@ export default function TypingTest5MinPage() {
             </div>
 
             <h3 className="text-2xl font-bold text-white mt-8">Frequently Asked Questions</h3>
-            
+
             <h4 className="text-xl font-semibold text-cyan-400 mt-6">Is 5 minutes too long for a typing test?</h4>
             <p className="text-lg text-slate-300">
               For beginners, yes - start with 1-3 minute tests first. But for professional assessment and certification, 5 minutes is the standard because it accurately reflects your sustained typing ability, not just short bursts.

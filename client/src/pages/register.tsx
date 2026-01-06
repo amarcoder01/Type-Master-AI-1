@@ -35,8 +35,8 @@ export default function Register() {
     title: 'Create Account | TypeMasterAI',
     description: 'Create a free TypeMasterAI account to save your typing progress, earn achievements, and compete on leaderboards.',
     keywords: 'register, sign up, create account, typemasterai, free account',
-    canonical: 'https://typemaster-ai.replit.app/register',
-    ogUrl: 'https://typemaster-ai.replit.app/register',
+    canonical: 'https://typemasterai.com/register',
+    ogUrl: 'https://typemasterai.com/register',
     noindex: true,
   });
   const [, setLocation] = useLocation();

@@ -42,8 +42,8 @@ function UnifiedLeaderboardContent() {
     title: 'Unified Leaderboards | All Typing Rankings - TypeMasterAI',
     description: 'Browse all TypeMasterAI leaderboards in one place. Compare rankings across standard typing, code typing, stress tests, and multiplayer races.',
     keywords: 'typing leaderboards, all rankings, typing competition, wpm rankings, unified leaderboard',
-    canonical: 'https://typemaster-ai.replit.app/leaderboards',
-    ogUrl: 'https://typemaster-ai.replit.app/leaderboards',
+    canonical: 'https://typemasterai.com/leaderboards',
+    ogUrl: 'https://typemasterai.com/leaderboards',
   });
   const [, setLocation] = useLocation();
   const searchParams = useSearchParams();

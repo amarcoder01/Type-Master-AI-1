@@ -6,8 +6,8 @@ export default function TermsOfService() {
     title: 'Terms of Service | TypeMasterAI',
     description: 'Read TypeMasterAI\'s terms of service. Understand the rules and guidelines for using our typing test platform.',
     keywords: 'terms of service, terms and conditions, typemasterai terms, user agreement',
-    canonical: 'https://typemaster-ai.replit.app/terms-of-service',
-    ogUrl: 'https://typemaster-ai.replit.app/terms-of-service',
+    canonical: 'https://typemasterai.com/terms-of-service',
+    ogUrl: 'https://typemasterai.com/terms-of-service',
   });
 
   return (

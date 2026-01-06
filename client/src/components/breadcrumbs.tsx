@@ -14,10 +14,10 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
     <nav aria-label="Breadcrumb" className="py-4">
       <ol className="flex items-center space-x-2 text-sm text-slate-400" itemScope itemType="https://schema.org/BreadcrumbList">
         <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
-          <a 
-            href="/" 
+          <a
+            href="/"
             itemProp="item"
-            className="flex items-center hover:text-cyan-400 transition-colors" 
+            className="flex items-center hover:text-cyan-400 transition-colors"
             data-testid="breadcrumb-home"
           >
             <Home className="h-4 w-4" />
@@ -25,7 +25,7 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
           </a>
           <meta itemProp="position" content="1" />
         </li>
-        
+
         {items.map((item, index) => (
           <li key={item.href} className="flex items-center" itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
             <ChevronRight className="h-4 w-4 mx-2" />
@@ -34,13 +34,13 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
                 <span className="text-cyan-400 font-medium" itemProp="name" data-testid={`breadcrumb-${index}`}>
                   {item.label}
                 </span>
-                <meta itemProp="item" content={`https://typemaster-ai.replit.app${item.href}`} />
+                <meta itemProp="item" content={`https://typemasterai.com${item.href}`} />
               </>
             ) : (
-              <a 
-                href={item.href} 
+              <a
+                href={item.href}
                 itemProp="item"
-                className="hover:text-cyan-400 transition-colors" 
+                className="hover:text-cyan-400 transition-colors"
                 data-testid={`breadcrumb-${index}`}
               >
                 <span itemProp="name">{item.label}</span>

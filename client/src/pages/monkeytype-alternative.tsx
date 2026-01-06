@@ -10,8 +10,8 @@ export default function MonkeytypeAlternativePage() {
     title: 'Monkeytype Alternative | TypeMasterAI - Free Typing Test with AI Features',
     description: 'Looking for a Monkeytype alternative? TypeMasterAI offers everything Monkeytype has plus AI-powered analytics, code typing mode, multiplayer racing, and 23+ languages. Try the best free typing test alternative now!',
     keywords: 'monkeytype alternative, typing test alternative, better than monkeytype, monkeytype vs typemaster, free typing test, typing speed test online, monkeytype competitor',
-    canonical: 'https://typemaster-ai.replit.app/monkeytype-alternative',
-    ogUrl: 'https://typemaster-ai.replit.app/monkeytype-alternative',
+    canonical: 'https://typemasterai.com/monkeytype-alternative',
+    ogUrl: 'https://typemasterai.com/monkeytype-alternative',
   });
 
   return (

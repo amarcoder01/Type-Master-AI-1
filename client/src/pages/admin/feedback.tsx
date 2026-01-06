@@ -190,8 +190,8 @@ export default function AdminFeedbackDashboard() {
     title: 'Admin Feedback Dashboard | TypeMasterAI',
     description: 'Admin dashboard for managing user feedback and suggestions.',
     keywords: 'admin, feedback, dashboard, typemasterai',
-    canonical: 'https://typemaster-ai.replit.app/admin/feedback',
-    ogUrl: 'https://typemaster-ai.replit.app/admin/feedback',
+    canonical: 'https://typemasterai.com/admin/feedback',
+    ogUrl: 'https://typemasterai.com/admin/feedback',
     noindex: true,
   });
   const { user } = useAuth();

@@ -6,8 +6,8 @@ export default function AccessibilityStatement() {
     title: 'Accessibility Statement | TypeMasterAI',
     description: 'TypeMasterAI\'s commitment to accessibility. Learn about our efforts to make our typing test platform accessible to all users.',
     keywords: 'accessibility, wcag, accessible typing test, disability support, a11y',
-    canonical: 'https://typemaster-ai.replit.app/accessibility',
-    ogUrl: 'https://typemaster-ai.replit.app/accessibility',
+    canonical: 'https://typemasterai.com/accessibility',
+    ogUrl: 'https://typemasterai.com/accessibility',
   });
 
   return (

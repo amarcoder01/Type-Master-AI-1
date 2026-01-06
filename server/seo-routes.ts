@@ -13,7 +13,7 @@ export interface SEORouteConfig {
   noindex?: boolean;
 }
 
-const BASE_URL = 'https://typemaster-ai.replit.app';
+const BASE_URL = 'https://typemasterai.com';
 
 export const SEO_ROUTES: Record<string, SEORouteConfig> = {
   '/': {
@@ -270,6 +270,50 @@ export const SEO_ROUTES: Record<string, SEORouteConfig> = {
     canonical: `${BASE_URL}/typing-certificate`,
     ogType: 'website',
   },
+  // Phase 3 Pillar Pages
+  '/average-typing-speed': {
+    title: 'Average Typing Speed by Age & Gender | 2026 Statistics - TypeMasterAI',
+    description: 'What is the average typing speed? Comprehensive statistics on WPM benchmarks by age, gender, and profession. See how you compare to the world.',
+    keywords: 'average typing speed, average wpm, typing speed statistics, average typing speed by age, average words per minute',
+    canonical: `${BASE_URL}/average-typing-speed`,
+    ogType: 'article',
+  },
+  '/typing-speed-chart': {
+    title: 'Typing Speed Chart & Distributions | WPM Visualized - TypeMasterAI',
+    description: 'Visualizing typing speed distributions worldwide. See where you rank on the bell curve of WPM scores. Detailed infographic data included.',
+    keywords: 'typing speed chart, wpm chart, typing speed distribution, wpm percentile, typing skill levels',
+    canonical: `${BASE_URL}/typing-speed-chart`,
+    ogType: 'article',
+  },
+  '/typing-test-jobs': {
+    title: 'Typing Speed Requirements for Jobs | WPM Careers 2026 - TypeMasterAI',
+    description: 'Which jobs require fast typing? Discover the WPM requirements for data entry, transcription, administrative roles, and more.',
+    keywords: 'typing jobs, data entry wpm requirements, transcription typing speed, administrative assistant typing test, typing speed for jobs',
+    canonical: `${BASE_URL}/typing-test-jobs`,
+    ogType: 'article',
+  },
+  '/touch-typing': {
+    title: 'What is Touch Typing? | Learn Faster Typing - TypeMasterAI',
+    description: 'Learn the fundamentals of touch typing. Discover how to type without looking at the keyboard, improve your speed to 60+ WPM, and reduce physical strain.',
+    keywords: 'what is touch typing, learn touch typing, touch typing guide, proper finger placement, home row keys, typing without looking',
+    canonical: `${BASE_URL}/touch-typing`,
+    ogType: 'article',
+  },
+  '/keybr-alternative': {
+    title: 'Keybr Alternative | Best Adaptive Typing Practice - TypeMasterAI',
+    description: 'Looking for a Keybr alternative? TypeMasterAI offers standard WPM tests plus adaptive learning features, multiplayer modes, and detailed analytics.',
+    keywords: 'keybr alternative, better than keybr, keybr vs typemaster, adaptive typing practice, learn to type free',
+    canonical: `${BASE_URL}/keybr-alternative`,
+    ogType: 'website',
+  },
+  // International (Pilot)
+  '/es/typing-test': {
+    title: 'Prueba de Mecanografía Gratis | Test de Velocidad - TypeMasterAI',
+    description: 'Comprueba tu velocidad de escritura en español. Test de mecanografía de 1 minuto con certificado WPM gratis.',
+    keywords: 'prueba mecanografia, test velocidad escritura, typing test español, wpm español',
+    canonical: `${BASE_URL}/es/typing-test`,
+    ogType: 'website',
+  },
   // Noindex pages
   '/login': {
     title: 'Login | TypeMasterAI',
@@ -337,7 +381,7 @@ export function getSEOConfig(path: string): SEORouteConfig | null {
   if (SEO_ROUTES[path]) {
     return SEO_ROUTES[path];
   }
-  
+
   // Handle dynamic routes
   if (path.startsWith('/verify/')) {
     return {
@@ -345,7 +389,7 @@ export function getSEOConfig(path: string): SEORouteConfig | null {
       canonical: `${BASE_URL}${path}`,
     };
   }
-  
+
   if (path.startsWith('/share/')) {
     return {
       title: 'Shared Typing Result | TypeMasterAI',
@@ -355,7 +399,7 @@ export function getSEOConfig(path: string): SEORouteConfig | null {
       ogType: 'website',
     };
   }
-  
+
   if (path.startsWith('/result/')) {
     return {
       title: 'Typing Test Result | TypeMasterAI',
@@ -365,7 +409,7 @@ export function getSEOConfig(path: string): SEORouteConfig | null {
       ogType: 'website',
     };
   }
-  
+
   if (path.startsWith('/race/')) {
     return {
       title: 'Typing Race | TypeMasterAI',
@@ -376,7 +420,7 @@ export function getSEOConfig(path: string): SEORouteConfig | null {
       noindex: true, // Race rooms are temporary
     };
   }
-  
+
   return null;
 }
 

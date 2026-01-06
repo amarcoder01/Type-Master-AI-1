@@ -35,8 +35,8 @@ export default function Login() {
     title: 'Login | TypeMasterAI',
     description: 'Log in to your TypeMasterAI account to access your typing history, achievements, and personalized analytics.',
     keywords: 'login, sign in, typemasterai account',
-    canonical: 'https://typemaster-ai.replit.app/login',
-    ogUrl: 'https://typemaster-ai.replit.app/login',
+    canonical: 'https://typemasterai.com/login',
+    ogUrl: 'https://typemasterai.com/login',
     noindex: true,
   });
   const [, setLocation] = useLocation();

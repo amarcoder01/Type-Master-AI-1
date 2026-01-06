@@ -132,7 +132,7 @@ const FAQ_ITEMS: FAQItem[] = [
 ];
 
 // Group FAQs by category
-const FAQ_CATEGORIES = [...new Set(FAQ_ITEMS.map(item => item.category))];
+const FAQ_CATEGORIES = Array.from(new Set(FAQ_ITEMS.map(item => item.category)));
 
 const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   "Getting Started": HelpCircle,
@@ -152,8 +152,8 @@ export default function FAQPage() {
     title: 'FAQ | Frequently Asked Questions - TypeMasterAI',
     description: 'Find answers to common questions about TypeMasterAI typing tests. Learn about WPM calculation, typing speed improvement, features, languages, and more.',
     keywords: 'typing test faq, wpm questions, typing speed help, how to type faster, monkeytype alternative questions, typing test help',
-    canonical: 'https://typemaster-ai.replit.app/faq',
-    ogUrl: 'https://typemaster-ai.replit.app/faq',
+    canonical: 'https://typemasterai.com/faq',
+    ogUrl: 'https://typemasterai.com/faq',
     structuredData: {
       '@context': 'https://schema.org',
       '@type': 'FAQPage',
@@ -180,7 +180,7 @@ export default function FAQPage() {
     });
   };
 
-  const filteredFAQs = activeCategory 
+  const filteredFAQs = activeCategory
     ? FAQ_ITEMS.filter(item => item.category === activeCategory)
     : FAQ_ITEMS;
 
@@ -236,10 +236,10 @@ export default function FAQPage() {
         {filteredFAQs.map((item, index) => {
           const globalIndex = FAQ_ITEMS.indexOf(item);
           const isOpen = openItems.has(globalIndex);
-          
+
           return (
-            <div 
-              key={globalIndex} 
+            <div
+              key={globalIndex}
               className="border border-border/50 rounded-xl overflow-hidden bg-card/30"
             >
               <button

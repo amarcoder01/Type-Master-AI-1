@@ -46,8 +46,16 @@ export default function KeyboardTestPage() {
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     e.preventDefault();
     const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
-    setPressedKeys(prev => new Set([...prev, key]));
-    setTestedKeys(prev => new Set([...prev, key]));
+    setPressedKeys(prev => {
+      const next = new Set(prev);
+      next.add(key);
+      return next;
+    });
+    setTestedKeys(prev => {
+      const next = new Set(prev);
+      next.add(key);
+      return next;
+    });
     setLastKey(key);
   }, []);
 
@@ -81,7 +89,7 @@ export default function KeyboardTestPage() {
     const normalizedKey = key.length === 1 ? key.toLowerCase() : key;
     const isPressed = pressedKeys.has(normalizedKey) || pressedKeys.has(key);
     const isTested = testedKeys.has(normalizedKey) || testedKeys.has(key);
-    
+
     return cn(
       "flex items-center justify-center rounded border text-sm font-mono transition-all",
       key === ' ' ? 'col-span-5 min-w-[200px]' : '',
@@ -98,7 +106,7 @@ export default function KeyboardTestPage() {
     <div className="min-h-screen">
       <div className="container mx-auto px-4 pt-20 pb-16">
         <Breadcrumbs items={[{ label: 'Keyboard Test', href: '/keyboard-test' }]} />
-        
+
         {/* Hero Section */}
         <section className="max-w-4xl mx-auto text-center pt-8 pb-8">
           <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60 mb-6">
@@ -120,7 +128,7 @@ export default function KeyboardTestPage() {
                 <div>
                   <CardTitle>Keyboard Test</CardTitle>
                   <CardDescription>
-                    {isActive 
+                    {isActive
                       ? `Press any key to test. ${testedKeys.size} keys tested.`
                       : 'Click Start to begin testing your keyboard'}
                   </CardDescription>

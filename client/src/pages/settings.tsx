@@ -70,8 +70,8 @@ export default function Settings() {
     title: 'Settings | Customize Your Experience - TypeMasterAI',
     description: 'Customize your TypeMasterAI experience. Adjust themes, test duration, language preferences, and notification settings.',
     keywords: 'typing test settings, customize typing test, typemasterai settings, preferences',
-    canonical: 'https://typemaster-ai.replit.app/settings',
-    ogUrl: 'https://typemaster-ai.replit.app/settings',
+    canonical: 'https://typemasterai.com/settings',
+    ogUrl: 'https://typemasterai.com/settings',
   });
   const { user, logout } = useAuth();
   const { theme, setTheme } = useTheme();

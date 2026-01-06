@@ -32,13 +32,13 @@ interface ErrorState {
 }
 
 // Error display component with retry functionality
-function RaceErrorDisplay({ 
-  error, 
-  onRetry, 
-  onGoBack 
-}: { 
-  error: ErrorState; 
-  onRetry?: () => void; 
+function RaceErrorDisplay({
+  error,
+  onRetry,
+  onGoBack
+}: {
+  error: ErrorState;
+  onRetry?: () => void;
   onGoBack: () => void;
 }) {
   const getErrorIcon = () => {
@@ -145,14 +145,14 @@ function RaceLoadingDisplay({ message, subMessage }: { message: string; subMessa
 }
 
 // Network status banner component
-function NetworkStatusBanner({ 
-  isConnected, 
-  isReconnecting, 
-  reconnectAttempt, 
+function NetworkStatusBanner({
+  isConnected,
+  isReconnecting,
+  reconnectAttempt,
   maxAttempts,
-  onManualRetry 
-}: { 
-  isConnected: boolean; 
+  onManualRetry
+}: {
+  isConnected: boolean;
   isReconnecting: boolean;
   reconnectAttempt: number;
   maxAttempts: number;
@@ -178,8 +178,8 @@ function NetworkStatusBanner({
         </AlertTitle>
         <AlertDescription className="flex items-center justify-between">
           <span>
-            {isReconnecting 
-              ? `Attempt ${reconnectAttempt} of ${maxAttempts}...` 
+            {isReconnecting
+              ? `Attempt ${reconnectAttempt} of ${maxAttempts}...`
               : "Your progress is saved. Click retry to reconnect."}
           </span>
           {!isReconnecting && (
@@ -300,27 +300,27 @@ function RaceChat({
   const sendMessage = () => {
     const trimmedInput = input.trim();
     if (!trimmedInput || !isEnabled) return;
-    
+
     if (!wsConnected) {
       setSendError("Connection lost");
-      toast.error("Cannot send message", { 
+      toast.error("Cannot send message", {
         description: "Connection lost. Reconnecting...",
         icon: <WifiOff className="h-4 w-4" />
       });
       return;
     }
-    
+
     if (trimmedInput.length > MAX_CHAT_LENGTH) {
       setSendError("Message too long");
-      toast.error("Message too long", { 
+      toast.error("Message too long", {
         description: `Maximum ${MAX_CHAT_LENGTH} characters allowed`,
         icon: <AlertTriangle className="h-4 w-4" />
       });
       return;
     }
-    
+
     setSendError(null);
-    
+
     try {
       sendWsMessage({
         type: "chat_message",
@@ -331,7 +331,7 @@ function RaceChat({
       setInput("");
     } catch (error) {
       setSendError("Failed to send");
-      toast.error("Failed to send message", { 
+      toast.error("Failed to send message", {
         description: "Please check your connection and try again",
         icon: <XCircle className="h-4 w-4" />
       });
@@ -369,14 +369,14 @@ function RaceChat({
               <TooltipContent side="top" className="max-w-xs">
                 <p className="font-medium">Race Chat</p>
                 <p className="text-zinc-400">
-                  {wsConnected 
+                  {wsConnected
                     ? "Chat with other racers. Press Enter to send."
                     : "Reconnecting to chat server..."}
                 </p>
               </TooltipContent>
             </Tooltip>
           </div>
-          <div 
+          <div
             ref={scrollRef}
             className="h-16 sm:h-20 overflow-y-auto mb-1 space-y-0.5 sm:space-y-1"
           >
@@ -463,7 +463,7 @@ function RaceChat({
               <TooltipContent side="right" className="max-w-xs">
                 <p className="font-medium">Race Chat</p>
                 <p className="text-zinc-400">
-                  Chat with other participants before and after the race. 
+                  Chat with other participants before and after the race.
                   Chat is disabled during active typing to prevent distraction.
                 </p>
                 <p className="text-zinc-400 mt-1">
@@ -475,7 +475,7 @@ function RaceChat({
         </CardHeader>
         <CardContent className="p-2 h-[calc(100%-4rem)]">
           <div className="flex flex-col h-full">
-            <div 
+            <div
               ref={scrollRef}
               className="flex-1 overflow-y-auto pr-2 mb-2"
             >
@@ -502,8 +502,8 @@ function RaceChat({
                       </TooltipTrigger>
                       <TooltipContent side="left">
                         <p className="text-xs">
-                          {msg.isSystem 
-                            ? "System notification" 
+                          {msg.isSystem
+                            ? "System notification"
                             : `Message from ${msg.username}`}
                         </p>
                       </TooltipContent>
@@ -623,7 +623,7 @@ function RatingChangeDisplay({ ratingInfo, position }: { ratingInfo: RatingInfo 
             <TooltipContent side="top" className="max-w-xs">
               <p className="font-medium">ELO Skill Rating</p>
               <p className="text-zinc-400">
-                Your competitive rating based on race performance. 
+                Your competitive rating based on race performance.
                 Win against higher-rated players to gain more points.
               </p>
               <p className="text-zinc-400 mt-1">
@@ -633,8 +633,8 @@ function RatingChangeDisplay({ ratingInfo, position }: { ratingInfo: RatingInfo 
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Badge 
-                variant="outline" 
+              <Badge
+                variant="outline"
                 className="capitalize cursor-help"
                 style={{ borderColor: tierColor, color: tierColor }}
               >
@@ -677,7 +677,7 @@ function RatingChangeDisplay({ ratingInfo, position }: { ratingInfo: RatingInfo 
                   {isPositive ? 'Rating Gained' : 'Rating Lost'}
                 </p>
                 <p className="text-zinc-400">
-                  {isPositive 
+                  {isPositive
                     ? `Great race! You gained ${ratingInfo.ratingChange} points.`
                     : `You lost ${Math.abs(ratingInfo.ratingChange)} points. Keep practicing!`}
                 </p>
@@ -695,15 +695,15 @@ function RatingChangeDisplay({ ratingInfo, position }: { ratingInfo: RatingInfo 
   );
 }
 
-function RaceFinishBanner({ 
-  position, 
-  totalPlayers, 
-  wpm, 
-  accuracy, 
+function RaceFinishBanner({
+  position,
+  totalPlayers,
+  wpm,
+  accuracy,
   isWinner,
-  onDismiss 
-}: { 
-  position: number | null; 
+  onDismiss
+}: {
+  position: number | null;
   totalPlayers: number;
   wpm: number;
   accuracy: number;
@@ -716,11 +716,11 @@ function RaceFinishBanner({
   useEffect(() => {
     setTimeout(() => setIsVisible(true), 100);
     setTimeout(() => setShowStats(true), 800);
-    
+
     if (isWinner) {
       const duration = 3000;
       const animationEnd = Date.now() + duration;
-      
+
       const runConfetti = () => {
         confetti({
           particleCount: 3,
@@ -736,7 +736,7 @@ function RaceFinishBanner({
           origin: { x: 1 },
           colors: ['#FFD700', '#FFA500', '#FF6347']
         });
-        
+
         if (Date.now() < animationEnd) {
           requestAnimationFrame(runConfetti);
         }
@@ -758,29 +758,29 @@ function RaceFinishBanner({
   const positionInfo = getPositionDisplay();
 
   return (
-    <div 
+    <div
       className={`fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm transition-opacity duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
       onClick={onDismiss}
       data-testid="race-finish-banner"
     >
-      <div 
+      <div
         className={`text-center transform transition-all duration-700 ${isVisible ? 'scale-100 translate-y-0' : 'scale-75 translate-y-10'}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className={`text-8xl mb-4 animate-bounce`}>
           {positionInfo.emoji}
         </div>
-        
+
         <h1 className={`text-5xl md:text-6xl font-bold ${positionInfo.color} mb-2 drop-shadow-lg`}>
           {positionInfo.text}
         </h1>
-        
+
         {isWinner && (
           <p className="text-xl text-yellow-300 mb-4 animate-pulse">
             ✨ Congratulations, Champion! ✨
           </p>
         )}
-        
+
         <div className={`mt-6 transition-all duration-500 ${showStats ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <div className="flex items-center justify-center gap-8 text-white">
             <div className="text-center">
@@ -800,10 +800,10 @@ function RaceFinishBanner({
             </div>
           </div>
         </div>
-        
+
         <div className={`mt-8 transition-all duration-500 delay-300 ${showStats ? 'opacity-100' : 'opacity-0'}`}>
-          <Button 
-            size="lg" 
+          <Button
+            size="lg"
             onClick={onDismiss}
             className="px-8 py-3 text-lg bg-primary hover:bg-primary/90"
             data-testid="button-view-results"
@@ -822,14 +822,14 @@ export default function RacePage() {
     title: 'Typing Race | TypeMasterAI',
     description: 'Join this multiplayer typing race and compete against other typists in real-time!',
     keywords: 'typing race, multiplayer race, compete typing, live race',
-    canonical: 'https://typemaster-ai.replit.app/multiplayer',
-    ogUrl: 'https://typemaster-ai.replit.app/multiplayer',
+    canonical: 'https://typemasterai.com/multiplayer',
+    ogUrl: 'https://typemasterai.com/multiplayer',
   });
   const [, params] = useRoute("/race/:id");
   const [, setLocation] = useLocation();
   const { user } = useAuth();
   const { isOnline, wasOffline } = useNetwork();
-  
+
   const [race, setRace] = useState<Race | null>(null);
   const raceRef = useRef<Race | null>(null);
   const [participants, setParticipants] = useState<Participant[]>([]);
@@ -961,10 +961,10 @@ export default function RacePage() {
     setStartTime(null);
     extensionRequestedRef.current = false;
     seenParticipantJoinsRef.current = new Set();
-    
+
     const roomCodeOrId = params.id;
     const savedParticipant = localStorage.getItem(`race_${roomCodeOrId}_participant`);
-    
+
     if (savedParticipant) {
       try {
         const participant = JSON.parse(savedParticipant);
@@ -995,20 +995,20 @@ export default function RacePage() {
       if (hasJoinedRef.current && lastJoinedRaceIdRef.current === race.id) {
         return;
       }
-      
+
       // CRITICAL: Verify participant belongs to this race before joining
       // This prevents stale participant data from old races causing "Invalid participant" errors
       if (myParticipant.raceId !== race.id) {
         console.log(`[Race] Participant ${myParticipant.id} belongs to race ${myParticipant.raceId}, not ${race.id} - waiting for correct participant data`);
         return;
       }
-      
+
       hasJoinedRef.current = true;
       lastJoinedRaceIdRef.current = race.id;
       setHasJoinedRace(true); // Update state for UI reactivity
-      
+
       console.log(`[Race] Joining race ${race.id} as participant ${myParticipant.id} (${myParticipant.username})`);
-      
+
       sendWsMessage({
         type: "join",
         raceId: race.id,
@@ -1027,31 +1027,31 @@ export default function RacePage() {
 
   useEffect(() => {
     if (!isRacing || !startTime) return;
-    
+
     const interval = setInterval(() => {
       const elapsed = (Date.now() - startTime) / 1000;
       setElapsedTime(elapsed);
-      
+
       const idx = currentIndexRef.current;
       const errs = errorsRef.current;
       const correctChars = Math.max(0, idx - errs);
       const wpm = elapsed > 0 ? Math.round((correctChars / 5) / (elapsed / 60)) : 0;
       const accuracy = idx > 0 ? Math.round(((idx - errs) / idx) * 100) : 100;
-      
+
       setLiveWpm(wpm);
       setLiveAccuracy(Math.max(0, accuracy));
-      
+
       // Update time remaining for timed races
       if (race?.raceType === "timed" && race.timeLimitSeconds) {
         const remaining = Math.max(0, race.timeLimitSeconds - elapsed);
         setTimeRemaining(remaining);
-        
+
         // Handle time running out - only send once
         if (remaining <= 0 && myParticipant && !timedFinishSentRef.current) {
           timedFinishSentRef.current = true;
-          
+
           console.log(`[Race Timer] Time expired! Progress: ${idx}, WPM: ${wpm}`);
-          
+
           // Send finish message via WebSocket
           sendWsMessage({
             type: "timed_finish",
@@ -1062,21 +1062,21 @@ export default function RacePage() {
             accuracy: accuracy,
             errors: errs
           });
-          
+
           // Show toast notification
           toast.info("Time's up!", {
             description: `You typed ${idx} characters at ${wpm} WPM`,
             duration: 3000
           });
-          
+
           // STOP racing immediately
           setIsRacing(false);
-          
+
           // Update race status locally - this triggers the finished view
           if (raceRef.current) {
             setRace({ ...raceRef.current, status: "finished" });
           }
-          
+
           // Store values for use in timeout (avoid stale closures)
           const finalIdx = idx;
           const finalWpm = wpm;
@@ -1084,21 +1084,20 @@ export default function RacePage() {
           const finalErrors = errs;
           const participantCount = participants.length;
           const timeLimit = race.timeLimitSeconds || 60;
-          
+
           // Set up a fallback to show results after a delay
           // This ensures the UI shows results even if server doesn't respond
           setTimeout(() => {
             // Only show local results if we haven't received server results yet
             if (!finishBannerDismissedRef.current) {
-              console.log(`[Race Timer] Showing race results (local fallback)`);
-              
+
               setFinishBannerData({
                 position: null, // Unknown without server data
                 totalPlayers: participantCount,
                 wpm: finalWpm,
                 accuracy: finalAccuracy,
               });
-              
+
               setLastResultSnapshot({
                 wpm: finalWpm,
                 accuracy: finalAccuracy,
@@ -1109,14 +1108,14 @@ export default function RacePage() {
                 errors: finalErrors,
                 duration: timeLimit,
               });
-              
+
               setShowFinishBanner(true);
             }
           }, 1000); // Wait 1 second for server response before showing local results
         }
       }
     }, 100);
-    
+
     return () => clearInterval(interval);
   }, [isRacing, startTime, race?.raceType, race?.timeLimitSeconds, race?.id, myParticipant]);
 
@@ -1126,11 +1125,11 @@ export default function RacePage() {
       const container = textContainerRef.current;
       const containerRect = container.getBoundingClientRect();
       const caretRect = caret.getBoundingClientRect();
-      
+
       const caretRelativeTop = caretRect.top - containerRect.top + container.scrollTop;
       const visibleTop = container.scrollTop;
       const visibleBottom = visibleTop + container.clientHeight;
-      
+
       if (caretRelativeTop < visibleTop + 50) {
         container.scrollTo({ top: caretRelativeTop - 50, behavior: 'smooth' });
       } else if (caretRelativeTop > visibleBottom - 50) {
@@ -1172,7 +1171,7 @@ export default function RacePage() {
 
   function handleTyping(e: React.FormEvent<HTMLInputElement>) {
     if (!isRacing || !race || isComposingRef.current) return;
-    
+
     // Block typing if timed race has expired
     if (timedFinishSentRef.current) return;
 
@@ -1187,7 +1186,7 @@ export default function RacePage() {
 
   function processInput(value: string) {
     if (!race) return;
-    
+
     // Block processing if timed race has expired
     if (timedFinishSentRef.current) return;
 
@@ -1223,7 +1222,7 @@ export default function RacePage() {
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (!isRacing) return;
-    
+
     // Block key events if timed race has expired
     if (timedFinishSentRef.current) return;
 
@@ -1231,7 +1230,7 @@ export default function RacePage() {
       e.preventDefault();
       const newIndex = currentIndexRef.current - 1;
       currentIndexRef.current = newIndex;
-      
+
       const newCharStates = [...charStates];
       if (newCharStates[newIndex] === 'incorrect') {
         errorsRef.current = Math.max(0, errorsRef.current - 1);
@@ -1239,7 +1238,7 @@ export default function RacePage() {
       }
       newCharStates[newIndex] = 'pending';
       setCharStates(newCharStates);
-      
+
       setCurrentIndex(newIndex);
       updateProgress(newIndex, errorsRef.current);
     }
@@ -1255,25 +1254,25 @@ export default function RacePage() {
   useEffect(() => {
     // Don't show banner again if user already dismissed it
     if (finishBannerDismissedRef.current) return;
-    
+
     if (race?.status === "finished" && !showFinishBanner) {
       console.log("[Race Debug] Detected finished race from API/state");
-      
+
       // If participants are empty, refetch race data to get results
       if (participants.length === 0) {
         console.log("[Race Debug] No participants loaded, refetching race data");
         fetchRaceData();
         return;
       }
-      
+
       console.log("[Race Debug] Showing finish banner with", participants.length, "participants");
       const sortedParticipants = [...participants].sort((a, b) => (a.finishPosition || 999) - (b.finishPosition || 999));
-      
+
       // Try to find my result, or use the first participant if myParticipant is null
-      const myResult = myParticipant 
+      const myResult = myParticipant
         ? sortedParticipants.find(p => p.id === myParticipant.id)
         : sortedParticipants[0]; // Fallback for when myParticipant isn't loaded
-      
+
       if (myResult) {
         // Use 'progress' field from server (actual characters typed)
         const chars = myResult.progress || currentIndexRef.current || 0;
@@ -1286,14 +1285,14 @@ export default function RacePage() {
         const consistency = Math.max(70, Math.min(100, Math.round(
           baseConsistency * 0.95 + (chars > 100 ? 5 : chars / 20)
         )));
-        
+
         setFinishBannerData({
           position: myResult.finishPosition || null,
           totalPlayers: participants.length,
           wpm: myResult.wpm,
           accuracy: myResult.accuracy,
         });
-        
+
         setLastResultSnapshot({
           wpm: myResult.wpm,
           accuracy: myResult.accuracy,
@@ -1304,7 +1303,7 @@ export default function RacePage() {
           errors: resultErrors,
           duration: race?.timeLimitSeconds || 60,
         });
-        
+
         setShowFinishBanner(true);
         setIsRacing(false);
       }
@@ -1313,9 +1312,9 @@ export default function RacePage() {
 
   useEffect(() => {
     if (!race || !myParticipant || myParticipant.isFinished) return;
-    
+
     const progress = currentIndex / race.paragraphContent.length;
-    
+
     if (progress >= extensionThreshold && !extensionRequestedRef.current) {
       extensionRequestedRef.current = true;
       sendWsMessage({
@@ -1324,7 +1323,7 @@ export default function RacePage() {
         participantId: myParticipant.id,
       });
     }
-    
+
     if (currentIndex >= race.paragraphContent.length) {
       finishRace();
     }
@@ -1333,19 +1332,19 @@ export default function RacePage() {
   async function fetchRaceData() {
     setLoadingMessage("Loading race...");
     setErrorState(null);
-    
+
     try {
       const response = await fetch(`/api/races/${params?.id}`);
-      
+
       if (response.ok) {
         const data = await response.json();
         setRace(data.race);
         setParticipants(data.participants);
         setErrorState(null);
-        
+
         // Get current myParticipant from ref (state may be stale in async callback)
         const currentMyParticipant = myParticipantRef.current;
-        
+
         if (currentMyParticipant) {
           // Update existing participant data
           const updatedParticipant = data.participants.find((p: Participant) => p.id === currentMyParticipant.id);
@@ -1359,7 +1358,6 @@ export default function RacePage() {
             setMyParticipant(userParticipant);
             // Also save to localStorage for future reference
             localStorage.setItem(`race_${data.race.id}_participant`, JSON.stringify(userParticipant));
-            console.log(`[Race] Found and set participant for user:`, userParticipant);
           }
         }
       } else if (response.status === 404) {
@@ -1433,11 +1431,10 @@ export default function RacePage() {
 
     setIsReconnecting(true);
     reconnectAttempts.current += 1;
-    
+
     const delay = Math.min(1000 * Math.pow(2, reconnectAttempts.current - 1), 10000);
-    
+
     reconnectTimeoutRef.current = setTimeout(() => {
-      console.log(`Reconnection attempt ${reconnectAttempts.current}/${maxReconnectAttempts}`);
       connectWebSocket();
     }, delay);
   }, [isOnline]);
@@ -1454,7 +1451,6 @@ export default function RacePage() {
 
   function connectWebSocket() {
     if (!isOnline) {
-      console.log("Cannot connect WebSocket: offline");
       return;
     }
 
@@ -1463,19 +1459,18 @@ export default function RacePage() {
     const socket = new WebSocket(wsUrl);
 
     socket.onopen = () => {
-      console.log("WebSocket connected");
       setWs(socket);
       setWsConnected(true);
       setIsReconnecting(false);
       reconnectAttempts.current = 0;
-      
+
       while (pendingMessagesRef.current.length > 0) {
         const message = pendingMessagesRef.current.shift();
         if (message) {
           socket.send(message);
         }
       }
-      
+
       if (wasOffline) {
         toast.success("Reconnected to race server");
       }
@@ -1492,11 +1487,10 @@ export default function RacePage() {
     };
 
     socket.onclose = (event) => {
-      console.log("WebSocket disconnected", event.code, event.reason);
       setWsConnected(false);
       setWs(null);
       hasJoinedRef.current = false;
-      
+
       if (event.code !== 1000 && race?.status !== "finished") {
         attemptReconnect();
       }
@@ -1505,7 +1499,7 @@ export default function RacePage() {
 
   function sendWsMessage(message: object) {
     const messageStr = JSON.stringify(message);
-    
+
     if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(messageStr);
     } else if (isOnline) {
@@ -1639,15 +1633,15 @@ export default function RacePage() {
         }
         break;
       case "progress_update":
-        setParticipants(prev => prev.map(p => 
-          p.id === message.participantId 
+        setParticipants(prev => prev.map(p =>
+          p.id === message.participantId
             ? { ...p, progress: message.progress, wpm: message.wpm, accuracy: message.accuracy, errors: message.errors }
             : p
         ));
         break;
       case "participant_finished":
-        setParticipants(prev => prev.map(p => 
-          p.id === message.participantId 
+        setParticipants(prev => prev.map(p =>
+          p.id === message.participantId
             ? { ...p, isFinished: 1, finishPosition: message.position }
             : p
         ));
@@ -1661,7 +1655,7 @@ export default function RacePage() {
         // Use ref to get current participant ID (avoids stale closure issues)
         const currentParticipant = myParticipantRef.current;
         const myResult = message.results.find((p: Participant) => p.id === currentParticipant?.id);
-        
+
         // If myResult found, use server values; otherwise default to 100% accuracy for no typing
         const finalWpm = myResult?.wpm ?? 0;
         const finalAccuracy = myResult?.accuracy ?? 100;
@@ -1675,14 +1669,14 @@ export default function RacePage() {
         const finalConsistency = Math.max(70, Math.min(100, Math.round(
           baseConsistency * 0.95 + (finalCharacters > 100 ? 5 : finalCharacters / 20)
         )));
-        
+
         setFinishBannerData({
           position: myResult?.finishPosition || null,
           totalPlayers: message.results.length,
           wpm: finalWpm,
           accuracy: finalAccuracy,
         });
-        
+
         setLastResultSnapshot({
           wpm: finalWpm,
           accuracy: finalAccuracy,
@@ -1693,9 +1687,9 @@ export default function RacePage() {
           errors: finalErrors,
           duration: raceRef.current?.timeLimitSeconds || Math.round(elapsedTime) || 60,
         });
-        
+
         setShowFinishBanner(true);
-        
+
         if (user) {
           fetch("/api/ratings/me")
             .then(res => res.json())
@@ -1731,15 +1725,15 @@ export default function RacePage() {
         break;
       case "participant_disconnected":
         // Mark participant as disconnected and show notification
-        setParticipants(prev => prev.map(p => 
-          p.id === message.participantId 
-            ? { ...p, isDisconnected: true } 
+        setParticipants(prev => prev.map(p =>
+          p.id === message.participantId
+            ? { ...p, isDisconnected: true }
             : p
         ));
         if (message.participantId !== myParticipantRef.current?.id && message.username) {
-          toast.warning(`${message.username} disconnected`, { 
+          toast.warning(`${message.username} disconnected`, {
             description: message.reason === "timeout" ? "Connection timed out" : "They may reconnect...",
-            duration: 3000 
+            duration: 3000
           });
           // Add system message to chat
           setChatMessages(prev => [...prev, {
@@ -1754,9 +1748,9 @@ export default function RacePage() {
         break;
       case "participant_reconnected":
         // Mark participant as reconnected and show notification
-        setParticipants(prev => prev.map(p => 
-          p.id === message.participantId 
-            ? { ...p, isDisconnected: false } 
+        setParticipants(prev => prev.map(p =>
+          p.id === message.participantId
+            ? { ...p, isDisconnected: false }
             : p
         ));
         if (message.participantId !== myParticipantRef.current?.id && message.username) {
@@ -1810,8 +1804,8 @@ export default function RacePage() {
         break;
       case "participant_dnf":
         // Mark participant as DNF (Did Not Finish)
-        setParticipants(prev => prev.map(p => 
-          p.id === message.participantId 
+        setParticipants(prev => prev.map(p =>
+          p.id === message.participantId
             ? { ...p, isFinished: 1, finishPosition: 999 }
             : p
         ));
@@ -1909,7 +1903,7 @@ export default function RacePage() {
           roomCode: message.roomCode,
           createdBy: message.createdBy,
         });
-        toast.success(`New race created! Joining...`, { 
+        toast.success(`New race created! Joining...`, {
           duration: 2000,
         });
         // Auto-redirect to the new race
@@ -1921,110 +1915,110 @@ export default function RacePage() {
         // Handle server-side errors with typed error codes
         switch (message.code) {
           case "CHAT_RATE_LIMITED":
-            toast.error("Slow down!", { 
+            toast.error("Slow down!", {
               description: message.message || "Please wait before sending another message",
               duration: 2000
             });
             break;
           case "NOT_HOST":
-            toast.error("Permission denied", { 
+            toast.error("Permission denied", {
               description: message.message || "Only the host can do this",
               duration: 3000
             });
             break;
           case "NOT_ENOUGH_PLAYERS":
-            toast.warning("Not enough players", { 
+            toast.warning("Not enough players", {
               description: message.message || "Need at least 2 players to start",
               duration: 4000
             });
             break;
           case "PLAYERS_NOT_READY":
-            toast.warning("Players not ready", { 
+            toast.warning("Players not ready", {
               description: message.message || "All players must be ready to start",
               duration: 4000
             });
             break;
           case "ROOM_LOCKED":
-            toast.error("Room locked", { 
+            toast.error("Room locked", {
               description: message.message || "This room is not accepting new players",
               duration: 3000
             });
             break;
           case "KICKED":
-            toast.error("Kicked", { 
+            toast.error("Kicked", {
               description: message.message || "You have been kicked from the room",
               duration: 5000
             });
             setLocation("/multiplayer");
             break;
           case "PLAYER_NOT_FOUND":
-            toast.error("Player not found", { 
+            toast.error("Player not found", {
               description: message.message || "The player may have already left the room",
               duration: 3000
             });
             break;
           case "CANNOT_KICK_SELF":
-            toast.error("Cannot kick yourself", { 
+            toast.error("Cannot kick yourself", {
               description: message.message || "You cannot remove yourself from the room",
               duration: 3000
             });
             break;
           case "ROOM_NOT_FOUND":
-            toast.error("Room not found", { 
+            toast.error("Room not found", {
               description: message.message || "The race room no longer exists",
               duration: 3000
             });
             break;
           case "RACE_IN_PROGRESS":
-            toast.error("Race in progress", { 
+            toast.error("Race in progress", {
               description: message.message || "Cannot perform this action during an active race",
               duration: 3000
             });
             break;
           case "RACE_FINISHED":
-            toast.error("Race finished", { 
+            toast.error("Race finished", {
               description: message.message || "Cannot perform this action on a finished race",
               duration: 3000
             });
             break;
           case "RACE_STARTING":
-            toast.info("Race starting", { 
+            toast.info("Race starting", {
               description: message.message || "The race is already starting...",
               duration: 2000
             });
             break;
           case "ALREADY_KICKED":
-            toast.warning("Already kicked", { 
+            toast.warning("Already kicked", {
               description: message.message || "This player has already been kicked",
               duration: 2000
             });
             break;
           case "INVALID_REQUEST":
-            toast.error("Invalid request", { 
+            toast.error("Invalid request", {
               description: message.message || "The request was invalid",
               duration: 3000
             });
             break;
           case "INVALID_RACE_STATUS":
-            toast.error("Invalid action", { 
+            toast.error("Invalid action", {
               description: message.message || "Cannot perform this action in the current race state",
               duration: 3000
             });
             break;
           case "RATE_LIMITED":
-            toast.error("Too fast", { 
+            toast.error("Too fast", {
               description: message.message || "Please slow down and try again",
               duration: 2000
             });
             break;
           case "INVALID_PAYLOAD":
-            toast.error("Invalid data", { 
+            toast.error("Invalid data", {
               description: message.message || "The data sent was invalid",
               duration: 3000
             });
             break;
           case "NOT_IN_RACE":
-            toast.error("Not connected", { 
+            toast.error("Not connected", {
               description: message.message || "You are not connected to this race",
               duration: 3000
             });
@@ -2034,7 +2028,7 @@ export default function RacePage() {
             }
             break;
           case "INSUFFICIENT_PLAYERS":
-            toast.warning("Not enough players", { 
+            toast.warning("Not enough players", {
               description: message.message || "More players needed to start the race",
               duration: 4000
             });
@@ -2042,7 +2036,7 @@ export default function RacePage() {
           case "RACE_UNAVAILABLE":
             // Race is no longer available (finished, cancelled, or not found)
             setIsStarting(false);
-            toast.error("Race unavailable", { 
+            toast.error("Race unavailable", {
               description: message.message || "This race is no longer available",
               duration: 5000
             });
@@ -2131,13 +2125,13 @@ export default function RacePage() {
 
   function startRace() {
     if (!participants.length || isStarting || isTransitioning) return;
-    
+
     // Only the host can start the race
     if (hostParticipantId && myParticipant?.id !== hostParticipantId) {
       toast.error("Only the room host can start the race");
       return;
     }
-    
+
     setIsStarting(true);
     setIsTransitioning(true);
     setTransitionMessage("Preparing race...");
@@ -2170,15 +2164,15 @@ export default function RacePage() {
       setLocation("/multiplayer");
       return;
     }
-    
+
     // During active racing, show confirmation dialog
     setShowLeaveConfirmation(true);
   }
-  
+
   function confirmLeaveRace() {
     setIsLeaving(true);
     setShowLeaveConfirmation(false);
-    
+
     try {
       if (myParticipant && race) {
         // Send leave with current progress for DNF tracking
@@ -2191,11 +2185,11 @@ export default function RacePage() {
           wpm: liveWpm,
           accuracy: liveAccuracy,
         });
-        
+
         // Clean up local storage
         localStorage.removeItem(`race_${race.id}_participant`);
         localStorage.removeItem(`race_${race.roomCode}_participant`);
-        
+
         toast.info("You left the race", { duration: 2000 });
       } else {
         toast.warning("Leaving race...", { duration: 1500 });
@@ -2210,7 +2204,7 @@ export default function RacePage() {
       }, 100);
     }
   }
-  
+
   function cancelLeaveRace() {
     setShowLeaveConfirmation(false);
   }
@@ -2229,7 +2223,7 @@ export default function RacePage() {
   // Handle loading state
   if (!race) {
     return (
-      <RaceLoadingDisplay 
+      <RaceLoadingDisplay
         message={loadingMessage}
         subMessage="Connecting to race server..."
       />
@@ -2281,12 +2275,12 @@ export default function RacePage() {
                 </TooltipContent>
               </Tooltip>
             </div>
-            
+
             {/* Countdown number */}
-                  <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-primary animate-pulse" data-testid="countdown-number">
+            <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-primary animate-pulse" data-testid="countdown-number">
               {countdown === 0 ? "GO!" : countdown ?? "..."}
             </div>
-            
+
             {/* Dynamic instruction */}
             {countdown === null || countdown > 0 ? (
               <p className="text-muted-foreground text-lg flex items-center justify-center gap-2">
@@ -2369,9 +2363,9 @@ export default function RacePage() {
                     </Tooltip>
                   </div>
                 </div>
-                
+
                 {/* Room Settings Display */}
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4 mt-3 pt-3 border-t space-y-2 sm:space-y-0">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4 mt-3 pt-3 border-t space-y-2 sm:space-y-0">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Timer className="h-4 w-4" />
                     <span>{race.timeLimitSeconds ? `${race.timeLimitSeconds}s race` : 'Untimed'}</span>
@@ -2420,10 +2414,9 @@ export default function RacePage() {
                         return (
                           <div
                             key={p.id}
-                            className={`flex items-center gap-2 sm:gap-3 p-2 sm:p-3 border rounded-lg transition-colors ${
-                              p.id === myParticipant?.id ? 'border-primary/50 bg-primary/5' : ''
-                            } ${p.id === hostParticipantId ? 'border-yellow-500/50' : ''
-                            } ${playerReady ? 'bg-green-500/5' : ''}`}
+                            className={`flex items-center gap-2 sm:gap-3 p-2 sm:p-3 border rounded-lg transition-colors ${p.id === myParticipant?.id ? 'border-primary/50 bg-primary/5' : ''
+                              } ${p.id === hostParticipantId ? 'border-yellow-500/50' : ''
+                              } ${playerReady ? 'bg-green-500/5' : ''}`}
                             data-testid={`participant-${p.id}`}
                           >
                             <div className={`h-8 w-8 sm:h-10 sm:w-10 rounded-full ${p.avatarColor || 'bg-primary'} flex items-center justify-center text-white font-medium relative`}>
@@ -2561,72 +2554,72 @@ export default function RacePage() {
                   const minHumansNeeded = hasBots ? 1 : 2;
                   const canStart = humanCount >= minHumansNeeded;
                   const humansNeeded = minHumansNeeded - humanCount;
-                  
+
                   return (!hostParticipantId || myParticipant?.id === hostParticipantId) ? (
-                  <div className="space-y-2">
-                    {!canStart && (
-                      <div className="flex items-center justify-center gap-2 p-3 bg-muted/50 rounded-lg text-sm text-muted-foreground">
-                        <Users className="h-4 w-4" />
-                        <span>
-                          {hasBots 
-                            ? "Waiting for you to connect..." 
-                            : `Waiting for ${humansNeeded} more player${humansNeeded > 1 ? 's' : ''} to join...`}
-                        </span>
-                      </div>
-                    )}
-                    
-                    
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          onClick={startRace}
-                          disabled={!canStart || isStarting}
-                          size="lg"
-                          className="w-full"
-                          data-testid="button-start-race"
-                        >
-                          {isStarting ? (
+                    <div className="space-y-2">
+                      {!canStart && (
+                        <div className="flex items-center justify-center gap-2 p-3 bg-muted/50 rounded-lg text-sm text-muted-foreground">
+                          <Users className="h-4 w-4" />
+                          <span>
+                            {hasBots
+                              ? "Waiting for you to connect..."
+                              : `Waiting for ${humansNeeded} more player${humansNeeded > 1 ? 's' : ''} to join...`}
+                          </span>
+                        </div>
+                      )}
+
+
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            onClick={startRace}
+                            disabled={!canStart || isStarting}
+                            size="lg"
+                            className="w-full"
+                            data-testid="button-start-race"
+                          >
+                            {isStarting ? (
+                              <>
+                                <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                                Starting...
+                              </>
+                            ) : (
+                              <>
+                                <Play className="h-4 w-4 mr-2" />
+                                {!canStart
+                                  ? (hasBots ? 'Waiting...' : `Need ${humansNeeded} more player${humansNeeded > 1 ? 's' : ''}`)
+                                  : 'Start Race'}
+                              </>
+                            )}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom">
+                          {!canStart ? (
                             <>
-                              <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                              Starting...
+                              <p className="font-medium">Need more players</p>
+                              <p className="text-zinc-400">
+                                {hasBots
+                                  ? "Make sure you're connected to start racing!"
+                                  : "Share the room code with friends to start racing!"}
+                              </p>
                             </>
                           ) : (
                             <>
-                              <Play className="h-4 w-4 mr-2" />
-                              {!canStart 
-                                ? (hasBots ? 'Waiting...' : `Need ${humansNeeded} more player${humansNeeded > 1 ? 's' : ''}`)
-                                : 'Start Race'}
+                              <p className="font-medium">Begin the race</p>
+                              <p className="text-zinc-400">A countdown will start and the race begins!</p>
                             </>
                           )}
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom">
-                        {!canStart ? (
-                          <>
-                            <p className="font-medium">Need more players</p>
-                            <p className="text-zinc-400">
-                              {hasBots 
-                                ? "Make sure you're connected to start racing!"
-                                : "Share the room code with friends to start racing!"}
-                            </p>
-                          </>
-                        ) : (
-                          <>
-                            <p className="font-medium">Begin the race</p>
-                            <p className="text-zinc-400">A countdown will start and the race begins!</p>
-                          </>
-                        )}
-                      </TooltipContent>
-                    </Tooltip>
-                  </div>
-                ) : (
-                  <div className="w-full py-3 px-4 bg-muted/50 rounded-lg text-center text-muted-foreground">
-                    <div className="flex items-center justify-center gap-2">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>Waiting for host to start the race...</span>
+                        </TooltipContent>
+                      </Tooltip>
                     </div>
-                  </div>
-                );
+                  ) : (
+                    <div className="w-full py-3 px-4 bg-muted/50 rounded-lg text-center text-muted-foreground">
+                      <div className="flex items-center justify-center gap-2">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <span>Waiting for host to start the race...</span>
+                      </div>
+                    </div>
+                  );
                 })()}
               </CardContent>
             </Card>
@@ -2665,7 +2658,7 @@ export default function RacePage() {
               <AlertDialogCancel onClick={cancelLeaveRace}>
                 Keep Racing
               </AlertDialogCancel>
-              <AlertDialogAction 
+              <AlertDialogAction
                 onClick={confirmLeaveRace}
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
@@ -2674,7 +2667,7 @@ export default function RacePage() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-        
+
         <div className="min-h-screen bg-background">
           <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-6xl lg:max-w-7xl">
             {/* Network status banner */}
@@ -2685,7 +2678,7 @@ export default function RacePage() {
               maxAttempts={maxReconnectAttempts}
               onManualRetry={manualReconnect}
             />
-            
+
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between sm:gap-4 mb-4 space-y-3 sm:space-y-0">
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -2716,7 +2709,7 @@ export default function RacePage() {
                   <p className="text-zinc-400 text-xs">You'll be asked to confirm. Leaving marks you as DNF (Did Not Finish).</p>
                 </TooltipContent>
               </Tooltip>
-              
+
             </div>
             <div className="space-y-6">
               <Card>
@@ -2732,8 +2725,8 @@ export default function RacePage() {
                         <TooltipContent side="right" className="max-w-xs">
                           <p className="font-medium">Real-time Leaderboard</p>
                           <p className="text-zinc-400">
-                            {race.raceType === "timed" 
-                              ? "Type as much as you can before time runs out!" 
+                            {race.raceType === "timed"
+                              ? "Type as much as you can before time runs out!"
                               : "Track all racers' progress, speed, and accuracy as they type"}
                           </p>
                         </TooltipContent>
@@ -2742,13 +2735,12 @@ export default function RacePage() {
                     {race.raceType === "timed" && timeRemaining !== null && (
                       <Tooltip>
                         <TooltipTrigger asChild>
-                  <div className={`flex items-center gap-2 px-2 sm:px-4 py-2 rounded-lg font-mono text-base sm:text-lg cursor-help ${
-                    timeRemaining <= 10 
-                      ? 'bg-red-500/20 text-red-400 animate-pulse' 
-                      : timeRemaining <= 30 
-                        ? 'bg-yellow-500/20 text-yellow-400' 
-                        : 'bg-primary/20 text-primary'
-                  }`}>
+                          <div className={`flex items-center gap-2 px-2 sm:px-4 py-2 rounded-lg font-mono text-base sm:text-lg cursor-help ${timeRemaining <= 10
+                              ? 'bg-red-500/20 text-red-400 animate-pulse'
+                              : timeRemaining <= 30
+                                ? 'bg-yellow-500/20 text-yellow-400'
+                                : 'bg-primary/20 text-primary'
+                            }`}>
                             <Timer className="h-5 w-5" />
                             <span data-testid="time-remaining">
                               {Math.floor(timeRemaining / 60)}:{String(Math.floor(timeRemaining % 60)).padStart(2, '0')}
@@ -2758,8 +2750,8 @@ export default function RacePage() {
                         <TooltipContent side="bottom">
                           <p className="font-medium">Time Remaining</p>
                           <p className="text-zinc-400">
-                            {timeRemaining <= 10 
-                              ? "Hurry! Almost out of time!" 
+                            {timeRemaining <= 10
+                              ? "Hurry! Almost out of time!"
                               : "Keep typing to maximize your WPM!"}
                           </p>
                         </TooltipContent>
@@ -2855,12 +2847,11 @@ export default function RacePage() {
                 </CardContent>
               </Card>
 
-              <div 
-                className={`cursor-text transition-all duration-200 rounded-lg ${
-                  isFocused 
-                    ? 'ring-2 ring-primary/50 ring-offset-2 ring-offset-background' 
+              <div
+                className={`cursor-text transition-all duration-200 rounded-lg ${isFocused
+                    ? 'ring-2 ring-primary/50 ring-offset-2 ring-offset-background'
                     : ''
-                }`}
+                  }`}
                 onClick={() => hiddenInputRef.current?.focus()}
                 role="application"
                 aria-label="Typing test area"
@@ -2871,22 +2862,22 @@ export default function RacePage() {
                     <span className="text-sm">Click here or press any key to focus</span>
                   </div>
                 )}
-                
-              <div className="relative">
-                <div 
-                  ref={textContainerRef}
-                  className="text-lg sm:text-xl leading-[1.8] sm:leading-[2] font-mono select-none max-h-[200px] sm:max-h-[280px] overflow-y-auto scroll-smooth p-4 sm:p-6 lg:p-8 bg-zinc-900 rounded-lg whitespace-pre-wrap break-words" 
-                  data-testid="text-paragraph"
-                  role="textbox"
-                  aria-readonly="true"
-                  aria-label="Text to type"
-                  aria-describedby="typing-instructions"
-                >
+
+                <div className="relative">
+                  <div
+                    ref={textContainerRef}
+                    className="text-lg sm:text-xl leading-[1.8] sm:leading-[2] font-mono select-none max-h-[200px] sm:max-h-[280px] overflow-y-auto scroll-smooth p-4 sm:p-6 lg:p-8 bg-zinc-900 rounded-lg whitespace-pre-wrap break-words"
+                    data-testid="text-paragraph"
+                    role="textbox"
+                    aria-readonly="true"
+                    aria-label="Text to type"
+                    aria-describedby="typing-instructions"
+                  >
                     {(() => {
                       const text = race.paragraphContent;
                       const words = text.split(/(\s+)/);
                       let charIndex = 0;
-                      
+
                       const findCurrentWordBounds = () => {
                         let start = 0;
                         for (const word of words) {
@@ -2898,25 +2889,25 @@ export default function RacePage() {
                         }
                         return { start: 0, end: text.length };
                       };
-                      
+
                       const currentWordBounds = findCurrentWordBounds();
-                      
+
                       return words.map((word, wordIdx) => {
                         const wordStartIdx = charIndex;
                         const isCurrentWord = currentIndex >= wordStartIdx && currentIndex < wordStartIdx + word.length;
                         const isCompletedWord = currentIndex >= wordStartIdx + word.length;
                         const isPureSpace = /^\s+$/.test(word);
-                        
+
                         const renderedChars = word.split('').map((char, charIdx) => {
                           const idx = charIndex;
                           charIndex++;
-                          
+
                           const state = charStates[idx] || 'pending';
                           const isCurrent = idx === currentIndex;
                           const isSpace = char === ' ';
-                          
+
                           let className = 'transition-colors duration-75 ';
-                          
+
                           if (state === 'correct') {
                             className += 'text-zinc-100';
                           } else if (state === 'incorrect') {
@@ -2931,38 +2922,37 @@ export default function RacePage() {
                           } else {
                             className += 'text-zinc-600';
                           }
-                          
+
                           if (isCurrent) {
                             return (
-                              <span 
-                                key={idx} 
+                              <span
+                                key={idx}
                                 ref={caretRef}
                                 className={`${className} relative`}
                               >
-                                <span 
-                                  className={`absolute left-0 top-0 w-[2px] h-full bg-yellow-400 transition-all duration-100 ${
-                                    isFocused ? 'animate-caret-smooth' : 'opacity-50'
-                                  }`}
+                                <span
+                                  className={`absolute left-0 top-0 w-[2px] h-full bg-yellow-400 transition-all duration-100 ${isFocused ? 'animate-caret-smooth' : 'opacity-50'
+                                    }`}
                                 />
                                 {isSpace ? '\u00A0' : char}
                               </span>
                             );
                           }
-                          
+
                           return (
-                            <span 
-                              key={idx} 
+                            <span
+                              key={idx}
                               className={className}
                             >
                               {isSpace ? '\u00A0' : char}
                             </span>
                           );
                         });
-                        
+
                         if (isPureSpace) {
                           return <span key={`word-${wordIdx}`}>{renderedChars}</span>;
                         }
-                        
+
                         return (
                           <span key={`word-${wordIdx}`}>
                             {renderedChars}
@@ -2971,11 +2961,11 @@ export default function RacePage() {
                       });
                     })()}
                   </div>
-                  
+
                   <div id="typing-instructions" className="sr-only">
                     Type the text shown above. Use backspace to correct mistakes. Your progress is tracked in real-time.
                   </div>
-                  
+
                   <input
                     ref={hiddenInputRef}
                     type="text"
@@ -2999,7 +2989,7 @@ export default function RacePage() {
                   />
                 </div>
               </div>
-              
+
               {/* Chat is hidden during active racing to minimize distractions */}
             </div>
           </div>
@@ -3034,7 +3024,7 @@ export default function RacePage() {
             <div className="relative mb-8">
               {/* Background decoration */}
               <div className="hidden sm:block absolute inset-0 bg-gradient-to-r from-primary/10 via-yellow-500/10 to-primary/10 rounded-3xl blur-3xl opacity-50" />
-              
+
               <div className="relative overflow-hidden bg-gradient-to-br from-zinc-900/80 via-zinc-900/60 to-zinc-800/80 backdrop-blur-xl rounded-2xl border border-white/10 p-4 sm:p-6 md:p-8">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between sm:gap-4 mb-4 sm:mb-6 space-y-3 sm:space-y-0">
                   <Button
@@ -3051,7 +3041,7 @@ export default function RacePage() {
                     <Flag className="h-3 w-3 mr-1" />
                     Race Complete
                   </Badge>
-            </div>
+                </div>
 
                 {/* Your Result Hero */}
                 {myResult && lastResultSnapshot && (
@@ -3070,7 +3060,7 @@ export default function RacePage() {
                         <div className="text-3xl sm:text-5xl">🏁</div>
                       )}
                     </div>
-                    
+
                     <div>
                       <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-primary to-white bg-clip-text text-transparent">
                         {myPosition === 1 ? "Victory!" : myPosition === 2 ? "Runner Up!" : myPosition === 3 ? "Podium Finish!" : "Race Complete!"}
@@ -3078,10 +3068,10 @@ export default function RacePage() {
                       <p className="text-muted-foreground mt-1">
                         You finished #{myPosition} of {sortedParticipants.length} racers
                       </p>
-                      </div>
+                    </div>
 
                     {/* Quick Stats */}
-                      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
                       <div className="bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10">
                         <div className="flex items-center justify-center gap-2 text-primary mb-1">
                           <Gauge className="h-4 w-4" />
@@ -3151,19 +3141,18 @@ export default function RacePage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2 sm:space-y-3 px-3 sm:px-6">
-                  {sortedParticipants.map((p, idx) => {
-                    const isParticipantBot = p.isBot === 1 || p.isBot === true;
-                    const tierColor = p.tierInfo?.color || 'gray';
-                    return (
+                    {sortedParticipants.map((p, idx) => {
+                      const isParticipantBot = p.isBot === 1 || p.isBot === true;
+                      const tierColor = p.tierInfo?.color || 'gray';
+                      return (
                         <div
                           key={p.id}
-                          className={`rounded-xl transition-all duration-200 hover:scale-[1.005] ${
-                            p.id === myParticipant?.id 
-                              ? 'bg-gradient-to-r from-primary/20 to-primary/5 border border-primary/30' 
+                          className={`rounded-xl transition-all duration-200 hover:scale-[1.005] ${p.id === myParticipant?.id
+                              ? 'bg-gradient-to-r from-primary/20 to-primary/5 border border-primary/30'
                               : 'bg-white/5 border border-white/10 hover:border-white/20'
-                          }`}
+                            }`}
                           data-testid={`result-${p.id}`}
-                        >  
+                        >
                           {/* Mobile Layout */}
                           <div className="flex sm:hidden p-3">
                             <div className="flex items-start gap-2 w-full">
@@ -3210,7 +3199,7 @@ export default function RacePage() {
                               </div>
                             </div>
                           </div>
-                          
+
                           {/* Desktop Layout */}
                           <div className="hidden sm:flex items-center gap-4 p-4">
                             <div className="text-2xl font-bold w-12 text-center shrink-0">
@@ -3256,8 +3245,8 @@ export default function RacePage() {
                             </div>
                           </div>
                         </div>
-                        );
-                      })}
+                      );
+                    })}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -3279,7 +3268,7 @@ export default function RacePage() {
                           <div className="text-center p-2 sm:p-3 bg-white/5 rounded-lg">
                             <p className="text-2xl sm:text-3xl font-bold text-primary">{lastResultSnapshot.wpm}</p>
                             <p className="text-xs text-muted-foreground">Words/Min</p>
-                            </div>
+                          </div>
                           <div className="text-center p-2 sm:p-3 bg-white/5 rounded-lg">
                             <p className="text-2xl sm:text-3xl font-bold text-green-400">{lastResultSnapshot.accuracy}%</p>
                             <p className="text-xs text-muted-foreground">Accuracy</p>
@@ -3287,7 +3276,7 @@ export default function RacePage() {
                           <div className="text-center p-2 sm:p-3 bg-white/5 rounded-lg">
                             <p className="text-2xl sm:text-3xl font-bold text-purple-400">{lastResultSnapshot.characters}</p>
                             <p className="text-xs text-muted-foreground">Characters</p>
-                            </div>
+                          </div>
                           <div className="text-center p-2 sm:p-3 bg-white/5 rounded-lg">
                             <p className="text-2xl sm:text-3xl font-bold text-red-400">{lastResultSnapshot.errors}</p>
                             <p className="text-xs text-muted-foreground">Errors</p>
@@ -3296,7 +3285,7 @@ export default function RacePage() {
                         <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
                           <span className="text-sm text-muted-foreground">Race Duration</span>
                           <span className="font-bold">{lastResultSnapshot.duration}s</span>
-                </div>
+                        </div>
                         <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
                           <span className="text-sm text-muted-foreground">Consistency</span>
                           <span className="font-bold">{lastResultSnapshot.consistency}%</span>
@@ -3314,24 +3303,24 @@ export default function RacePage() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                {user ? (
-                  ratingInfo ? (
-                    <RatingChangeDisplay ratingInfo={ratingInfo} position={myPosition} />
-                  ) : (
+                      {user ? (
+                        ratingInfo ? (
+                          <RatingChangeDisplay ratingInfo={ratingInfo} position={myPosition} />
+                        ) : (
                           <div className="flex items-center gap-2 text-muted-foreground p-4">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>Loading your rating...</span>
-                    </div>
-                  )
-                ) : (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <span>Loading your rating...</span>
+                          </div>
+                        )
+                      ) : (
                         <div className="text-center p-6">
                           <User className="h-12 w-12 mx-auto mb-3 text-muted-foreground" />
                           <p className="text-muted-foreground">Sign in to track your competitive rating</p>
                           <Button variant="outline" className="mt-4" onClick={() => setLocation("/login")}>
                             Sign In
                           </Button>
-                  </div>
-                )}
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 </div>
@@ -3344,16 +3333,16 @@ export default function RacePage() {
                     {lastResultSnapshot ? (
                       <div className="overflow-x-auto -mx-2 sm:mx-0 px-2">
                         <RaceCertificate
-                        wpm={lastResultSnapshot.wpm}
-                        accuracy={lastResultSnapshot.accuracy}
-                        consistency={lastResultSnapshot.consistency}
-                        placement={lastResultSnapshot.placement}
-                        totalParticipants={lastResultSnapshot.totalParticipants}
-                        characters={lastResultSnapshot.characters}
-                        errors={lastResultSnapshot.errors}
-                        duration={lastResultSnapshot.duration}
-                        username={user?.username}
-                        raceId={race?.id?.toString()}
+                          wpm={lastResultSnapshot.wpm}
+                          accuracy={lastResultSnapshot.accuracy}
+                          consistency={lastResultSnapshot.consistency}
+                          placement={lastResultSnapshot.placement}
+                          totalParticipants={lastResultSnapshot.totalParticipants}
+                          characters={lastResultSnapshot.characters}
+                          errors={lastResultSnapshot.errors}
+                          duration={lastResultSnapshot.duration}
+                          username={user?.username}
+                          raceId={race?.id?.toString()}
                         />
                       </div>
                     ) : (
@@ -3503,7 +3492,7 @@ export default function RacePage() {
                         onClick={async () => {
                           // Set loading state
                           setIsCreatingRematch(true);
-                          
+
                           try {
                             const response = await fetch("/api/races/quick-match", {
                               method: "POST",
@@ -3512,25 +3501,25 @@ export default function RacePage() {
                             });
                             if (response.ok) {
                               const data = await response.json();
-                              
+
                               // CRITICAL: Save participant to localStorage before redirect
                               // This ensures the race page can find the participant on load
                               if (data.participant) {
                                 localStorage.setItem(`race_${data.race.id}_participant`, JSON.stringify(data.participant));
                                 console.log(`[Play Again] Saved new participant ${data.participant.id} for race ${data.race.id}`);
                               }
-                              
+
                               // Clear old race participant from localStorage to avoid confusion
                               if (race?.id && race.id !== data.race.id) {
                                 localStorage.removeItem(`race_${race.id}_participant`);
                               }
-                              
+
                               setRematchInfo({
                                 newRaceId: data.race.id,
                                 roomCode: data.race.roomCode,
                                 createdBy: myParticipant?.username || "You",
                               });
-                              
+
                               // Auto-redirect to new race
                               setTimeout(() => {
                                 setLocation(`/race/${data.race.id}`);
@@ -3570,8 +3559,8 @@ export default function RacePage() {
                     <TooltipContent side="bottom">
                       <p className="font-medium">{rematchInfo ? "Rematch ready!" : "Start a new race"}</p>
                       <p className="text-zinc-400">
-                        {rematchInfo 
-                          ? "Click 'Join Rematch' above to continue" 
+                        {rematchInfo
+                          ? "Click 'Join Rematch' above to continue"
                           : "Create a new race with same settings"
                         }
                       </p>
@@ -3595,7 +3584,7 @@ export default function RacePage() {
                 Share your multiplayer race achievement with others!
               </DialogDescription>
             </DialogHeader>
-            
+
             {lastResultSnapshot && (
               <Tabs defaultValue="certificate" className="w-full">
                 <TabsList className="grid w-full grid-cols-1">
@@ -3611,7 +3600,7 @@ export default function RacePage() {
                     </TooltipContent>
                   </Tooltip>
                 </TabsList>
-                
+
                 <TabsContent value="certificate" className="space-y-4">
                   <div className="text-center space-y-2 mb-4">
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border-2 border-yellow-500/30 mb-2">
@@ -3646,8 +3635,8 @@ export default function RacePage() {
                   </div>
 
                   {/* Hidden pre-rendered certificate for sharing */}
-                  <div 
-                    className="absolute -z-50 w-0 h-0 overflow-hidden opacity-0 pointer-events-none" 
+                  <div
+                    className="absolute -z-50 w-0 h-0 overflow-hidden opacity-0 pointer-events-none"
                     aria-hidden="true"
                     data-testid="hidden-certificate-container"
                   >

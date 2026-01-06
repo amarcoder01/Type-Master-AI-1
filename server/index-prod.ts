@@ -24,7 +24,7 @@ const CACHE_DURATIONS = {
   seo: 86400,
 };
 
-const BASE_URL = 'https://typemaster-ai.replit.app';
+const BASE_URL = 'https://typemasterai.com';
 
 /**
  * Middleware to add optimal cache headers based on file type
@@ -33,7 +33,7 @@ const BASE_URL = 'https://typemaster-ai.replit.app';
 function cacheHeadersMiddleware(req: Request, res: Response, next: NextFunction) {
   const url = req.url;
   const cleanPath = url.split('?')[0]; // Remove query string for path matching
-  
+
   // Immutable hashed assets (JS/CSS with hash in filename)
   if (url.match(/\.(js|css)$/) && url.includes('-')) {
     res.set('Cache-Control', `public, max-age=${CACHE_DURATIONS.immutable}, immutable`);
@@ -65,28 +65,28 @@ function cacheHeadersMiddleware(req: Request, res: Response, next: NextFunction)
     res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.set('Pragma', 'no-cache');
     res.set('Expires', '0');
-    
+
     // Add canonical Link header for SEO
     res.set('Link', `<${BASE_URL}${cleanPath}>; rel="canonical"`);
-    
+
     // Add X-Robots-Tag for proper indexing
     res.set('X-Robots-Tag', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
   }
-  
+
   // Add security headers for all responses
   res.set('X-Content-Type-Options', 'nosniff');
   res.set('X-Frame-Options', 'SAMEORIGIN');
   res.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  
+
   // Add performance hints
   res.set('X-DNS-Prefetch-Control', 'on');
-  
+
   // Add preconnect hints via Link header for external resources
   if (!url.includes('.')) {
     res.append('Link', '<https://fonts.googleapis.com>; rel="preconnect"');
     res.append('Link', '<https://fonts.gstatic.com>; rel="preconnect"; crossorigin');
   }
-  
+
   next();
 }
 

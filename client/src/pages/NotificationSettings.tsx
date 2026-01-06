@@ -54,8 +54,8 @@ export default function NotificationSettings() {
     title: 'Notification Settings | TypeMasterAI',
     description: 'Manage your TypeMasterAI notification preferences. Control daily reminders, streak alerts, and achievement notifications.',
     keywords: 'notification settings, typing reminders, practice alerts, push notifications',
-    canonical: 'https://typemaster-ai.replit.app/notifications',
-    ogUrl: 'https://typemaster-ai.replit.app/notifications',
+    canonical: 'https://typemasterai.com/notifications',
+    ogUrl: 'https://typemasterai.com/notifications',
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);

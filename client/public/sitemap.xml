@@ -14,20 +14,20 @@
   
   <!-- Home Page / Main Typing Test - Priority 1.0 -->
   <url>
-    <loc>https://typemaster-ai.replit.app/</loc>
+    <loc>https://typemasterai.com/</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
     <mobile:mobile/>
     <image:image>
-      <image:loc>https://typemaster-ai.replit.app/opengraph.jpg</image:loc>
+      <image:loc>https://typemasterai.com/opengraph.jpg</image:loc>
       <image:title>TypeMasterAI - Free Online Typing Speed Test</image:title>
     </image:image>
   </url>
   
   <!-- Core Feature Pages - Priority 0.9 -->
   <url>
-    <loc>https://typemaster-ai.replit.app/code-mode</loc>
+    <loc>https://typemasterai.com/code-mode</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -35,7 +35,7 @@
   </url>
   
   <url>
-    <loc>https://typemaster-ai.replit.app/multiplayer</loc>
+    <loc>https://typemasterai.com/multiplayer</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -44,7 +44,7 @@
   
   <!-- SEO Landing Pages - Duration Tests -->
   <url>
-    <loc>https://typemaster-ai.replit.app/1-minute-typing-test</loc>
+    <loc>https://typemasterai.com/1-minute-typing-test</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -52,7 +52,7 @@
   </url>
   
   <url>
-    <loc>https://typemaster-ai.replit.app/3-minute-typing-test</loc>
+    <loc>https://typemasterai.com/3-minute-typing-test</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -60,7 +60,7 @@
   </url>
   
   <url>
-    <loc>https://typemaster-ai.replit.app/5-minute-typing-test</loc>
+    <loc>https://typemasterai.com/5-minute-typing-test</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -69,7 +69,7 @@
   
   <!-- NEW SEO Landing Pages -->
   <url>
-    <loc>https://typemaster-ai.replit.app/typing-practice</loc>
+    <loc>https://typemasterai.com/typing-practice</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -77,7 +77,7 @@
   </url>
   
   <url>
-    <loc>https://typemaster-ai.replit.app/wpm-test</loc>
+    <loc>https://typemasterai.com/wpm-test</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -85,7 +85,7 @@
   </url>
   
   <url>
-    <loc>https://typemaster-ai.replit.app/typing-games</loc>
+    <loc>https://typemasterai.com/typing-games</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -93,7 +93,7 @@
   </url>
   
   <url>
-    <loc>https://typemaster-ai.replit.app/keyboard-test</loc>
+    <loc>https://typemasterai.com/keyboard-test</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -101,7 +101,7 @@
   </url>
   
   <url>
-    <loc>https://typemaster-ai.replit.app/typing-certificate</loc>
+    <loc>https://typemasterai.com/typing-certificate</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -110,7 +110,7 @@
   
   <!-- Competitor Alternative Pages -->
   <url>
-    <loc>https://typemaster-ai.replit.app/monkeytype-alternative</loc>
+    <loc>https://typemasterai.com/monkeytype-alternative</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -118,7 +118,7 @@
   </url>
   
   <url>
-    <loc>https://typemaster-ai.replit.app/typeracer-alternative</loc>
+    <loc>https://typemasterai.com/typeracer-alternative</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -126,7 +126,7 @@
   </url>
   
   <url>
-    <loc>https://typemaster-ai.replit.app/10fastfingers-alternative</loc>
+    <loc>https://typemasterai.com/10fastfingers-alternative</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -134,7 +134,7 @@
   </url>
   
   <url>
-    <loc>https://typemaster-ai.replit.app/typingcom-alternative</loc>
+    <loc>https://typemasterai.com/typingcom-alternative</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -143,7 +143,7 @@
   
   <!-- Feature Pages -->
   <url>
-    <loc>https://typemaster-ai.replit.app/dictation-mode</loc>
+    <loc>https://typemasterai.com/dictation-mode</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -151,7 +151,7 @@
   </url>
   
   <url>
-    <loc>https://typemaster-ai.replit.app/dictation-test</loc>
+    <loc>https://typemasterai.com/dictation-test</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -159,7 +159,7 @@
   </url>
   
   <url>
-    <loc>https://typemaster-ai.replit.app/stress-test</loc>
+    <loc>https://typemasterai.com/stress-test</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -168,7 +168,7 @@
   
   <!-- Leaderboards -->
   <url>
-    <loc>https://typemaster-ai.replit.app/leaderboard</loc>
+    <loc>https://typemasterai.com/leaderboard</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>hourly</changefreq>
     <priority>0.8</priority>
@@ -176,7 +176,7 @@
   </url>
   
   <url>
-    <loc>https://typemaster-ai.replit.app/leaderboards</loc>
+    <loc>https://typemasterai.com/leaderboards</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -184,7 +184,7 @@
   </url>
   
   <url>
-    <loc>https://typemaster-ai.replit.app/code-leaderboard</loc>
+    <loc>https://typemasterai.com/code-leaderboard</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
@@ -192,7 +192,7 @@
   </url>
   
   <url>
-    <loc>https://typemaster-ai.replit.app/stress-leaderboard</loc>
+    <loc>https://typemasterai.com/stress-leaderboard</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
@@ -201,7 +201,7 @@
   
   <!-- User Features -->
   <url>
-    <loc>https://typemaster-ai.replit.app/analytics</loc>
+    <loc>https://typemasterai.com/analytics</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
@@ -209,7 +209,7 @@
   </url>
   
   <url>
-    <loc>https://typemaster-ai.replit.app/profile</loc>
+    <loc>https://typemasterai.com/profile</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -217,7 +217,7 @@
   </url>
   
   <url>
-    <loc>https://typemaster-ai.replit.app/settings</loc>
+    <loc>https://typemasterai.com/settings</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
@@ -226,7 +226,7 @@
   
   <!-- Educational Content -->
   <url>
-    <loc>https://typemaster-ai.replit.app/learn</loc>
+    <loc>https://typemasterai.com/learn</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -234,7 +234,7 @@
   </url>
   
   <url>
-    <loc>https://typemaster-ai.replit.app/faq</loc>
+    <loc>https://typemasterai.com/faq</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -243,7 +243,7 @@
   
   <!-- AI Features -->
   <url>
-    <loc>https://typemaster-ai.replit.app/chat</loc>
+    <loc>https://typemasterai.com/chat</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -252,7 +252,7 @@
   
   <!-- About & Contact -->
   <url>
-    <loc>https://typemaster-ai.replit.app/about</loc>
+    <loc>https://typemasterai.com/about</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -260,7 +260,7 @@
   </url>
   
   <url>
-    <loc>https://typemaster-ai.replit.app/contact</loc>
+    <loc>https://typemasterai.com/contact</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
@@ -269,7 +269,7 @@
   
   <!-- Verification & Certificates -->
   <url>
-    <loc>https://typemaster-ai.replit.app/verify</loc>
+    <loc>https://typemasterai.com/verify</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -278,7 +278,7 @@
   
   <!-- Legal & Compliance Pages -->
   <url>
-    <loc>https://typemaster-ai.replit.app/privacy-policy</loc>
+    <loc>https://typemasterai.com/privacy-policy</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
@@ -286,7 +286,7 @@
   </url>
   
   <url>
-    <loc>https://typemaster-ai.replit.app/terms-of-service</loc>
+    <loc>https://typemasterai.com/terms-of-service</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
@@ -294,7 +294,7 @@
   </url>
   
   <url>
-    <loc>https://typemaster-ai.replit.app/cookie-policy</loc>
+    <loc>https://typemasterai.com/cookie-policy</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
@@ -302,7 +302,7 @@
   </url>
   
   <url>
-    <loc>https://typemaster-ai.replit.app/ai-transparency</loc>
+    <loc>https://typemasterai.com/ai-transparency</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
@@ -310,7 +310,7 @@
   </url>
   
   <url>
-    <loc>https://typemaster-ai.replit.app/accessibility</loc>
+    <loc>https://typemasterai.com/accessibility</loc>
     <lastmod>2026-01-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>

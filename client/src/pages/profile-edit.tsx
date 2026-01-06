@@ -62,8 +62,8 @@ export default function ProfileEdit() {
     title: 'Edit Profile | TypeMasterAI',
     description: 'Update your TypeMasterAI profile information, avatar, and display settings.',
     keywords: 'edit profile, update profile, account settings',
-    canonical: 'https://typemaster-ai.replit.app/profile/edit',
-    ogUrl: 'https://typemaster-ai.replit.app/profile/edit',
+    canonical: 'https://typemasterai.com/profile/edit',
+    ogUrl: 'https://typemasterai.com/profile/edit',
     noindex: true,
   });
   const { user } = useAuth();

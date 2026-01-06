@@ -70,6 +70,12 @@ const WPMTest = lazy(() => import("@/pages/wpm-test"));
 const TypingGames = lazy(() => import("@/pages/typing-games"));
 const KeyboardTest = lazy(() => import("@/pages/keyboard-test"));
 const TypingCertificate = lazy(() => import("@/pages/typing-certificate"));
+const AverageTypingSpeed = lazy(() => import("@/pages/average-typing-speed"));
+const TypingSpeedChart = lazy(() => import("@/pages/typing-speed-chart"));
+const KeybrAlternative = lazy(() => import("@/pages/keybr-alternative"));
+const TypingTestJobs = lazy(() => import("@/pages/typing-test-jobs"));
+const TouchTyping = lazy(() => import("@/pages/touch-typing"));
+const SpanishTypingTest = lazy(() => import("@/pages/es/typing-test"));
 
 // Loading component for Suspense fallback
 function PageLoader() {
@@ -111,6 +117,12 @@ function Router() {
                 <Route path="/typing-games" component={TypingGames} />
                 <Route path="/keyboard-test" component={KeyboardTest} />
                 <Route path="/typing-certificate" component={TypingCertificate} />
+                <Route path="/average-typing-speed" component={AverageTypingSpeed} />
+                <Route path="/typing-speed-chart" component={TypingSpeedChart} />
+                <Route path="/keybr-alternative" component={KeybrAlternative} />
+                <Route path="/typing-test-jobs" component={TypingTestJobs} />
+                <Route path="/touch-typing" component={TouchTyping} />
+                <Route path="/es/typing-test" component={SpanishTypingTest} />
                 <Route path="/profile" component={Profile} />
                 <Route path="/profile/edit" component={ProfileEdit} />
                 <Route path="/leaderboard" component={Leaderboard} />

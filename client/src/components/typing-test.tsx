@@ -89,7 +89,7 @@ interface CharSpanProps {
   state: 'pending' | 'correct' | 'incorrect';
 }
 
-const CharSpan = ({ char, index, state }: CharSpanProps) => {
+const CharSpan = memo(({ char, index, state }: CharSpanProps) => {
   const isSpace = char === ' ' || /\s/.test(char);
   const isIncorrectSpace = state === 'incorrect' && isSpace;
 
@@ -106,7 +106,7 @@ const CharSpan = ({ char, index, state }: CharSpanProps) => {
       {char}
     </span>
   );
-};
+}, (prev, next) => prev.state === next.state && prev.char === next.char && prev.index === next.index);
 
 /**
  * Word component that groups characters to prevent mid-word breaks
@@ -117,7 +117,7 @@ interface WordSpanProps {
   isRTL?: boolean;
 }
 
-const WordSpan = ({ chars, isRTL }: WordSpanProps) => {
+const WordSpan = memo(({ chars, isRTL }: WordSpanProps) => {
   return (
     <span className="inline whitespace-nowrap" style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
       {chars.map(({ char, index, state }) => (
@@ -130,7 +130,17 @@ const WordSpan = ({ chars, isRTL }: WordSpanProps) => {
       ))}
     </span>
   );
-};
+}, (prev, next) => {
+  if (prev.isRTL !== next.isRTL) return false;
+  if (prev.chars.length !== next.chars.length) return false;
+  // Deep comparison of states to avoid re-rendering words that haven't changed
+  for (let i = 0; i < prev.chars.length; i++) {
+    if (prev.chars[i].state !== next.chars[i].state) return false;
+    // Char and index technically shouldn't change for the same word instance, but safe to check
+    if (prev.chars[i].char !== next.chars[i].char) return false;
+  }
+  return true;
+});
 
 const LANGUAGE_NAMES: Record<string, string> = {
   en: "English",
@@ -186,7 +196,12 @@ interface CharState {
   state: 'pending' | 'correct' | 'incorrect';
 }
 
-export default function TypingTest() {
+interface TypingTestProps {
+  initialLanguage?: string;
+  initialMode?: TestMode;
+}
+
+export default function TypingTest({ initialLanguage = "en", initialMode = 60 }: TypingTestProps) {
   const { user } = useAuth();
   const { toast } = useToast();
   const { celebrateMultiple } = useAchievementCelebration();
@@ -202,10 +217,10 @@ export default function TypingTest() {
     }
   }, [toast]);
 
-  const [mode, setMode] = useState<TestMode>(60);
+  const [mode, setMode] = useState<TestMode>(initialMode);
   const [customTime, setCustomTime] = useState<string>("");
   const [showCustomInput, setShowCustomInput] = useState(false);
-  const [language, setLanguage] = useState("en");
+  const [language, setLanguage] = useState(initialLanguage);
   const [paragraphMode, setParagraphMode] = useState<string>("general");
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("easy");
   const [customPrompt, setCustomPrompt] = useState("");

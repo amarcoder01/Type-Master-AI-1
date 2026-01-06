@@ -6,12 +6,12 @@ User-agent: *
 Allow: /
 
 # Sitemap location - primary sitemap index
-Sitemap: https://typemaster-ai.replit.app/sitemap.xml
+Sitemap: https://typemasterai.com/sitemap.xml
 
 # Individual sitemaps for better crawl distribution
-Sitemap: https://typemaster-ai.replit.app/sitemap-pages.xml
-Sitemap: https://typemaster-ai.replit.app/sitemap-shared.xml
-Sitemap: https://typemaster-ai.replit.app/sitemap-certificates.xml
+Sitemap: https://typemasterai.com/sitemap-pages.xml
+Sitemap: https://typemasterai.com/sitemap-shared.xml
+Sitemap: https://typemasterai.com/sitemap-certificates.xml
 
 # Disallow API endpoints and private content
 Disallow: /api/

@@ -6,8 +6,8 @@ export default function CookiePolicy() {
     title: 'Cookie Policy | TypeMasterAI',
     description: 'Learn about how TypeMasterAI uses cookies to improve your experience on our typing test platform.',
     keywords: 'cookie policy, cookies, typemasterai cookies, tracking',
-    canonical: 'https://typemaster-ai.replit.app/cookie-policy',
-    ogUrl: 'https://typemaster-ai.replit.app/cookie-policy',
+    canonical: 'https://typemasterai.com/cookie-policy',
+    ogUrl: 'https://typemasterai.com/cookie-policy',
   });
 
   return (

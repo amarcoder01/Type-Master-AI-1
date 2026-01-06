@@ -5,7 +5,7 @@
 
 import { storage } from './storage';
 
-const BASE_URL = 'https://typemaster-ai.replit.app';
+const BASE_URL = 'https://typemasterai.com';
 
 interface SitemapUrl {
   loc: string;
@@ -23,7 +23,7 @@ const STATIC_PAGES: SitemapUrl[] = [
   { loc: '/', lastmod: new Date().toISOString().split('T')[0], changefreq: 'daily', priority: '1.0', images: [{ loc: `${BASE_URL}/opengraph.jpg`, title: 'TypeMasterAI - Free Online Typing Speed Test' }] },
   { loc: '/code-mode', lastmod: new Date().toISOString().split('T')[0], changefreq: 'daily', priority: '0.9' },
   { loc: '/multiplayer', lastmod: new Date().toISOString().split('T')[0], changefreq: 'daily', priority: '0.9' },
-  
+
   // SEO Landing Pages - high priority
   { loc: '/1-minute-typing-test', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.9' },
   { loc: '/3-minute-typing-test', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.9' },
@@ -32,42 +32,50 @@ const STATIC_PAGES: SitemapUrl[] = [
   { loc: '/typeracer-alternative', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.9' },
   { loc: '/10fastfingers-alternative', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.9' },
   { loc: '/typingcom-alternative', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.9' },
-  
+
   // New SEO landing pages
   { loc: '/typing-practice', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.9' },
   { loc: '/wpm-test', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.9' },
   { loc: '/typing-games', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.9' },
   { loc: '/keyboard-test', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.9' },
   { loc: '/typing-certificate', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.8' },
-  
+
+  // Phase 3 Pillar Pages
+  { loc: '/average-typing-speed', lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.8' },
+  { loc: '/typing-speed-chart', lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.8' },
+  { loc: '/typing-test-jobs', lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.8' },
+  { loc: '/touch-typing', lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.9' },
+  { loc: '/keybr-alternative', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.9' },
+  { loc: '/es/typing-test', lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.8' },
+
   // Feature pages
   { loc: '/dictation-mode', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.8' },
   { loc: '/dictation-test', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.8' },
   { loc: '/stress-test', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.8' },
-  
+
   // Leaderboards - frequently updated
   { loc: '/leaderboard', lastmod: new Date().toISOString().split('T')[0], changefreq: 'hourly', priority: '0.8' },
   { loc: '/leaderboards', lastmod: new Date().toISOString().split('T')[0], changefreq: 'daily', priority: '0.8' },
   { loc: '/code-leaderboard', lastmod: new Date().toISOString().split('T')[0], changefreq: 'daily', priority: '0.7' },
   { loc: '/stress-leaderboard', lastmod: new Date().toISOString().split('T')[0], changefreq: 'daily', priority: '0.7' },
-  
+
   // User features
   { loc: '/analytics', lastmod: new Date().toISOString().split('T')[0], changefreq: 'daily', priority: '0.7' },
   { loc: '/profile', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.6' },
   { loc: '/settings', lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.5' },
-  
+
   // Educational content
   { loc: '/learn', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.8' },
   { loc: '/faq', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.7' },
   { loc: '/chat', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.7' },
-  
+
   // About & Contact
   { loc: '/about', lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.6' },
   { loc: '/contact', lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.5' },
-  
+
   // Verification
   { loc: '/verify', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.5' },
-  
+
   // Legal pages
   { loc: '/privacy-policy', lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.3' },
   { loc: '/terms-of-service', lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.3' },
@@ -120,7 +128,7 @@ function escapeXml(text: string): string {
  */
 export async function generateMainSitemap(): Promise<string> {
   const today = new Date().toISOString().split('T')[0];
-  
+
   // Update lastmod for all static pages to today
   const updatedPages = STATIC_PAGES.map(page => ({
     ...page,
@@ -143,16 +151,16 @@ ${urlElements}
  */
 export async function generateSharedResultsSitemap(): Promise<string> {
   const today = new Date().toISOString().split('T')[0];
-  
+
   try {
     // Get recent shared results from database
     const sharedResults = await storage.getRecentSharedResults(1000);
-    
+
     const urlElements = sharedResults.map(result => {
-      const lastmod = result.createdAt 
+      const lastmod = result.createdAt
         ? new Date(result.createdAt).toISOString().split('T')[0]
         : today;
-      
+
       return `  <url>
     <loc>${BASE_URL}/share/${result.shareToken}</loc>
     <lastmod>${lastmod}</lastmod>
@@ -178,16 +186,16 @@ ${urlElements}
  */
 export async function generateCertificatesSitemap(): Promise<string> {
   const today = new Date().toISOString().split('T')[0];
-  
+
   try {
     // Get recent verified certificates
     const certificates = await storage.getRecentCertificates(500);
-    
+
     const urlElements = certificates.map(cert => {
-      const lastmod = cert.createdAt 
+      const lastmod = cert.createdAt
         ? new Date(cert.createdAt).toISOString().split('T')[0]
         : today;
-      
+
       return `  <url>
     <loc>${BASE_URL}/verify/${cert.verificationId}</loc>
     <lastmod>${lastmod}</lastmod>
@@ -213,7 +221,7 @@ ${urlElements}
  */
 export function generateSitemapIndex(): string {
   const today = new Date().toISOString().split('T')[0];
-  
+
   return `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>

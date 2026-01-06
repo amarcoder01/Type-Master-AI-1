@@ -13,8 +13,8 @@ export default function ForgotPassword() {
     title: 'Forgot Password | TypeMasterAI',
     description: 'Reset your TypeMasterAI password. Enter your email to receive a password reset link.',
     keywords: 'forgot password, reset password, account recovery',
-    canonical: 'https://typemaster-ai.replit.app/forgot-password',
-    ogUrl: 'https://typemaster-ai.replit.app/forgot-password',
+    canonical: 'https://typemasterai.com/forgot-password',
+    ogUrl: 'https://typemasterai.com/forgot-password',
     noindex: true,
   });
   const [, setLocation] = useLocation();

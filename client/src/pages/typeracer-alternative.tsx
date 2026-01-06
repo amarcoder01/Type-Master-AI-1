@@ -10,8 +10,8 @@ export default function TyperacerAlternativePage() {
     title: 'Typeracer Alternative | TypeMasterAI - Best Free Typing Race Game',
     description: 'Looking for a Typeracer alternative? TypeMasterAI offers multiplayer typing races, AI analytics, code typing mode, and instant matchmaking. Try the best free typing race game with advanced features Typeracer doesn\'t have!',
     keywords: 'typeracer alternative, typing race game, multiplayer typing test, typeracer competitor, better than typeracer, typing race online, free typing game',
-    canonical: 'https://typemaster-ai.replit.app/typeracer-alternative',
-    ogUrl: 'https://typemaster-ai.replit.app/typeracer-alternative',
+    canonical: 'https://typemasterai.com/typeracer-alternative',
+    ogUrl: 'https://typemasterai.com/typeracer-alternative',
   });
 
   return (

@@ -6,8 +6,8 @@ export default function PrivacyPolicy() {
     title: 'Privacy Policy | TypeMasterAI',
     description: 'Read TypeMasterAI\'s privacy policy. Learn how we collect, use, and protect your data while you use our typing test platform.',
     keywords: 'privacy policy, data protection, typemasterai privacy, user data, GDPR',
-    canonical: 'https://typemaster-ai.replit.app/privacy-policy',
-    ogUrl: 'https://typemaster-ai.replit.app/privacy-policy',
+    canonical: 'https://typemasterai.com/privacy-policy',
+    ogUrl: 'https://typemasterai.com/privacy-policy',
   });
 
   return (

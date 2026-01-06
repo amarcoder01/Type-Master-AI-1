@@ -10,8 +10,8 @@ export default function TenFastFingersAlternativePage() {
     title: '10FastFingers Alternative | TypeMasterAI - Better Typing Speed Test',
     description: 'Looking for a 10FastFingers alternative? TypeMasterAI offers everything 10FastFingers has plus AI analytics, code typing mode, multiplayer racing, and advanced features. Try the best free typing test alternative now!',
     keywords: '10fastfingers alternative, 10 fast fingers alternative, typing speed test, typing test alternative, better than 10fastfingers, free typing test, wpm test online',
-    canonical: 'https://typemaster-ai.replit.app/10fastfingers-alternative',
-    ogUrl: 'https://typemaster-ai.replit.app/10fastfingers-alternative',
+    canonical: 'https://typemasterai.com/10fastfingers-alternative',
+    ogUrl: 'https://typemasterai.com/10fastfingers-alternative',
   });
 
   return (

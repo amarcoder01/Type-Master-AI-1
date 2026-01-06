@@ -6,8 +6,8 @@ export default function AITransparency() {
     title: 'AI Transparency | How We Use AI - TypeMasterAI',
     description: 'Learn how TypeMasterAI uses artificial intelligence to power analytics, generate content, and provide personalized recommendations.',
     keywords: 'ai transparency, artificial intelligence, ai disclosure, typemasterai ai, machine learning',
-    canonical: 'https://typemaster-ai.replit.app/ai-transparency',
-    ogUrl: 'https://typemaster-ai.replit.app/ai-transparency',
+    canonical: 'https://typemasterai.com/ai-transparency',
+    ogUrl: 'https://typemasterai.com/ai-transparency',
   });
 
   return (

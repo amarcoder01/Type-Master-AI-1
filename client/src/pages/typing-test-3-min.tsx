@@ -10,8 +10,8 @@ export default function TypingTest3MinPage() {
     title: '3 Minute Typing Test | Free 180 Second WPM Speed Test - TypeMasterAI',
     description: 'Take a comprehensive 3-minute typing speed test for accurate WPM measurement. Perfect for intermediate typists seeking reliable results. Get detailed performance analytics and progress tracking. Start your free 3-minute typing test now!',
     keywords: '3 minute typing test, 180 second typing test, typing test 3 min, three minute typing speed test, typing speed test 3 minutes, intermediate typing test',
-    canonical: 'https://typemaster-ai.replit.app/3-minute-typing-test',
-    ogUrl: 'https://typemaster-ai.replit.app/3-minute-typing-test',
+    canonical: 'https://typemasterai.com/3-minute-typing-test',
+    ogUrl: 'https://typemasterai.com/3-minute-typing-test',
     structuredData: {
       '@context': 'https://schema.org',
       '@type': 'HowTo',

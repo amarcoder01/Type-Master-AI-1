@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Link } from 'wouter';
-import { Timer, Zap, Target, TrendingUp, Award, ArrowRight } from 'lucide-react';
+import { Timer, Zap, Target, TrendingUp, Award, ArrowRight, Brain } from 'lucide-react';
 import { useSEO } from '@/lib/seo';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,8 +10,8 @@ export default function TypingTest1MinPage() {
     title: '1 Minute Typing Test | Free 60 Second WPM Speed Test - TypeMasterAI',
     description: 'Take a quick 1-minute typing speed test and measure your WPM instantly. Perfect for beginners and quick practice sessions. Get real-time accuracy tracking and instant results. Start your free 60-second typing test now!',
     keywords: '1 minute typing test, 60 second typing test, quick typing test, typing test 1 min, one minute typing speed test, fast typing test, typing speed 60 seconds',
-    canonical: 'https://typemaster-ai.replit.app/1-minute-typing-test',
-    ogUrl: 'https://typemaster-ai.replit.app/1-minute-typing-test',
+    canonical: 'https://typemasterai.com/1-minute-typing-test',
+    ogUrl: 'https://typemasterai.com/1-minute-typing-test',
     structuredData: {
       '@context': 'https://schema.org',
       '@type': 'HowTo',
@@ -185,7 +185,7 @@ export default function TypingTest1MinPage() {
             </div>
 
             <h3 className="text-2xl font-bold text-white mt-8">Frequently Asked Questions</h3>
-            
+
             <h4 className="text-xl font-semibold text-cyan-400 mt-6">Is a 1-minute test accurate?</h4>
             <p className="text-lg">
               Yes! While longer tests can provide more stable averages, a 1-minute test gives you a reliable snapshot of your current typing ability. Take multiple tests for the most consistent results.

@@ -140,7 +140,7 @@ export default function VerifyPage() {
     keywords: "certificate verification, typing certificate, verify certificate, TypeMasterAI, authentic certificate, digital signature",
     ogTitle: seoTitle,
     ogDescription: seoDescription,
-    canonical: searchId ? `https://typemaster-ai.replit.app/verify/${searchId}` : "https://typemaster-ai.replit.app/verify",
+    canonical: searchId ? `https://typemasterai.com/verify/${searchId}` : "https://typemasterai.com/verify",
   });
 
   // Handle search with professional validation

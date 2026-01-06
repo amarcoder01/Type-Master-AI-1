@@ -216,10 +216,10 @@ function LeaderboardContent() {
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
-    
+
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
-    
+
     return () => {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
@@ -231,23 +231,23 @@ function LeaderboardContent() {
     queryFn: async ({ signal }) => {
       const timeoutSignal = AbortSignal.timeout(15000);
       const combinedController = new AbortController();
-      
+
       const abortHandler = () => combinedController.abort();
       signal.addEventListener("abort", abortHandler);
       timeoutSignal.addEventListener("abort", abortHandler);
-      
+
       try {
         const response = await fetch(
           `/api/leaderboard?limit=${limit}&offset=${offset}&timeframe=${timeframe}&language=${language}`,
           { signal: combinedController.signal }
         );
-        
+
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           const classified = classifyError(new Error(errorData.message || "Request failed"), response);
           throw new LeaderboardError(classified.message, classified.type, classified.retryable);
         }
-        
+
         return response.json();
       } catch (err) {
         if (err instanceof Error && err.name === "AbortError") {
@@ -285,9 +285,9 @@ function LeaderboardContent() {
     }
   }, [data?.pagination, offset, limit]);
 
-  const errorState: ErrorState | null = error instanceof LeaderboardError 
+  const errorState: ErrorState | null = error instanceof LeaderboardError
     ? { type: error.errorType, message: error.message, retryable: error.retryable }
-    : error instanceof Error 
+    : error instanceof Error
       ? classifyError(error)
       : null;
 
@@ -326,7 +326,7 @@ function LeaderboardContent() {
   // Real-time WebSocket updates
   const [liveEntries, setLiveEntries] = useState<LeaderboardEntry[]>([]);
   const [realtimeUpdateCount, setRealtimeUpdateCount] = useState(0);
-  
+
   const { isConnected: wsConnected, lastUpdate } = useLeaderboardWebSocket({
     mode: 'global',
     timeframe,
@@ -334,13 +334,12 @@ function LeaderboardContent() {
     userId: userData?.user?.id,
     enabled: true,
     onUpdate: (update) => {
-      console.log('[Leaderboard] Real-time update:', update);
       setRealtimeUpdateCount(prev => prev + 1);
-      
+
       // Update the entries list with the new data
       setLiveEntries(prevEntries => {
         const existingIndex = prevEntries.findIndex(e => e.userId === update.entry.userId);
-        
+
         if (existingIndex >= 0) {
           // Update existing entry
           const updated = [...prevEntries];
@@ -365,7 +364,7 @@ function LeaderboardContent() {
             isVerified: update.entry.isVerified,
           }];
         }
-        
+
         return prevEntries;
       });
     },
@@ -374,11 +373,11 @@ function LeaderboardContent() {
   // Merge live updates with cached data
   const entries: LeaderboardEntry[] = useMemo(() => {
     const baseEntries = data?.entries || [];
-    
+
     // If we have live updates, merge them
     if (liveEntries.length > 0) {
       const merged = [...baseEntries];
-      
+
       liveEntries.forEach(liveEntry => {
         const existingIndex = merged.findIndex(e => e.userId === liveEntry.userId);
         if (existingIndex >= 0) {
@@ -387,11 +386,11 @@ function LeaderboardContent() {
           merged.push(liveEntry);
         }
       });
-      
+
       // Re-sort by rank
       return merged.sort((a, b) => Number(a.rank) - Number(b.rank));
     }
-    
+
     return baseEntries;
   }, [data?.entries, liveEntries]);
   const pagination = data?.pagination || { total: 0, hasMore: false };
@@ -412,7 +411,7 @@ function LeaderboardContent() {
       setOffset(0);
       return;
     }
-    
+
     // Prevent rapid switching (debounce)
     setLanguage(value);
     setOffset(0);
@@ -448,27 +447,27 @@ function LeaderboardContent() {
   const getEmptyStateMessage = (tf: Timeframe, lang: string) => {
     const langName = LANGUAGE_NAMES[lang] || "this language";
     const timeLabel = tf === "all" ? "yet" : tf === "daily" ? "today" : tf === "weekly" ? "this week" : "this month";
-    
+
     switch (tf) {
       case "daily":
-        return { 
-          title: `No ${langName} tests completed today`, 
-          subtitle: `Be the first to set a ${langName} record today!` 
+        return {
+          title: `No ${langName} tests completed today`,
+          subtitle: `Be the first to set a ${langName} record today!`
         };
       case "weekly":
-        return { 
-          title: `No ${langName} tests completed this week`, 
-          subtitle: `Start the week strong with a ${langName} record!` 
+        return {
+          title: `No ${langName} tests completed this week`,
+          subtitle: `Start the week strong with a ${langName} record!`
         };
       case "monthly":
-        return { 
-          title: `No ${langName} tests completed this month`, 
-          subtitle: `Be the first on the monthly ${langName} leaderboard!` 
+        return {
+          title: `No ${langName} tests completed this month`,
+          subtitle: `Be the first on the monthly ${langName} leaderboard!`
         };
       default:
-        return { 
-          title: `No ${langName} test results yet`, 
-          subtitle: `Complete a ${langName} typing test to appear on this leaderboard!` 
+        return {
+          title: `No ${langName} test results yet`,
+          subtitle: `Complete a ${langName} typing test to appear on this leaderboard!`
         };
     }
   };
@@ -492,7 +491,7 @@ function LeaderboardContent() {
             </span>
           </motion.div>
         )}
-        
+
         {!isOnline && (
           <div className="mb-4 p-3 bg-orange-500/10 border border-orange-500/30 rounded-lg flex items-center gap-2 text-orange-500">
             <WifiOff className="w-4 h-4" />
@@ -516,8 +515,8 @@ function LeaderboardContent() {
           </Tooltip>
           <h1 className="text-2xl sm:text-3xl font-bold">Global Leaderboard</h1>
           <p className="text-sm sm:text-base text-muted-foreground">Top typists worldwide</p>
-          <a 
-            href="/leaderboards" 
+          <a
+            href="/leaderboards"
             className="text-xs text-primary hover:underline mt-1"
           >
             View all leaderboards →
@@ -606,9 +605,9 @@ function LeaderboardContent() {
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
-                <button 
-                  type="button" 
-                  className="text-muted-foreground/60 hover:text-muted-foreground transition-colors" 
+                <button
+                  type="button"
+                  className="text-muted-foreground/60 hover:text-muted-foreground transition-colors"
                   aria-label="Language help"
                   data-testid="language-help-button"
                 >
@@ -667,16 +666,16 @@ function LeaderboardContent() {
                 {getErrorIcon(errorState?.type || "unknown")}
                 <p className="text-lg font-medium text-foreground mb-2">
                   {errorState?.type === "network" ? "Connection Lost" :
-                   errorState?.type === "rate_limit" ? "Slow Down" :
-                   errorState?.type === "timeout" ? "Request Timed Out" :
-                   "Failed to load leaderboard"}
+                    errorState?.type === "rate_limit" ? "Slow Down" :
+                      errorState?.type === "timeout" ? "Request Timed Out" :
+                        "Failed to load leaderboard"}
                 </p>
                 <p className="text-sm text-muted-foreground mb-4 max-w-md">
                   {errorState?.message || (error instanceof Error ? error.message : "An unexpected error occurred")}
                 </p>
                 {(errorState?.retryable !== false) && (
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => refetch()}
                     disabled={isFetching}
                     data-testid="retry-button"
@@ -686,8 +685,8 @@ function LeaderboardContent() {
                   </Button>
                 )}
                 {errorState?.type === "auth" && (
-                  <Button 
-                    variant="default" 
+                  <Button
+                    variant="default"
                     onClick={() => window.location.reload()}
                     className="mt-2"
                   >
@@ -769,10 +768,10 @@ function LeaderboardContent() {
                     const wpm = safeNumber(entry.wpm);
                     const accuracy = safeNumber(entry.accuracy);
                     const totalTests = safeNumber(entry.totalTests, 1);
-                    
+
                     return (
-                      <div 
-                        key={`${entry.userId}-${entry.createdAt || rank}`} 
+                      <div
+                        key={`${entry.userId}-${entry.createdAt || rank}`}
                         className={`
                           px-4 py-4 transition-all duration-200 border-b last:border-b-0
                           hover:bg-slate-800/30 hover:shadow-sm
@@ -784,11 +783,10 @@ function LeaderboardContent() {
                           <div className="flex items-center gap-3">
                             {/* Rank (medal or #) */}
                             {rank <= 3 && MEDAL_TOOLTIPS[rank as 1 | 2 | 3] ? (
-                              <Medal 
-                                className={`w-6 h-6 ${
-                                  rank === 1 ? 'text-yellow-400' : 
-                                  rank === 2 ? 'text-slate-300' : 'text-amber-600'
-                                }`}
+                              <Medal
+                                className={`w-6 h-6 ${rank === 1 ? 'text-yellow-400' :
+                                    rank === 2 ? 'text-slate-300' : 'text-amber-600'
+                                  }`}
                               />
                             ) : (
                               <span className="font-mono text-sm font-medium text-muted-foreground">#{rank}</span>
@@ -796,7 +794,7 @@ function LeaderboardContent() {
 
                             {/* User */}
                             <Avatar className="w-10 h-10 ring-2 ring-border/50">
-                              <AvatarFallback 
+                              <AvatarFallback
                                 className={entry.avatarColor || "bg-primary/20"}
                                 style={{ color: "white" }}
                               >
@@ -840,111 +838,109 @@ function LeaderboardContent() {
                         {/* Desktop grid layout */}
                         <div className="hidden md:grid grid-cols-12 gap-4 items-center">
                           <div className="col-span-1 flex justify-center">
-                          {rank <= 3 && MEDAL_TOOLTIPS[rank] ? (
+                            {rank <= 3 && MEDAL_TOOLTIPS[rank] ? (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <div className="cursor-help">
+                                    <Medal
+                                      className={`w-6 h-6 ${rank === 1 ? 'text-yellow-400 drop-shadow-[0_0_6px_rgba(250,204,21,0.6)]' :
+                                          rank === 2 ? 'text-slate-300 drop-shadow-[0_0_6px_rgba(203,213,225,0.4)]' :
+                                            'text-amber-600 drop-shadow-[0_0_6px_rgba(217,119,6,0.4)]'
+                                        }`}
+                                      data-testid={`medal-rank-${rank}`}
+                                    />
+                                  </div>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="font-medium">{MEDAL_TOOLTIPS[rank].label}</p>
+                                  <p className="text-xs text-muted-foreground">{MEDAL_TOOLTIPS[rank].description}</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            ) : (
+                              <span className="font-mono text-sm font-medium text-muted-foreground" data-testid={`rank-${rank}`}>#{rank}</span>
+                            )}
+                          </div>
+                          <div className="col-span-4 flex items-center gap-3">
+                            <Avatar className="w-10 h-10 ring-2 ring-border/50">
+                              <AvatarFallback
+                                className={entry.avatarColor || "bg-primary/20"}
+                                style={{ color: "white" }}
+                              >
+                                {username.charAt(0).toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex flex-col min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="font-semibold truncate max-w-[140px]" data-testid={`username-${username}`}>
+                                  {username}
+                                </span>
+                                {entry.isVerified && (
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <ShieldCheck className="w-4 h-4 text-green-400 cursor-help flex-shrink-0" data-testid={`verified-${entry.userId}`} />
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>Verified score - passed anti-cheat challenge</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                )}
+                              </div>
+                              <span className="text-xs text-muted-foreground/80">{totalTests} test{totalTests !== 1 ? 's' : ''}</span>
+                            </div>
+                          </div>
+                          <div className="col-span-2 flex justify-center">
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <div className="cursor-help">
-                                  <Medal 
-                                    className={`w-6 h-6 ${
-                                      rank === 1 ? 'text-yellow-400 drop-shadow-[0_0_6px_rgba(250,204,21,0.6)]' : 
-                                      rank === 2 ? 'text-slate-300 drop-shadow-[0_0_6px_rgba(203,213,225,0.4)]' : 
-                                      'text-amber-600 drop-shadow-[0_0_6px_rgba(217,119,6,0.4)]'
-                                    }`} 
-                                    data-testid={`medal-rank-${rank}`} 
-                                  />
+                                <div className="flex flex-col items-center cursor-help">
+                                  <div className="font-mono font-bold text-primary text-xl tabular-nums" data-testid={`wpm-${entry.userId}`}>
+                                    {wpm}
+                                  </div>
+                                  <div className="text-[10px] text-muted-foreground/60 uppercase tracking-wide">wpm</div>
                                 </div>
                               </TooltipTrigger>
                               <TooltipContent>
-                                <p className="font-medium">{MEDAL_TOOLTIPS[rank].label}</p>
-                                <p className="text-xs text-muted-foreground">{MEDAL_TOOLTIPS[rank].description}</p>
+                                <p>{wpm} words per minute</p>
                               </TooltipContent>
                             </Tooltip>
-                          ) : (
-                            <span className="font-mono text-sm font-medium text-muted-foreground" data-testid={`rank-${rank}`}>#{rank}</span>
-                          )}
-                          </div>
-                          <div className="col-span-4 flex items-center gap-3">
-                          <Avatar className="w-10 h-10 ring-2 ring-border/50">
-                            <AvatarFallback 
-                              className={entry.avatarColor || "bg-primary/20"} 
-                              style={{ color: "white" }}
-                            >
-                              {username.charAt(0).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex flex-col min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="font-semibold truncate max-w-[140px]" data-testid={`username-${username}`}>
-                                {username}
-                              </span>
-                              {entry.isVerified && (
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <ShieldCheck className="w-4 h-4 text-green-400 cursor-help flex-shrink-0" data-testid={`verified-${entry.userId}`} />
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p>Verified score - passed anti-cheat challenge</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              )}
-                            </div>
-                            <span className="text-xs text-muted-foreground/80">{totalTests} test{totalTests !== 1 ? 's' : ''}</span>
-                          </div>
                           </div>
                           <div className="col-span-2 flex justify-center">
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <div className="flex flex-col items-center cursor-help">
-                                <div className="font-mono font-bold text-primary text-xl tabular-nums" data-testid={`wpm-${entry.userId}`}>
-                                {wpm}
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="flex flex-col items-center cursor-help" data-testid={`accuracy-${entry.userId}`}>
+                                  <div className={`font-mono font-semibold text-base tabular-nums ${accuracy >= 98 ? 'text-green-400' :
+                                      accuracy >= 95 ? 'text-blue-400' :
+                                        accuracy >= 90 ? 'text-yellow-400' :
+                                          'text-red-400'
+                                    }`}>
+                                    {accuracy.toFixed(1)}%
+                                  </div>
+                                  <div className="text-[10px] text-muted-foreground/60 uppercase tracking-wide">acc</div>
                                 </div>
-                                <div className="text-[10px] text-muted-foreground/60 uppercase tracking-wide">wpm</div>
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>{wpm} words per minute</p>
-                            </TooltipContent>
-                          </Tooltip>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{accuracy.toFixed(2)}% typing accuracy</p>
+                              </TooltipContent>
+                            </Tooltip>
                           </div>
                           <div className="col-span-2 flex justify-center">
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <div className="flex flex-col items-center cursor-help" data-testid={`accuracy-${entry.userId}`}>
-                                <div className={`font-mono font-semibold text-base tabular-nums ${
-                                  accuracy >= 98 ? 'text-green-400' : 
-                                  accuracy >= 95 ? 'text-blue-400' : 
-                                  accuracy >= 90 ? 'text-yellow-400' : 
-                                  'text-red-400'
-                                }`}>
-                                {accuracy.toFixed(1)}%
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-800/40 rounded-md cursor-help">
+                                  <Clock className="w-3.5 h-3.5 text-muted-foreground/80" />
+                                  <span className="text-sm font-medium tabular-nums" data-testid={`mode-${entry.userId}`}>
+                                    {formatTestMode(entry.mode)}
+                                  </span>
                                 </div>
-                                <div className="text-[10px] text-muted-foreground/60 uppercase tracking-wide">acc</div>
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>{accuracy.toFixed(2)}% typing accuracy</p>
-                            </TooltipContent>
-                          </Tooltip>
-                          </div>
-                          <div className="col-span-2 flex justify-center">
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-800/40 rounded-md cursor-help">
-                                <Clock className="w-3.5 h-3.5 text-muted-foreground/80" />
-                                <span className="text-sm font-medium tabular-nums" data-testid={`mode-${entry.userId}`}>
-                                {formatTestMode(entry.mode)}
-                                </span>
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Test time: {formatTestMode(entry.mode)}</p>
-                            </TooltipContent>
-                          </Tooltip>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Test time: {formatTestMode(entry.mode)}</p>
+                              </TooltipContent>
+                            </Tooltip>
                           </div>
                           <div className="col-span-1 flex justify-center">
-                          <span className="text-sm font-medium text-muted-foreground/80 tabular-nums" data-testid={`total-tests-${entry.userId}`}>
-                                {totalTests}
-                          </span>
+                            <span className="text-sm font-medium text-muted-foreground/80 tabular-nums" data-testid={`total-tests-${entry.userId}`}>
+                              {totalTests}
+                            </span>
                           </div>
                         </div>
                       </div>

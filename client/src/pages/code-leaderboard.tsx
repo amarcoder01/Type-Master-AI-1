@@ -24,8 +24,8 @@ function CodeLeaderboardContent() {
     title: 'Code Typing Leaderboard | Best Developer Typists - TypeMasterAI',
     description: 'View the fastest code typists! Browse rankings by programming language and see who types code the fastest.',
     keywords: 'code typing leaderboard, programmer typing rankings, developer typing speed, coding speed rankings, fastest coders',
-    canonical: 'https://typemaster-ai.replit.app/code-leaderboard',
-    ogUrl: 'https://typemaster-ai.replit.app/code-leaderboard',
+    canonical: 'https://typemasterai.com/code-leaderboard',
+    ogUrl: 'https://typemasterai.com/code-leaderboard',
   });
   const [selectedLanguage, setSelectedLanguage] = useState<string>("all");
   const [offset, setOffset] = useState(0);

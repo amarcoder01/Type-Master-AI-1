@@ -12,8 +12,8 @@ export default function VerifyEmail() {
     title: 'Verify Email | TypeMasterAI',
     description: 'Verify your email address to complete your TypeMasterAI account setup.',
     keywords: 'verify email, email verification, account verification',
-    canonical: 'https://typemaster-ai.replit.app/verify-email',
-    ogUrl: 'https://typemaster-ai.replit.app/verify-email',
+    canonical: 'https://typemasterai.com/verify-email',
+    ogUrl: 'https://typemasterai.com/verify-email',
     noindex: true,
   });
   const [, setLocation] = useLocation();

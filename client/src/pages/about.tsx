@@ -6,8 +6,8 @@ export default function About() {
     title: 'About TypeMasterAI | Our Mission & Story',
     description: 'Learn about TypeMasterAI, the AI-powered typing test platform. Discover our mission to help everyone improve their typing speed and accuracy with cutting-edge technology.',
     keywords: 'about typemasterai, typing test company, typing software, ai typing test, typing improvement platform, typing practice',
-    canonical: 'https://typemaster-ai.replit.app/about',
-    ogUrl: 'https://typemaster-ai.replit.app/about',
+    canonical: 'https://typemasterai.com/about',
+    ogUrl: 'https://typemasterai.com/about',
     structuredData: {
       '@context': 'https://schema.org',
       '@type': 'AboutPage',
@@ -16,7 +16,7 @@ export default function About() {
       'mainEntity': {
         '@type': 'Organization',
         'name': 'TypeMasterAI',
-        'url': 'https://typemaster-ai.replit.app',
+        'url': 'https://typemasterai.com',
         'foundingDate': '2024',
         'description': 'AI-powered typing test platform helping users improve their typing speed and accuracy'
       }

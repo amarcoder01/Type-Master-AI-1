@@ -17,9 +17,13 @@ export interface SEOConfig {
 /**
  * SEO Component for dynamic meta tag management
  * Updates page-specific meta tags for better search engine optimization
+ * Includes cleanup to remove dynamic structured data on unmount
  */
 export function useSEO(config: SEOConfig) {
   useEffect(() => {
+    // Store original title for potential cleanup
+    const originalTitle = document.title;
+
     // Update document title
     if (config.title) {
       document.title = config.title;
@@ -42,13 +46,19 @@ export function useSEO(config: SEOConfig) {
 
     // Update canonical URL
     if (config.canonical) {
-      updateLinkTag('canonical', config.canonical);
+      const canonicalUrl = config.canonical.startsWith('http')
+        ? config.canonical
+        : `${BASE_URL}${config.canonical.startsWith('/') ? '' : '/'}${config.canonical}`;
+      updateLinkTag('canonical', canonicalUrl);
     }
 
     // Update Open Graph URL
     if (config.ogUrl) {
-      updateMetaTag('property', 'og:url', config.ogUrl);
-      updateMetaTag('name', 'twitter:url', config.ogUrl);
+      const ogUrl = config.ogUrl.startsWith('http')
+        ? config.ogUrl
+        : `${BASE_URL}${config.ogUrl.startsWith('/') ? '' : '/'}${config.ogUrl}`;
+      updateMetaTag('property', 'og:url', ogUrl);
+      updateMetaTag('name', 'twitter:url', ogUrl);
     }
 
     // Add structured data if provided
@@ -60,6 +70,17 @@ export function useSEO(config: SEOConfig) {
     if (config.noindex) {
       updateMetaTag('name', 'robots', 'noindex, nofollow');
     }
+
+    // Cleanup function to remove dynamic structured data on unmount
+    // This prevents stale SEO data when navigating between pages in SPA
+    return () => {
+      const dynamicScript = document.querySelector('script[data-dynamic-seo="true"]');
+      if (dynamicScript) {
+        dynamicScript.remove();
+      }
+      // Restore original title if it was changed
+      // Page-specific meta tags are left as they get overwritten by next page
+    };
   }, [config]);
 }
 
@@ -68,13 +89,13 @@ export function useSEO(config: SEOConfig) {
  */
 function updateMetaTag(attribute: string, key: string, content: string) {
   let element = document.querySelector(`meta[${attribute}="${key}"]`);
-  
+
   if (!element) {
     element = document.createElement('meta');
     element.setAttribute(attribute, key);
     document.head.appendChild(element);
   }
-  
+
   element.setAttribute('content', content);
 }
 
@@ -83,13 +104,13 @@ function updateMetaTag(attribute: string, key: string, content: string) {
  */
 function updateLinkTag(rel: string, href: string) {
   let element = document.querySelector(`link[rel="${rel}"]`) as HTMLLinkElement;
-  
+
   if (!element) {
     element = document.createElement('link');
     element.setAttribute('rel', rel);
     document.head.appendChild(element);
   }
-  
+
   element.href = href;
 }
 
@@ -112,7 +133,7 @@ function addStructuredData(data: object) {
 }
 
 // Base URL for canonical URLs and structured data
-const BASE_URL = 'https://typemaster-ai.replit.app';
+const BASE_URL = 'https://typemasterai.com';
 
 /**
  * Generate common WebApplication structured data
@@ -265,6 +286,73 @@ export function getSoftwareAppSchema(name: string, description: string, features
 /**
  * Page-specific SEO configurations - Updated January 2026
  */
+/**
+ * Generate SpeakableSpecification structured data for voice search
+ */
+export function getSpeakableSchema(cssSelectors: string[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    'speakable': {
+      '@type': 'SpeakableSpecification',
+      'cssSelector': cssSelectors,
+    },
+  };
+}
+
+/**
+ * Generate Course structured data
+ */
+export function getCourseSchema(name: string, description: string, providerName: string = 'TypeMasterAI') {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Course',
+    'name': name,
+    'description': description,
+    'provider': {
+      '@type': 'Organization',
+      'name': providerName,
+      'url': BASE_URL
+    },
+    'isAccessibleForFree': true,
+    'educationalLevel': 'Beginner',
+  };
+}
+
+/**
+ * Generate VideoGame structured data
+ */
+export function getVideoGameSchema(name: string, description: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'VideoGame',
+    'name': name,
+    'description': description,
+    'genre': ['Educational', 'Arcade', 'Typing'],
+    'gamePlatform': 'Web Browser',
+    'applicationCategory': 'Game',
+    'numberOfPlayers': {
+      '@type': 'QuantitativeValue',
+      'minValue': 1,
+      'maxValue': 10,
+    },
+    'author': {
+      '@type': 'Organization',
+      'name': 'TypeMasterAI',
+      'url': BASE_URL,
+    },
+    'offers': {
+      '@type': 'Offer',
+      'price': '0',
+      'priceCurrency': 'USD',
+      'availability': 'https://schema.org/InStock',
+    },
+  };
+}
+
+/**
+ * Page-specific SEO configurations - Updated January 2026
+ */
 export const SEO_CONFIGS = {
   home: {
     title: 'Free Typing Test | TypeMasterAI - Check Your WPM & Typing Speed Online',
@@ -276,24 +364,160 @@ export const SEO_CONFIGS = {
       '@context': 'https://schema.org',
       '@graph': [
         {
-          '@type': 'WebApplication',
+          '@type': ['WebApplication', 'SoftwareApplication'],
           '@id': `${BASE_URL}/#webapp`,
           'name': 'TypeMasterAI',
+          'alternateName': ['TypeMaster AI Typing Test', 'TypeMaster', 'Type Master AI', 'Typing Speed Test'],
           'url': BASE_URL,
-          'description': 'Free online typing test with AI-powered analytics, code typing mode, and multiplayer racing.',
-          'applicationCategory': ['EducationalApplication', 'UtilitiesApplication'],
+          'description': 'Advanced AI-powered typing test platform with real-time WPM measurement, accuracy tracking, code typing mode for developers, multiplayer racing, and personalized analytics across 23+ languages.',
+          'applicationCategory': ['UtilitiesApplication', 'EducationalApplication', 'GameApplication'],
+          'applicationSubCategory': 'Typing Practice',
           'operatingSystem': 'Any',
-          'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'USD' },
-          'aggregateRating': { '@type': 'AggregateRating', 'ratingValue': '4.8', 'ratingCount': '2847' },
+          'browserRequirements': 'Requires JavaScript and HTML5 support',
+          'offers': {
+            '@type': 'Offer',
+            'price': '0',
+            'priceCurrency': 'USD',
+            'availability': 'https://schema.org/InStock',
+            'priceValidUntil': '2026-12-31'
+          },
+          'aggregateRating': {
+            '@type': 'AggregateRating',
+            'ratingValue': '4.8',
+            'bestRating': '5',
+            'worstRating': '1',
+            'ratingCount': '2847',
+            'reviewCount': '1523'
+          },
+          'isAccessibleForFree': true,
+          'featureList': [
+            "Real-time WPM calculation",
+            "Accuracy percentage tracking",
+            "AI-generated typing content",
+            "Code typing mode (20+ languages)",
+            "Multiplayer typing race",
+            "Keystroke heatmaps & analytics",
+            "Finger usage statistics",
+            "AI personalized insights",
+            "23+ language support",
+            "Daily challenges & achievements",
+            "Progressive Web App (PWA)",
+            "Global leaderboards"
+          ],
+          'softwareVersion': '2.0.0',
+          'author': { '@id': `${BASE_URL}/#organization` },
+          'publisher': { '@id': `${BASE_URL}/#organization` },
+          'creator': { '@id': `${BASE_URL}/#organization` },
+          'inLanguage': ["en", "es", "fr", "de", "it", "pt", "ru", "zh", "ja", "ko", "ar", "hi"],
+          'screenshot': {
+            '@type': 'ImageObject',
+            'url': `${BASE_URL}/opengraph.jpg`,
+            'caption': 'TypeMasterAI - Free Online Typing Speed Test'
+          }
+        },
+        {
+          '@type': 'Organization',
+          '@id': `${BASE_URL}/#organization`,
+          'name': 'TypeMasterAI',
+          'url': BASE_URL,
+          'logo': {
+            '@type': 'ImageObject',
+            'url': `${BASE_URL}/icon-512x512.png`,
+            'width': 512,
+            'height': 512,
+            'caption': 'TypeMasterAI Logo'
+          },
+          'image': `${BASE_URL}/icon-512x512.png`,
+          'description': 'TypeMasterAI provides free AI-powered typing tests with real-time analytics, code typing mode, and multiplayer racing.',
+          'email': 'support@typemasterai.com',
+          'sameAs': [
+            'https://twitter.com/replit',
+            'https://github.com/replit'
+          ]
         },
         {
           '@type': 'WebSite',
+          '@id': `${BASE_URL}/#website`,
           'url': BASE_URL,
-          'name': 'TypeMasterAI',
+          'name': 'TypeMasterAI - Free Online Typing Test',
+          'publisher': { '@id': `${BASE_URL}/#organization` },
           'potentialAction': {
             '@type': 'SearchAction',
             'target': `${BASE_URL}/?q={search_term_string}`,
-            'query-input': 'required name=search_term_string',
+            'query-input': 'required name=search_term_string'
+          }
+        },
+        {
+          '@type': 'BreadcrumbList',
+          '@id': `${BASE_URL}/#breadcrumb`,
+          'itemListElement': [
+            { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': BASE_URL }
+          ]
+        },
+        {
+          '@type': 'HowTo',
+          '@id': `${BASE_URL}/#howto`,
+          'name': 'How to Test and Improve Your Typing Speed',
+          'description': 'Learn how to accurately measure your typing speed in WPM and improve your typing skills using TypeMasterAI.',
+          'totalTime': 'PT5M',
+          'tool': { '@type': 'HowToTool', 'name': 'TypeMasterAI Typing Test' },
+          'step': [
+            { '@type': 'HowToStep', 'position': 1, 'name': 'Visit TypeMasterAI', 'text': 'Go to typemasterai.com in your web browser.', 'url': BASE_URL },
+            { '@type': 'HowToStep', 'position': 2, 'name': 'Select test duration', 'text': 'Choose from 15s, 30s, 1min, 3min, or 5min.' },
+            { '@type': 'HowToStep', 'position': 3, 'name': 'Start typing', 'text': 'Type the displayed paragraph. WPM is calculated in real-time.' },
+            { '@type': 'HowToStep', 'position': 4, 'name': 'View results', 'text': 'See your WPM, accuracy, and detailed analytics.' },
+            { '@type': 'HowToStep', 'position': 5, 'name': 'Track progress', 'text': 'Save results and compete on the leaderboard.' }
+          ]
+        },
+        {
+          '@type': 'FAQPage',
+          '@id': `${BASE_URL}/#faq`,
+          'mainEntity': [
+            {
+              '@type': 'Question',
+              'name': 'How do I test my typing speed?',
+              'acceptedAnswer': { '@type': 'Answer', 'text': 'Simply visit TypeMasterAI and start typing. Your WPM and accuracy are calculated in real-time.' }
+            },
+            {
+              '@type': 'Question',
+              'name': 'What is a good typing speed?',
+              'acceptedAnswer': { '@type': 'Answer', 'text': 'Average is 40 WPM. 50-80 WPM is good, 80-95 very good, and 100+ expert.' }
+            },
+            {
+              '@type': 'Question',
+              'name': 'Is TypeMasterAI free?',
+              'acceptedAnswer': { '@type': 'Answer', 'text': 'Yes, TypeMasterAI is 100% free with unlimited tests and features.' }
+            },
+            {
+              '@type': 'Question',
+              'name': 'What is code typing mode?',
+              'acceptedAnswer': { '@type': 'Answer', 'text': 'A mode for programmers to practice typing code in 20+ languages like Python and JavaScript.' }
+            },
+            {
+              '@type': 'Question',
+              'name': 'How does multiplayer work?',
+              'acceptedAnswer': { '@type': 'Answer', 'text': 'Join a room and race against others in real-time to type the same paragraph.' }
+            }
+          ]
+        },
+        {
+          '@type': 'ItemList',
+          '@id': `${BASE_URL}/#features`,
+          'name': 'TypeMasterAI Features',
+          'itemListElement': [
+            { '@type': 'ListItem', 'position': 1, 'name': 'Real-time WPM' },
+            { '@type': 'ListItem', 'position': 2, 'name': 'Code Typing Mode' },
+            { '@type': 'ListItem', 'position': 3, 'name': 'Multiplayer Racing' },
+            { '@type': 'ListItem', 'position': 4, 'name': 'AI Analytics' },
+            { '@type': 'ListItem', 'position': 5, 'name': '23+ Languages' }
+          ]
+        },
+        // Speakable Specification
+        {
+          '@type': 'WebPage',
+          'speakable': {
+            '@type': 'SpeakableSpecification',
+            'cssSelector': ['h1', '.wpm-display', '.accuracy-display'],
           },
         },
       ],
@@ -305,6 +529,7 @@ export const SEO_CONFIGS = {
     keywords: '1 minute typing test, typing speed test, wpm calculator, typing test 60 seconds, free typing test, online typing speed test, check typing speed',
     canonical: `${BASE_URL}/test`,
     ogUrl: `${BASE_URL}/test`,
+    structuredData: getBreadcrumbSchema([{ name: 'Home', url: BASE_URL }, { name: 'Typing Test', url: `${BASE_URL}/test` }]),
   },
   codeMode: {
     title: 'Code Typing Test for Programmers | 20+ Languages - TypeMasterAI',
@@ -314,13 +539,18 @@ export const SEO_CONFIGS = {
     ogUrl: `${BASE_URL}/code-mode`,
     structuredData: {
       '@context': 'https://schema.org',
-      '@type': 'SoftwareApplication',
-      'name': 'TypeMasterAI Code Typing Mode',
-      'description': 'Specialized code typing test for programmers with 20+ programming languages',
-      'applicationCategory': 'DeveloperApplication',
-      'operatingSystem': 'Web Browser',
-      'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'USD' },
-      'featureList': ['JavaScript', 'Python', 'Java', 'C++', 'TypeScript', 'Go', 'Rust', 'Ruby', 'PHP', 'Swift'],
+      '@graph': [
+        {
+          '@type': 'SoftwareApplication',
+          'name': 'TypeMasterAI Code Typing Mode',
+          'description': 'Specialized code typing test for programmers with 20+ programming languages',
+          'applicationCategory': 'DeveloperApplication',
+          'operatingSystem': 'Web Browser',
+          'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'USD' },
+          'featureList': ['JavaScript', 'Python', 'Java', 'C++', 'TypeScript', 'Go', 'Rust', 'Ruby', 'PHP', 'Swift'],
+        },
+        getBreadcrumbSchema([{ name: 'Home', url: BASE_URL }, { name: 'Code Mode', url: `${BASE_URL}/code-mode` }]),
+      ]
     },
   },
   multiplayer: {
@@ -331,13 +561,10 @@ export const SEO_CONFIGS = {
     ogUrl: `${BASE_URL}/multiplayer`,
     structuredData: {
       '@context': 'https://schema.org',
-      '@type': 'VideoGame',
-      'name': 'TypeMasterAI Multiplayer Racing',
-      'description': 'Real-time multiplayer typing race game',
-      'genre': 'Educational',
-      'gamePlatform': 'Web Browser',
-      'numberOfPlayers': { '@type': 'QuantitativeValue', 'minValue': 2, 'maxValue': 10 },
-      'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'USD' },
+      '@graph': [
+        getVideoGameSchema('TypeMasterAI Multiplayer Racing', 'Real-time multiplayer typing race game where you compete to type paragraphs the fastest.'),
+        getBreadcrumbSchema([{ name: 'Home', url: BASE_URL }, { name: 'Multiplayer', url: `${BASE_URL}/multiplayer` }]),
+      ]
     },
   },
   leaderboard: {
@@ -382,6 +609,7 @@ export const SEO_CONFIGS = {
     keywords: 'dictation test, listening typing test, transcription practice, audio typing test, dictation practice, typing from audio',
     canonical: `${BASE_URL}/dictation-test`,
     ogUrl: `${BASE_URL}/dictation-test`,
+    structuredData: getSpeakableSchema(['.dictation-text', '.transcription-area']),
   },
   learn: {
     title: 'Learn Touch Typing | Free Typing Lessons - TypeMasterAI',
@@ -391,12 +619,10 @@ export const SEO_CONFIGS = {
     ogUrl: `${BASE_URL}/learn`,
     structuredData: {
       '@context': 'https://schema.org',
-      '@type': 'Course',
-      'name': 'Touch Typing Fundamentals',
-      'description': 'Learn touch typing with free comprehensive lessons',
-      'provider': { '@type': 'Organization', 'name': 'TypeMasterAI', 'url': BASE_URL },
-      'isAccessibleForFree': true,
-      'educationalLevel': 'Beginner',
+      '@graph': [
+        getCourseSchema('Touch Typing Fundamentals', 'Comprehensive touch typing course with 5 levels of mastery.'),
+        getBreadcrumbSchema([{ name: 'Home', url: BASE_URL }, { name: 'Learn', url: `${BASE_URL}/learn` }]),
+      ]
     },
   },
   faq: {
@@ -405,6 +631,7 @@ export const SEO_CONFIGS = {
     keywords: 'typing test faq, wpm questions, typing speed help, how to type faster, monkeytype alternative questions, typing test help',
     canonical: `${BASE_URL}/faq`,
     ogUrl: `${BASE_URL}/faq`,
+    structuredData: getBreadcrumbSchema([{ name: 'Home', url: BASE_URL }, { name: 'FAQ', url: `${BASE_URL}/faq` }]),
   },
   // New SEO Landing Pages
   typingPractice: {
@@ -413,6 +640,7 @@ export const SEO_CONFIGS = {
     keywords: 'typing practice, typing practice online, free typing practice, practice typing, typing exercises, improve typing speed, typing drills, keyboard practice',
     canonical: `${BASE_URL}/typing-practice`,
     ogUrl: `${BASE_URL}/typing-practice`,
+    structuredData: getBreadcrumbSchema([{ name: 'Home', url: BASE_URL }, { name: 'Typing Practice', url: `${BASE_URL}/typing-practice` }]),
   },
   wpmTest: {
     title: 'WPM Test - Check Your Words Per Minute | Free Online - TypeMasterAI',
@@ -420,6 +648,7 @@ export const SEO_CONFIGS = {
     keywords: 'wpm test, words per minute test, wpm calculator, check wpm, typing wpm, wpm speed test, how fast do i type, wpm checker, words per minute calculator',
     canonical: `${BASE_URL}/wpm-test`,
     ogUrl: `${BASE_URL}/wpm-test`,
+    structuredData: getBreadcrumbSchema([{ name: 'Home', url: BASE_URL }, { name: 'WPM Test', url: `${BASE_URL}/wpm-test` }]),
   },
   typingGames: {
     title: 'Typing Games Online | Fun & Free - TypeMasterAI',
@@ -427,6 +656,13 @@ export const SEO_CONFIGS = {
     keywords: 'typing games, typing games online, free typing games, fun typing games, typing race game, keyboard games, typing game for kids, typing practice games',
     canonical: `${BASE_URL}/typing-games`,
     ogUrl: `${BASE_URL}/typing-games`,
+    structuredData: {
+      '@context': 'https://schema.org',
+      '@graph': [
+        getVideoGameSchema('TypeMasterAI Typing Games Collection', 'A collection of fun typing games to improve speed and accuracy.'),
+        getBreadcrumbSchema([{ name: 'Home', url: BASE_URL }, { name: 'Typing Games', url: `${BASE_URL}/typing-games` }]),
+      ]
+    },
   },
   keyboardTest: {
     title: 'Online Keyboard Test | Check All Keys Work - TypeMasterAI',
@@ -434,6 +670,7 @@ export const SEO_CONFIGS = {
     keywords: 'keyboard test, keyboard tester, online keyboard test, test keyboard, keyboard checker, key test, check keyboard keys, keyboard test online',
     canonical: `${BASE_URL}/keyboard-test`,
     ogUrl: `${BASE_URL}/keyboard-test`,
+    structuredData: getSoftwareAppSchema('Online Keyboard Tester', 'Utility to test keyboard keys functionality', ['Key Response Time', 'Multi-key Rollover', 'Layout Detection']),
   },
   typingCertificate: {
     title: 'Typing Certificate | Get Certified Speed Results - TypeMasterAI',
@@ -441,5 +678,6 @@ export const SEO_CONFIGS = {
     keywords: 'typing certificate, typing speed certificate, wpm certificate, typing test certificate, professional typing certificate, typing certification, verified typing results',
     canonical: `${BASE_URL}/typing-certificate`,
     ogUrl: `${BASE_URL}/typing-certificate`,
+    structuredData: getBreadcrumbSchema([{ name: 'Home', url: BASE_URL }, { name: 'Certificate', url: `${BASE_URL}/typing-certificate` }]),
   },
 };

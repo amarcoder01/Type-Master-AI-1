@@ -49,8 +49,8 @@ function StressLeaderboardContent() {
     title: 'Stress Test Leaderboard | Top Performers Under Pressure - TypeMasterAI',
     description: 'See who types the fastest under pressure! Browse the stress test leaderboard and compare your performance against the best.',
     keywords: 'stress test leaderboard, hard typing rankings, focus test rankings, pressure typing rankings',
-    canonical: 'https://typemaster-ai.replit.app/stress-leaderboard',
-    ogUrl: 'https://typemaster-ai.replit.app/stress-leaderboard',
+    canonical: 'https://typemasterai.com/stress-leaderboard',
+    ogUrl: 'https://typemasterai.com/stress-leaderboard',
   });
   const { user } = useAuth();
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>('all');
