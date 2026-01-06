@@ -4,6 +4,7 @@ import { useSEO, getBreadcrumbSchema, getFAQSchema, TYPING_KEYWORDS } from '@/li
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Breadcrumbs } from '@/components/breadcrumbs';
+import { RelatedFeatures, QuickLinksFooter } from '@/components/related-features';
 
 export default function FreeOnlineTypingTestPage() {
   useSEO({
@@ -176,6 +177,12 @@ export default function FreeOnlineTypingTestPage() {
           </div>
         </section>
 
+        {/* Related Features */}
+        <div className="max-w-5xl mx-auto">
+          <RelatedFeatures title="More Typing Tests" features="typingTests" columns={4} />
+          <RelatedFeatures title="Learn & Improve" features="learning" columns={4} />
+        </div>
+
         {/* CTA Section */}
         <section className="max-w-3xl mx-auto text-center py-16">
           <h2 className="text-3xl font-bold text-white mb-4">
@@ -191,6 +198,11 @@ export default function FreeOnlineTypingTestPage() {
             </Button>
           </Link>
         </section>
+
+        {/* Quick Links */}
+        <div className="max-w-4xl mx-auto border-t border-slate-700 mt-8">
+          <QuickLinksFooter exclude={['/free-online-typing-test']} />
+        </div>
       </div>
     </div>
   );

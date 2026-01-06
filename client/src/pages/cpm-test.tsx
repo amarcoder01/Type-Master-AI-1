@@ -4,6 +4,7 @@ import { useSEO, getBreadcrumbSchema, getFAQSchema } from '@/lib/seo';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Breadcrumbs } from '@/components/breadcrumbs';
+import { RelatedFeatures, QuickLinksFooter } from '@/components/related-features';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -192,6 +193,11 @@ export default function CpmTestPage() {
           </div>
         </section>
 
+        {/* Related Features */}
+        <div className="max-w-4xl mx-auto">
+          <RelatedFeatures title="Other Typing Tests" features="specialized" columns={4} />
+        </div>
+
         {/* CTA */}
         <section className="max-w-3xl mx-auto text-center py-16">
           <h2 className="text-3xl font-bold text-white mb-4">
@@ -207,6 +213,11 @@ export default function CpmTestPage() {
             </Button>
           </Link>
         </section>
+
+        {/* Quick Links */}
+        <div className="max-w-4xl mx-auto border-t border-slate-700">
+          <QuickLinksFooter exclude={['/cpm-test']} />
+        </div>
       </div>
     </div>
   );

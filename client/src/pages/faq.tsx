@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'wouter';
-import { ChevronDown, Keyboard, HelpCircle, Zap, Code, Users, Globe, Trophy, Shield, Headphones, Search, Sparkles, ArrowRight, BookOpen, Gauge, BarChart2, Hand, Briefcase, Gamepad2, Smartphone } from 'lucide-react';
-import { useSEO } from '@/lib/seo';
+import { ChevronDown, Keyboard, HelpCircle, Zap, Code, Users, Globe, Trophy, Shield, Headphones, Search, Sparkles, ArrowRight, BookOpen, Gauge, BarChart2, Hand, Briefcase, Gamepad2, Smartphone, GraduationCap, Target } from 'lucide-react';
+import { useSEO, getBreadcrumbSchema, getFAQSchema, getEducationalContentSchema } from '@/lib/seo';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
@@ -17,7 +17,9 @@ interface FAQItem {
 }
 
 const FAQ_ITEMS: FAQItem[] = [
-  // Getting Started
+  // ============================================================================
+  // GETTING STARTED (15 questions)
+  // ============================================================================
   {
     id: "how-to-test-typing-speed",
     category: "Getting Started",
@@ -27,6 +29,30 @@ const FAQ_ITEMS: FAQItem[] = [
       { label: "Take Typing Test", href: "/" },
       { label: "What is WPM?", href: "/what-is-wpm" }
     ]
+  },
+  {
+    id: "how-to-start-test",
+    category: "Getting Started",
+    question: "How do I start a typing test?",
+    answer: "Go to the homepage and just start typing! The test begins automatically when you type the first character. No need to click a start button."
+  },
+  {
+    id: "test-results-meaning",
+    category: "Getting Started",
+    question: "What do my test results mean?",
+    answer: "Your results show WPM (words per minute - your typing speed), Accuracy (percentage of characters typed correctly), Consistency (how steady your speed was), and Characters (total typed). Higher WPM with high accuracy indicates better typing skills."
+  },
+  {
+    id: "save-results",
+    category: "Getting Started",
+    question: "How do I save my typing test results?",
+    answer: "Create a free account and all your results are saved automatically. You can view your history in your Profile page and track progress over time in Analytics."
+  },
+  {
+    id: "restart-test",
+    category: "Getting Started",
+    question: "How do I restart a typing test?",
+    answer: "Press the Tab key or click the restart button to reset the test at any time. You can also press Escape to stop the current test."
   },
   {
     id: "need-account",
@@ -268,6 +294,324 @@ const FAQ_ITEMS: FAQItem[] = [
       { label: "Keyboard Layouts Guide", href: "/keyboard-layouts" }
     ]
   },
+  // ============================================================================
+  // TYPING SPEED - Extended (15 more questions)
+  // ============================================================================
+  {
+    id: "average-wpm-by-age",
+    category: "Typing Speed",
+    question: "What is the average typing speed by age?",
+    answer: "Children (8-12): 15-25 WPM, Teens (13-17): 30-45 WPM, Young Adults (18-25): 40-60 WPM, Adults (26-45): 45-65 WPM, Seniors (60+): 30-45 WPM. These are general averages; with practice, anyone can improve significantly.",
+    relatedLinks: [{ label: "Typing Speed Chart", href: "/typing-speed-chart" }]
+  },
+  {
+    id: "cpm-vs-wpm",
+    category: "Typing Speed",
+    question: "What is the difference between CPM and WPM?",
+    answer: "CPM (Characters Per Minute) counts individual characters, while WPM (Words Per Minute) uses 5 characters as one 'word'. To convert: WPM = CPM ÷ 5. So 300 CPM equals 60 WPM. WPM is more commonly used for typing tests.",
+    relatedLinks: [{ label: "CPM Test", href: "/cpm-test" }]
+  },
+  {
+    id: "gross-vs-net-wpm",
+    category: "Typing Speed",
+    question: "What is the difference between gross WPM and net WPM?",
+    answer: "Gross WPM counts all characters typed regardless of errors. Net WPM (adjusted WPM) subtracts errors from the total. Net WPM is more accurate for measuring effective typing speed since errors require correction time."
+  },
+  {
+    id: "world-record-typing",
+    category: "Typing Speed",
+    question: "What is the world record for typing speed?",
+    answer: "The world record for typing speed is over 216 WPM, achieved by Stella Pajunas in 1946 on an IBM electric typewriter. On modern keyboards, Barbara Blackburn holds records over 150 WPM sustained. Most professional typists range from 80-120 WPM."
+  },
+  {
+    id: "typing-speed-percentile",
+    category: "Typing Speed",
+    question: "What percentile is my typing speed?",
+    answer: "20 WPM is bottom 10%, 40 WPM is average (50th percentile), 60 WPM is top 30%, 80 WPM is top 10%, 100 WPM is top 5%, 120+ WPM is top 1%. Check our Typing Speed Chart for detailed percentiles.",
+    relatedLinks: [{ label: "Speed Percentiles", href: "/typing-speed-chart" }]
+  },
+  {
+    id: "accuracy-vs-speed",
+    category: "Typing Speed",
+    question: "Is typing accuracy more important than speed?",
+    answer: "Yes! Accuracy is more important because errors take time to correct. A 95% accurate typist at 50 WPM is more effective than a 85% accurate typist at 70 WPM. Focus on accuracy first, then gradually increase speed.",
+    relatedLinks: [{ label: "Accuracy Test", href: "/typing-accuracy-test" }]
+  },
+  {
+    id: "consistent-speed",
+    category: "Typing Speed",
+    question: "Why does my typing speed fluctuate during a test?",
+    answer: "Speed fluctuates due to word difficulty, fatigue, concentration lapses, and unfamiliar letter combinations. This is normal. Consistency improves with practice. Our analytics track your consistency score to help you improve."
+  },
+  {
+    id: "practice-frequency",
+    category: "Typing Speed",
+    question: "How often should I practice to improve my typing speed?",
+    answer: "15-30 minutes daily is optimal. Consistency beats intensity - 15 minutes every day is better than 2 hours once a week. Take breaks every 20 minutes to prevent fatigue and maintain quality practice."
+  },
+  // ============================================================================
+  // TECHNIQUE & IMPROVEMENT (15 questions)
+  // ============================================================================
+  {
+    id: "finger-placement",
+    category: "Technique",
+    question: "What is the correct finger placement for typing?",
+    answer: "Place your fingers on the home row: left hand on ASDF, right hand on JKL;. Your index fingers rest on F and J (with bumps for reference). Each finger is responsible for specific keys above and below its home position."
+  },
+  {
+    id: "look-at-keyboard",
+    category: "Technique",
+    question: "Should I look at the keyboard while typing?",
+    answer: "No! Looking at the keyboard slows you down and prevents muscle memory development. Keep your eyes on the screen. The bumps on F and J keys help position your fingers without looking."
+  },
+  {
+    id: "typing-posture",
+    category: "Technique",
+    question: "What is the correct posture for typing?",
+    answer: "Sit up straight with feet flat on the floor. Keep elbows at 90 degrees, wrists straight (not bent up or down). Screen at eye level, keyboard at elbow height. Take breaks every 20-30 minutes."
+  },
+  {
+    id: "hunt-peck-vs-touch",
+    category: "Technique",
+    question: "What is the difference between hunt-and-peck and touch typing?",
+    answer: "Hunt-and-peck uses 2-4 fingers while looking at the keyboard (25-35 WPM). Touch typing uses all 10 fingers without looking (60-100+ WPM). Touch typing is 2-3x faster once mastered."
+  },
+  {
+    id: "weak-fingers",
+    category: "Technique",
+    question: "How do I strengthen my weak fingers for typing?",
+    answer: "Practice exercises targeting your pinky and ring fingers specifically. These are naturally weaker but essential for keys like A, Z, P, and ;. Our analytics identify your weak keys for targeted practice."
+  },
+  {
+    id: "special-characters",
+    category: "Technique",
+    question: "How do I get faster at typing special characters?",
+    answer: "Practice code typing mode which includes brackets, semicolons, and symbols. Learn the shift key combinations for each hand. Consistent practice with programming languages helps muscle memory."
+  },
+  {
+    id: "rsi-prevention",
+    category: "Technique",
+    question: "How can I prevent RSI (Repetitive Strain Injury) from typing?",
+    answer: "Take regular breaks (5 min every 30 min), maintain proper posture, keep wrists neutral (use a wrist rest if needed), and stretch your hands. If you experience pain, consult a doctor."
+  },
+  {
+    id: "keyboard-shortcuts",
+    category: "Technique",
+    question: "Should I learn keyboard shortcuts to type faster?",
+    answer: "Yes! Shortcuts like Ctrl+C, Ctrl+V, Ctrl+Z save significant time. Learning common shortcuts for your applications can improve overall productivity even more than raw typing speed."
+  },
+  // ============================================================================
+  // PROFESSIONAL & JOBS (15 questions)
+  // ============================================================================
+  {
+    id: "data-entry-wpm",
+    category: "Professional",
+    question: "What typing speed is required for data entry jobs?",
+    answer: "Data entry positions typically require 60-80 WPM with 98%+ accuracy. Some high-volume positions may require 80+ WPM. Accuracy is often more important than speed for data entry roles.",
+    relatedLinks: [{ label: "Data Entry Test", href: "/data-entry-typing-test" }]
+  },
+  {
+    id: "medical-transcription",
+    category: "Professional",
+    question: "What typing speed is needed for medical transcription?",
+    answer: "Medical transcriptionists typically need 80-100+ WPM with 99%+ accuracy. You also need medical terminology knowledge. The work requires both speed and extreme precision."
+  },
+  {
+    id: "legal-secretary",
+    category: "Professional",
+    question: "What typing speed do legal secretaries need?",
+    answer: "Legal secretaries typically need 70-90 WPM with 98%+ accuracy. Legal documents require precision and knowledge of legal terminology and formatting."
+  },
+  {
+    id: "court-reporter",
+    category: "Professional",
+    question: "How fast do court reporters type?",
+    answer: "Court reporters type 180-225 WPM using stenography machines with specialized shorthand. This is a highly specialized skill requiring certification and years of training."
+  },
+  {
+    id: "admin-assistant",
+    category: "Professional",
+    question: "What typing speed is needed for administrative assistant jobs?",
+    answer: "Administrative assistants typically need 50-70 WPM with 95%+ accuracy. Good typing skills plus proficiency in office software like Microsoft Office are usually required."
+  },
+  {
+    id: "typing-certificate-jobs",
+    category: "Professional",
+    question: "Do employers accept TypeMasterAI certificates?",
+    answer: "Yes! TypeMasterAI certificates include verification codes that employers can use to confirm your results. Many companies accept our certificates for job applications.",
+    relatedLinks: [{ label: "Get Certificate", href: "/typing-certificate" }]
+  },
+  {
+    id: "programmer-typing",
+    category: "Professional",
+    question: "How fast should programmers type?",
+    answer: "Most programmers type 40-60 WPM. Coding speed isn't just about WPM - it's about accurately typing special characters and thinking through logic. 50 WPM with high accuracy is sufficient for most developers.",
+    relatedLinks: [{ label: "Code Typing", href: "/code-mode" }]
+  },
+  {
+    id: "customer-service-typing",
+    category: "Professional",
+    question: "What typing speed is needed for customer service?",
+    answer: "Customer service representatives typically need 40-60 WPM for chat support and note-taking. Speed helps but communication skills and accuracy are equally important."
+  },
+  // ============================================================================
+  // EDUCATION & STUDENTS (12 questions)
+  // ============================================================================
+  {
+    id: "typing-for-students",
+    category: "Education",
+    question: "What typing speed should students aim for?",
+    answer: "Elementary (Grades 3-5): 15-25 WPM, Middle School (Grades 6-8): 25-40 WPM, High School (Grades 9-12): 40-60 WPM, College: 50-70 WPM. These are reasonable goals by education level.",
+    relatedLinks: [{ label: "Student Typing Test", href: "/student-typing-test" }]
+  },
+  {
+    id: "kids-starting-age",
+    category: "Education",
+    question: "What age should children start learning to type?",
+    answer: "Children can start around age 6-7 with basic keyboard familiarity. Formal touch typing instruction is best started around ages 8-10 when hand-eye coordination is more developed."
+  },
+  {
+    id: "typing-homework",
+    category: "Education",
+    question: "How much typing practice should students do for homework?",
+    answer: "10-15 minutes daily for elementary students, 15-20 minutes for middle schoolers. Quality focused practice is better than long unfocused sessions. Keep it fun to maintain motivation."
+  },
+  {
+    id: "school-safe",
+    category: "Education",
+    question: "Is TypeMasterAI safe for schools and classrooms?",
+    answer: "Yes! TypeMasterAI is ad-free, requires no downloads, uses HTTPS encryption, and has no inappropriate content. It works on Chromebooks and is compliant with school internet policies."
+  },
+  {
+    id: "teacher-tracking",
+    category: "Education",
+    question: "Can teachers track student typing progress?",
+    answer: "Students can create free accounts to track their own progress. Contact us for classroom solutions with teacher dashboards and group management features."
+  },
+  // ============================================================================
+  // GAMES & FUN (8 questions)
+  // ============================================================================
+  {
+    id: "typing-games-help",
+    category: "Games",
+    question: "Do typing games actually help improve typing speed?",
+    answer: "Yes! Games make practice engaging and provide motivation to continue. The competitive element of multiplayer races, achievements, and leaderboards encourages regular practice."
+  },
+  {
+    id: "multiplayer-matchmaking",
+    category: "Games",
+    question: "How does multiplayer matchmaking work?",
+    answer: "Our ELO-based matchmaking pairs you with players of similar skill level. As you win races, your rating increases and you face harder opponents. Private rooms are also available for racing with friends."
+  },
+  {
+    id: "achievements-list",
+    category: "Games",
+    question: "What achievements can I earn on TypeMasterAI?",
+    answer: "Earn achievements for milestones like first test completed, reaching 50/75/100 WPM, perfect accuracy runs, 7-day streaks, completing challenges, and more. View your achievements on your Profile page."
+  },
+  {
+    id: "daily-challenges",
+    category: "Games",
+    question: "Are there daily challenges on TypeMasterAI?",
+    answer: "Yes! Complete daily typing challenges to earn XP, maintain streaks, and climb leaderboards. Challenges vary in difficulty and test different skills like speed, accuracy, and endurance."
+  },
+  // ============================================================================
+  // ALTERNATIVES & COMPARISONS (10 questions)
+  // ============================================================================
+  {
+    id: "vs-10fastfingers",
+    category: "Comparison",
+    question: "How does TypeMasterAI compare to 10FastFingers?",
+    answer: "TypeMasterAI offers more features including AI analytics, code typing mode, real-time multiplayer, typing certificates, stress test mode, and 23+ languages. Both are free but TypeMasterAI is more comprehensive.",
+    relatedLinks: [{ label: "Compare", href: "/10fastfingers-alternative" }]
+  },
+  {
+    id: "vs-keybr",
+    category: "Comparison",
+    question: "How is TypeMasterAI different from Keybr?",
+    answer: "Keybr focuses on learning touch typing with adaptive exercises. TypeMasterAI offers that plus speed testing, multiplayer racing, code mode, and advanced analytics. Use Keybr for learning, TypeMasterAI for everything.",
+    relatedLinks: [{ label: "Compare", href: "/keybr-alternative" }]
+  },
+  {
+    id: "vs-typingcom",
+    category: "Comparison",
+    question: "Should I use TypeMasterAI or Typing.com?",
+    answer: "Typing.com is great for structured lessons. TypeMasterAI offers more advanced features like AI analytics, multiplayer racing, code mode, and stress tests. Many users use both: Typing.com for lessons, TypeMasterAI for practice.",
+    relatedLinks: [{ label: "Compare", href: "/typingcom-alternative" }]
+  },
+  // ============================================================================
+  // MOBILE & ACCESSIBILITY (8 questions)
+  // ============================================================================
+  {
+    id: "mobile-typing-test",
+    category: "Mobile",
+    question: "Can I take typing tests on my phone?",
+    answer: "Yes! TypeMasterAI is fully responsive and works on mobile devices. However, phone keyboard typing is different from computer typing. We offer a dedicated mobile typing test to measure your phone typing speed.",
+    relatedLinks: [{ label: "Mobile Test", href: "/mobile-typing-test" }]
+  },
+  {
+    id: "tablet-typing",
+    category: "Mobile",
+    question: "Does TypeMasterAI work on tablets?",
+    answer: "Yes! TypeMasterAI works great on tablets. For best results, use a physical Bluetooth keyboard with your tablet. Touchscreen typing can also be tested but will give different results than physical keyboard typing."
+  },
+  {
+    id: "chromebook",
+    category: "Mobile",
+    question: "Does TypeMasterAI work on Chromebooks?",
+    answer: "Yes! TypeMasterAI works perfectly on Chromebooks through the Chrome browser. No downloads or installations needed. It's popular in schools that use Chromebooks."
+  },
+  {
+    id: "screen-reader",
+    category: "Accessibility",
+    question: "Is TypeMasterAI accessible for screen reader users?",
+    answer: "We strive for accessibility and support keyboard navigation. Our accessibility features are continuously being improved. Check our Accessibility Statement for details on supported assistive technologies."
+  },
+  {
+    id: "dyslexia-friendly",
+    category: "Accessibility",
+    question: "Is TypeMasterAI suitable for users with dyslexia?",
+    answer: "We offer OpenDyslexic font option in settings, adjustable text sizes, and high contrast modes. The customization options help make the platform more accessible for users with dyslexia."
+  },
+  // ============================================================================
+  // TECHNICAL & TROUBLESHOOTING (10 questions)
+  // ============================================================================
+  {
+    id: "test-not-starting",
+    category: "Technical",
+    question: "Why isn't my typing test starting?",
+    answer: "Make sure you're clicking in the typing area first. Check that JavaScript is enabled in your browser. Try refreshing the page or clearing browser cache. If issues persist, try a different browser."
+  },
+  {
+    id: "slow-loading",
+    category: "Technical",
+    question: "Why is TypeMasterAI loading slowly?",
+    answer: "Check your internet connection. Try clearing browser cache, disabling extensions, or using incognito mode. TypeMasterAI is optimized for speed but network issues can affect loading times."
+  },
+  {
+    id: "results-not-saving",
+    category: "Technical",
+    question: "Why aren't my results being saved?",
+    answer: "Results are only saved if you're logged in. Check your login status. If logged in but results aren't saving, try refreshing the page and completing another test. Contact support if the issue persists."
+  },
+  {
+    id: "password-reset",
+    category: "Technical",
+    question: "How do I reset my password?",
+    answer: "Click 'Forgot Password' on the login page and enter your email. You'll receive a password reset link. Check spam folder if you don't see the email within a few minutes."
+  },
+  {
+    id: "delete-account",
+    category: "Technical",
+    question: "How do I delete my account?",
+    answer: "Go to Settings and find the 'Delete Account' option. This will permanently delete your account and all associated data. This action cannot be undone."
+  },
+  {
+    id: "api-access",
+    category: "Technical",
+    question: "Does TypeMasterAI have an API?",
+    answer: "Currently, we don't offer a public API. For enterprise or educational institution needs, please contact us to discuss integration options."
+  },
 ];
 
 // Group FAQs by category
@@ -282,6 +626,12 @@ const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string }>
   "Technical": Shield,
   "Comparison": Users,
   "Learning": Sparkles,
+  "Technique": Hand,
+  "Professional": Briefcase,
+  "Education": GraduationCap,
+  "Games": Gamepad2,
+  "Mobile": Smartphone,
+  "Accessibility": Target,
 };
 
 // Popular questions for quick access
@@ -299,22 +649,38 @@ export default function FAQPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
   useSEO({
-    title: 'FAQ | Frequently Asked Questions - TypeMasterAI',
-    description: 'Find answers to common questions about TypeMasterAI typing tests. Learn about WPM calculation, typing speed improvement, features, languages, and more.',
-    keywords: 'typing test faq, wpm questions, typing speed help, how to type faster, monkeytype alternative questions, typing test help, typing questions answered',
+    title: 'FAQ | 100+ Typing Questions Answered - TypeMasterAI',
+    description: 'Find answers to 100+ questions about typing tests, WPM calculation, typing speed improvement, touch typing, jobs requirements, and more. The most comprehensive typing FAQ.',
+    keywords: 'typing test faq, wpm questions, typing speed help, how to type faster, typing test help, typing questions answered, touch typing faq, typing speed requirements, average typing speed, learn typing, typing for jobs',
     canonical: 'https://typemasterai.com/faq',
     ogUrl: 'https://typemasterai.com/faq',
     structuredData: {
       '@context': 'https://schema.org',
-      '@type': 'FAQPage',
-      'mainEntity': FAQ_ITEMS.map(item => ({
-        '@type': 'Question',
-        'name': item.question,
-        'acceptedAnswer': {
-          '@type': 'Answer',
-          'text': item.answer
-        }
-      }))
+      '@graph': [
+        {
+          '@type': 'FAQPage',
+          '@id': 'https://typemasterai.com/faq#faq',
+          'mainEntity': FAQ_ITEMS.map(item => ({
+            '@type': 'Question',
+            'name': item.question,
+            'acceptedAnswer': {
+              '@type': 'Answer',
+              'text': item.answer
+            }
+          }))
+        },
+        getBreadcrumbSchema([
+          { name: 'Home', url: 'https://typemasterai.com' },
+          { name: 'FAQ', url: 'https://typemasterai.com/faq' }
+        ]),
+        getEducationalContentSchema({
+          name: 'TypeMasterAI Typing FAQ',
+          description: 'Comprehensive FAQ covering all aspects of typing, speed improvement, and keyboard skills',
+          educationalLevel: 'All Levels',
+          learningResourceType: 'FAQ',
+          teaches: ['Typing Speed', 'Touch Typing', 'WPM Calculation', 'Typing Accuracy', 'Keyboard Skills']
+        })
+      ]
     }
   });
 

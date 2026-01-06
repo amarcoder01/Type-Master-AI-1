@@ -6,6 +6,7 @@ import { useSEO, SEO_CONFIGS } from '@/lib/seo';
 import { PLATFORM_STATS, formatNumber } from '@shared/platform-stats';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { RelatedFeatures, QuickLinksFooter } from '@/components/related-features';
 
 // FAQ data matching the structured data in index.html
 const FAQ_ITEMS = [
@@ -268,6 +269,20 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Related Features - Internal Linking */}
+        <div className="max-w-4xl mx-auto px-4">
+          <RelatedFeatures 
+            title="Explore More Features" 
+            features="specialized" 
+            columns={4}
+          />
+          <RelatedFeatures 
+            title="Learning Resources" 
+            features="learning" 
+            columns={4}
+          />
+        </div>
+
         {/* Final CTA */}
         <div className="max-w-2xl mx-auto px-4 text-center pb-8">
           <h2 className="text-2xl sm:text-3xl font-bold mb-4">
@@ -283,6 +298,11 @@ export default function Home() {
             <Keyboard className="w-5 h-5" />
             Start Typing Test
           </button>
+        </div>
+
+        {/* Quick Links Footer */}
+        <div className="max-w-4xl mx-auto px-4 border-t border-border/30 mt-8">
+          <QuickLinksFooter exclude={['/']} />
         </div>
 
       </section>
