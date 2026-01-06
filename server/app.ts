@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { type Server } from "node:http";
 
+import compression from "compression";
 import express, { type Express, type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { requestIdMiddleware, errorHandler, notFoundHandler } from "./error-middleware";
@@ -21,6 +22,21 @@ export function log(message: string, source = "express") {
 export const app = express();
 
 app.set('trust proxy', 1);
+
+// Enable gzip/brotli compression for all responses
+// This significantly improves page load speed and Core Web Vitals
+app.use(compression({
+  level: 6, // Balanced compression level (1-9, default 6)
+  threshold: 1024, // Only compress responses larger than 1KB
+  filter: (req, res) => {
+    // Don't compress responses with this request header
+    if (req.headers['x-no-compression']) {
+      return false;
+    }
+    // Use compression filter defaults
+    return compression.filter(req, res);
+  },
+}));
 
 app.use(requestIdMiddleware);
 

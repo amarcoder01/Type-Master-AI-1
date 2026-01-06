@@ -775,33 +775,80 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </main>
 
       <footer 
-        className="border-t border-border/40"
+        className="border-t border-border/40 bg-card/20"
         role="contentinfo"
         aria-label="Site footer"
       >
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-xs text-muted-foreground">
-            <Link href="/contact" className="hover:text-primary transition-colors" data-testid="link-footer-contact">Contact</Link>
-            <span className="text-muted-foreground/40">·</span>
-            <Link href="/about" className="hover:text-primary transition-colors" data-testid="link-footer-about">About</Link>
-            <span className="text-muted-foreground/40">·</span>
-            <Link href="/privacy-policy" className="hover:text-primary transition-colors" data-testid="link-footer-privacy">Privacy</Link>
-            <span className="text-muted-foreground/40">·</span>
-            <Link href="/terms-of-service" className="hover:text-primary transition-colors" data-testid="link-footer-terms">Terms</Link>
-            <span className="text-muted-foreground/40">·</span>
-            <Link href="/cookie-policy" className="hover:text-primary transition-colors" data-testid="link-footer-cookies">Cookies</Link>
-            <span className="text-muted-foreground/40">·</span>
-            <Link href="/ai-transparency" className="hover:text-primary transition-colors" data-testid="link-footer-ai">AI Transparency</Link>
-            <span className="text-muted-foreground/40">·</span>
-            <Link href="/accessibility" className="hover:text-primary transition-colors" data-testid="link-footer-accessibility">Accessibility</Link>
-            <span className="text-muted-foreground/40">·</span>
-            <Link href="/verify" className="hover:text-primary transition-colors" data-testid="link-footer-verify">Verify Certificate</Link>
-            <span className="text-muted-foreground/40">·</span>
-            <span>© {new Date().getFullYear()} TypeMasterAI</span>
-            <span className="text-muted-foreground/40">·</span>
-            <a href="mailto:support@typemasterai.com" className="hover:text-primary transition-colors" data-testid="link-footer-support-email">support@typemasterai.com</a>
-            <span className="text-muted-foreground/40">·</span>
-            <span className="text-[10px]">Registered in Solapur, India</span>
+        <div className="container mx-auto px-4 py-8">
+          {/* Footer Links Grid - SEO optimized internal linking */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-8 text-sm">
+            {/* Typing Tests Column */}
+            <div>
+              <h3 className="font-semibold text-foreground mb-3 text-xs uppercase tracking-wider">Typing Tests</h3>
+              <nav className="space-y-2">
+                <Link href="/" className="block text-muted-foreground hover:text-primary transition-colors">Free Typing Test</Link>
+                <Link href="/1-minute-typing-test" className="block text-muted-foreground hover:text-primary transition-colors">1 Minute Test</Link>
+                <Link href="/3-minute-typing-test" className="block text-muted-foreground hover:text-primary transition-colors">3 Minute Test</Link>
+                <Link href="/5-minute-typing-test" className="block text-muted-foreground hover:text-primary transition-colors">5 Minute Test</Link>
+                <Link href="/code-mode" className="block text-muted-foreground hover:text-primary transition-colors">Code Typing</Link>
+              </nav>
+            </div>
+            
+            {/* Features Column */}
+            <div>
+              <h3 className="font-semibold text-foreground mb-3 text-xs uppercase tracking-wider">Features</h3>
+              <nav className="space-y-2">
+                <Link href="/multiplayer" className="block text-muted-foreground hover:text-primary transition-colors">Multiplayer Race</Link>
+                <Link href="/stress-test" className="block text-muted-foreground hover:text-primary transition-colors">Stress Test</Link>
+                <Link href="/dictation-mode" className="block text-muted-foreground hover:text-primary transition-colors">Dictation Mode</Link>
+                <Link href="/analytics" className="block text-muted-foreground hover:text-primary transition-colors">Analytics</Link>
+                <Link href="/leaderboard" className="block text-muted-foreground hover:text-primary transition-colors">Leaderboard</Link>
+              </nav>
+            </div>
+            
+            {/* Resources Column */}
+            <div>
+              <h3 className="font-semibold text-foreground mb-3 text-xs uppercase tracking-wider">Resources</h3>
+              <nav className="space-y-2">
+                <Link href="/learn" className="block text-muted-foreground hover:text-primary transition-colors">Learn Touch Typing</Link>
+                <Link href="/faq" className="block text-muted-foreground hover:text-primary transition-colors">FAQ</Link>
+                <Link href="/chat" className="block text-muted-foreground hover:text-primary transition-colors">AI Typing Coach</Link>
+                <Link href="/verify" className="block text-muted-foreground hover:text-primary transition-colors">Verify Certificate</Link>
+                <Link href="/about" className="block text-muted-foreground hover:text-primary transition-colors">About Us</Link>
+              </nav>
+            </div>
+            
+            {/* Compare Column */}
+            <div>
+              <h3 className="font-semibold text-foreground mb-3 text-xs uppercase tracking-wider">Compare</h3>
+              <nav className="space-y-2">
+                <Link href="/monkeytype-alternative" className="block text-muted-foreground hover:text-primary transition-colors">Monkeytype Alternative</Link>
+                <Link href="/typeracer-alternative" className="block text-muted-foreground hover:text-primary transition-colors">Typeracer Alternative</Link>
+                <Link href="/10fastfingers-alternative" className="block text-muted-foreground hover:text-primary transition-colors">10FastFingers Alternative</Link>
+                <Link href="/typingcom-alternative" className="block text-muted-foreground hover:text-primary transition-colors">Typing.com Alternative</Link>
+              </nav>
+            </div>
+          </div>
+          
+          {/* Bottom Bar */}
+          <div className="border-t border-border/40 pt-4">
+            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-xs text-muted-foreground">
+              <Link href="/contact" className="hover:text-primary transition-colors" data-testid="link-footer-contact">Contact</Link>
+              <span className="text-muted-foreground/40">·</span>
+              <Link href="/privacy-policy" className="hover:text-primary transition-colors" data-testid="link-footer-privacy">Privacy</Link>
+              <span className="text-muted-foreground/40">·</span>
+              <Link href="/terms-of-service" className="hover:text-primary transition-colors" data-testid="link-footer-terms">Terms</Link>
+              <span className="text-muted-foreground/40">·</span>
+              <Link href="/cookie-policy" className="hover:text-primary transition-colors" data-testid="link-footer-cookies">Cookies</Link>
+              <span className="text-muted-foreground/40">·</span>
+              <Link href="/ai-transparency" className="hover:text-primary transition-colors" data-testid="link-footer-ai">AI Transparency</Link>
+              <span className="text-muted-foreground/40">·</span>
+              <Link href="/accessibility" className="hover:text-primary transition-colors" data-testid="link-footer-accessibility">Accessibility</Link>
+              <span className="text-muted-foreground/40">·</span>
+              <span>© {new Date().getFullYear()} TypeMasterAI</span>
+              <span className="text-muted-foreground/40">·</span>
+              <a href="mailto:support@typemasterai.com" className="hover:text-primary transition-colors" data-testid="link-footer-support-email">support@typemasterai.com</a>
+            </div>
           </div>
         </div>
       </footer>

@@ -277,6 +277,13 @@ export const SEO_ROUTES: Record<string, SEORouteConfig> = {
     canonical: `${BASE_URL}/profile/edit`,
     noindex: true,
   },
+  '/faq': {
+    title: 'FAQ | Frequently Asked Questions - TypeMasterAI',
+    description: 'Find answers to common questions about TypeMasterAI typing tests. Learn about WPM calculation, typing speed improvement, features, languages, and more.',
+    keywords: 'typing test faq, wpm questions, typing speed help, how to type faster, monkeytype alternative questions, typing test help',
+    canonical: `${BASE_URL}/faq`,
+    ogType: 'website',
+  },
   '/admin/feedback': {
     title: 'Admin Feedback Dashboard | TypeMasterAI',
     description: 'Admin dashboard for managing user feedback.',
