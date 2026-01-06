@@ -306,6 +306,71 @@ export const SEO_ROUTES: Record<string, SEORouteConfig> = {
     canonical: `${BASE_URL}/keybr-alternative`,
     ogType: 'website',
   },
+  // Pillar-Cluster Content Pages
+  '/what-is-wpm': {
+    title: 'What is WPM? Words Per Minute Explained | TypeMasterAI',
+    description: 'Learn what WPM (Words Per Minute) means, how it\'s calculated, and what constitutes a good typing speed. Understand gross WPM, net WPM, and CPM.',
+    keywords: 'what is wpm, words per minute, wpm meaning, wpm definition, how to calculate wpm, typing speed, wpm vs cpm, gross wpm, net wpm',
+    canonical: `${BASE_URL}/what-is-wpm`,
+    ogType: 'article',
+  },
+  '/how-to-type-faster': {
+    title: 'How to Type Faster: 10 Proven Tips to Increase WPM | TypeMasterAI',
+    description: 'Learn how to type faster with proven techniques. From touch typing basics to advanced speed tips, increase your WPM from 40 to 80+ with daily practice.',
+    keywords: 'how to type faster, increase typing speed, typing tips, improve wpm, type faster, fast typing, typing techniques, speed typing tips',
+    canonical: `${BASE_URL}/how-to-type-faster`,
+    ogType: 'article',
+  },
+  '/keyboard-layouts': {
+    title: 'Keyboard Layouts Compared: QWERTY vs Dvorak vs Colemak | TypeMasterAI',
+    description: 'Compare QWERTY, Dvorak, and Colemak keyboard layouts. Learn the pros, cons, and speed differences of each layout to choose the best one for you.',
+    keywords: 'keyboard layouts, qwerty vs dvorak, colemak, dvorak keyboard, keyboard layout comparison, best keyboard layout, typing layout',
+    canonical: `${BASE_URL}/keyboard-layouts`,
+    ogType: 'article',
+  },
+  '/typing-for-beginners': {
+    title: 'Typing for Beginners: Learn to Type from Scratch | TypeMasterAI',
+    description: 'Complete beginner\'s guide to typing. Learn touch typing from scratch with step-by-step instructions, home row basics, and free practice exercises.',
+    keywords: 'typing for beginners, learn to type, beginner typing, how to type, typing lessons for beginners, learn keyboard typing, start typing, typing basics',
+    canonical: `${BASE_URL}/typing-for-beginners`,
+    ogType: 'article',
+  },
+  '/data-entry-typing-test': {
+    title: 'Data Entry Typing Test: Practice for Job Applications | TypeMasterAI',
+    description: 'Prepare for data entry job typing tests. Practice with realistic 5-minute tests, learn WPM requirements for different jobs, and get certified results.',
+    keywords: 'data entry typing test, typing test for jobs, employment typing test, data entry wpm, typing speed for jobs, job typing test, alphanumeric typing test',
+    canonical: `${BASE_URL}/data-entry-typing-test`,
+    ogType: 'website',
+  },
+  '/typing-test-for-kids': {
+    title: 'Typing Test for Kids: Fun & Free Typing Practice | TypeMasterAI',
+    description: 'Free typing test designed for kids and students. Age-appropriate practice, fun achievements, and progress tracking. Perfect for learning touch typing.',
+    keywords: 'typing test for kids, kids typing practice, typing for children, child typing test, student typing test, typing games for kids, learn typing kids',
+    canonical: `${BASE_URL}/typing-test-for-kids`,
+    ogType: 'website',
+  },
+  '/mobile-typing-test': {
+    title: 'Mobile Typing Test: Test Your Phone Typing Speed | TypeMasterAI',
+    description: 'Test your mobile typing speed on phone or tablet. Practice thumb typing, measure your WPM, and improve your smartphone keyboard skills.',
+    keywords: 'mobile typing test, phone typing speed, typing test on phone, mobile typing speed, thumb typing test, smartphone typing test, tablet typing test',
+    canonical: `${BASE_URL}/mobile-typing-test`,
+    ogType: 'website',
+  },
+  // Programming Language Typing Tests
+  '/javascript-typing-test': {
+    title: 'JavaScript Typing Test: Practice Coding Speed | TypeMasterAI',
+    description: 'Practice typing JavaScript code with syntax highlighting. Improve your coding speed with arrow functions, async/await, and modern JS syntax.',
+    keywords: 'javascript typing test, js typing practice, code typing test, programming typing test, javascript coding speed, developer typing test',
+    canonical: `${BASE_URL}/javascript-typing-test`,
+    ogType: 'website',
+  },
+  '/python-typing-test': {
+    title: 'Python Typing Test: Practice Coding Speed | TypeMasterAI',
+    description: 'Practice typing Python code with syntax highlighting. Improve your coding speed with functions, classes, and Pythonic syntax.',
+    keywords: 'python typing test, python coding practice, code typing test, programming typing test, python coding speed, developer typing test',
+    canonical: `${BASE_URL}/python-typing-test`,
+    ogType: 'website',
+  },
   // International (Pilot)
   '/es/typing-test': {
     title: 'Prueba de Mecanografía Gratis | Test de Velocidad - TypeMasterAI',

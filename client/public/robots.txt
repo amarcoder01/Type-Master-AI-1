@@ -12,6 +12,7 @@ Sitemap: https://typemasterai.com/sitemap.xml
 Sitemap: https://typemasterai.com/sitemap-pages.xml
 Sitemap: https://typemasterai.com/sitemap-shared.xml
 Sitemap: https://typemasterai.com/sitemap-certificates.xml
+Sitemap: https://typemasterai.com/sitemap-images.xml
 
 # Disallow API endpoints and private content
 Disallow: /api/
@@ -26,6 +27,14 @@ Disallow: /admin/
 Disallow: /settings
 Disallow: /notifications
 Disallow: /profile/edit
+
+# Reduce crawl duplication from tracking parameters
+Disallow: /*?*utm_*
+Disallow: /*?*gclid=*
+Disallow: /*?*fbclid=*
+Disallow: /*?*ref=*
+Disallow: /*?*source=*
+Disallow: /*?*campaign=*
 
 # Allow important SEO pages
 Allow: /
@@ -42,6 +51,7 @@ Allow: /dictation-mode
 Allow: /dictation-test
 Allow: /chat
 Allow: /learn
+Allow: /knowledge
 Allow: /faq
 Allow: /about
 Allow: /contact
@@ -61,6 +71,22 @@ Allow: /monkeytype-alternative
 Allow: /typeracer-alternative
 Allow: /10fastfingers-alternative
 Allow: /typingcom-alternative
+
+# Pillar-Cluster Content Pages (Topical Authority)
+Allow: /what-is-wpm
+Allow: /how-to-type-faster
+Allow: /keyboard-layouts
+Allow: /typing-for-beginners
+Allow: /data-entry-typing-test
+Allow: /typing-test-for-kids
+Allow: /mobile-typing-test
+Allow: /average-typing-speed
+Allow: /typing-speed-chart
+Allow: /typing-test-jobs
+Allow: /touch-typing
+Allow: /keybr-alternative
+Allow: /javascript-typing-test
+Allow: /python-typing-test
 
 # Shared results and certificates (dynamic content)
 Allow: /share/
@@ -88,6 +114,10 @@ Allow: /logo-*.png
 # ============================================================
 # AI Crawlers - Specific Rules
 # ============================================================
+
+# Hint for AI agents: curated context file available
+# llms.txt provides LLM-friendly site overview and links
+Allow: /llms.txt
 
 # Google AI (Gemini/Bard)
 User-agent: Google-Extended
@@ -170,6 +200,15 @@ User-agent: Googlebot
 Allow: /
 Crawl-delay: 0
 
+# Google Ads crawlers
+User-agent: AdsBot-Google
+Allow: /
+Crawl-delay: 0
+
+User-agent: Mediapartners-Google
+Allow: /
+Crawl-delay: 0
+
 User-agent: Googlebot-Image
 Allow: /
 Crawl-delay: 0
@@ -236,7 +275,7 @@ User-agent: LinkedInBot
 Allow: /
 
 # Pinterest
-User-agent: Pinterest
+User-agent: Pinterestbot
 Allow: /
 
 # Slack
@@ -253,4 +292,8 @@ Allow: /
 
 # WhatsApp
 User-agent: WhatsApp
+Allow: /
+
+# Facebook link preview
+User-agent: facebookexternalhit
 Allow: /

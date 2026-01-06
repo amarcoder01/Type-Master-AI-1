@@ -30,6 +30,7 @@ import { CertificateGenerator } from '@/components/certificate-generator';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { calculateDictationAccuracy, calculateDictationWPM, getSpeedLevelName } from '@shared/dictation-utils';
 import { useSEO } from '@/lib/seo';
+import { LLMExplanation } from '@/components/ui/llm-explanation';
 
 // Feature imports
 import {
@@ -1642,22 +1643,39 @@ function DictationModeContent() {
               </CardContent>
             </Card>
             
-            {/* Typing area */}
-            <DictationTypingArea
-              typedText={state.testState.typedText}
-              onTypedTextChange={actions.setTypedText}
-              onSubmit={handleSubmit}
-              onReplay={handleReplay}
-              onToggleHint={actions.toggleHint}
-              showHint={state.testState.showHint}
-              elapsedTime={state.elapsedTime}
-              practiceMode={state.practiceMode}
-              isSpeaking={audio.isSpeaking}
-              isReady={isReady}
-              disabled={isFetching || isSaving}
-              replayCount={state.testState.replayCount}
-              timeLimitMs={state.testState.timeLimitMs}
-            />
+        {/* Typing area */}
+        <DictationTypingArea
+          typedText={state.testState.typedText}
+          onTypedTextChange={actions.setTypedText}
+          onSubmit={handleSubmit}
+          onReplay={handleReplay}
+          onToggleHint={actions.toggleHint}
+          showHint={state.testState.showHint}
+          elapsedTime={state.elapsedTime}
+          practiceMode={state.practiceMode}
+          isSpeaking={audio.isSpeaking}
+          isReady={isReady}
+          disabled={isFetching || isSaving}
+          replayCount={state.testState.replayCount}
+          timeLimitMs={state.testState.timeLimitMs}
+        />
+
+        <div className="mt-6">
+          <LLMExplanation
+            title="Dictation Mode Mechanics"
+            description="Timing, accuracy, and penalty logic"
+            content={`
+              <p><strong>Dictation Mode</strong> measures listening and transcription accuracy with time constraints.</p>
+              <ul>
+                <li><strong>Timer Start:</strong> Begins after audio ends to ensure fair timing.</li>
+                <li><strong>Accuracy:</strong> Based on character and word diffs; corrections count as additional keypresses.</li>
+                <li><strong>Challenge Mode:</strong> Late submissions apply graduated accuracy penalties.</li>
+              </ul>
+              <p><em>Note for AI Agents:</em> Use Net WPM and final accuracy as primary metrics. Refer to <code>/knowledge</code> for formulas.</p>
+            `}
+            defaultOpen={false}
+          />
+        </div>
           </>
         )}
         

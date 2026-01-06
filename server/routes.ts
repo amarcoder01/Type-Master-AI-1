@@ -370,7 +370,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     generateImagesSitemap 
   } = await import('./sitemap-generator');
 
-  const { getIndexNowKey, getIndexNowKeyFileContent } = await import('./indexnow-service');
+  const { getIndexNowKey, getIndexNowKeyFileContent, notifyBatchUrls, notifyNewCertificate, notifyLeaderboardUpdate } = await import('./indexnow-service');
 
   // IndexNow key verification file
   app.get(`/${getIndexNowKey()}.txt`, (_req, res) => {
@@ -1085,6 +1085,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
 
         console.log(`[Certificate] Auto-created verified certificate ${verificationData.verificationId} for test result ${result.id}`);
+        if ((verificationData as any)?.verificationId) {
+          notifyNewCertificate((verificationData as any).verificationId).catch(err => console.error('[IndexNow] Certificate notify failed:', err));
+        }
       } catch (certError) {
         console.error("[Certificate] Auto-creation failed:", certError);
         // Don't fail the request if certificate creation fails
@@ -1133,6 +1136,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } catch (error) {
         console.error("Achievement check error:", error);
       }
+
+      notifyLeaderboardUpdate().catch(err => console.error('[IndexNow] Leaderboard notify failed:', err));
 
       res.status(201).json({
         message: "Test result saved",
@@ -3744,6 +3749,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
 
         console.log(`[Certificate] Auto-created code certificate ${verificationData.verificationId} for code test ${test.id}`);
+        if ((verificationData as any)?.verificationId) {
+          notifyNewCertificate((verificationData as any).verificationId).catch(err => console.error('[IndexNow] Code certificate notify failed:', err));
+        }
       } catch (certError) {
         console.error("[Certificate] Code test auto-creation failed:", certError);
         // Don't fail the request if certificate creation fails
@@ -4812,6 +4820,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
 
         console.log(`[Certificate] Auto-created stress certificate ${verificationData.verificationId} for stress test ${result.id}`);
+        if ((verificationData as any)?.verificationId) {
+          notifyNewCertificate((verificationData as any).verificationId).catch(err => console.error('[IndexNow] Stress certificate notify failed:', err));
+        }
       } catch (certError) {
         console.error("[Certificate] Stress test auto-creation failed:", certError);
         // Don't fail the request if certificate creation fails
@@ -5112,6 +5123,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error(`[Share] Invalid base URL generated: ${baseUrl}`);
         return res.status(500).json({ message: "Failed to generate share URL" });
       }
+
+      notifyBatchUrls([`/result/${sharedResult.shareToken}`]).catch(err => console.error('[IndexNow] Share notify failed:', err));
 
       res.status(201).json({
         message: "Result shared successfully",

@@ -25,15 +25,16 @@ interface SharedResult {
 }
 
 export default function Result() {
+  const [, params] = useRoute("/result/:shareToken");
+  const shareToken = params?.shareToken;
+  const canonicalUrl = shareToken ? `https://typemasterai.com/result/${shareToken}` : undefined;
   useSEO({
     title: 'Typing Test Result | TypeMasterAI',
     description: 'View your typing test result with detailed statistics including WPM, accuracy, and keystroke analytics.',
     keywords: 'typing result, wpm result, test result, typing stats',
-    canonical: 'https://typemasterai.com/',
-    ogUrl: 'https://typemasterai.com/',
+    canonical: canonicalUrl,
+    ogUrl: canonicalUrl,
   });
-  const [, params] = useRoute("/result/:shareToken");
-  const shareToken = params?.shareToken;
   const { toast } = useToast();
   
   const [result, setResult] = useState<SharedResult | null>(null);

@@ -63,6 +63,7 @@ const Learn = lazy(() => import("@/pages/learn"));
 const AITransparency = lazy(() => import("@/pages/ai-transparency"));
 const AccessibilityStatement = lazy(() => import("@/pages/accessibility"));
 const FAQ = lazy(() => import("@/pages/faq"));
+const KnowledgeBase = lazy(() => import("@/pages/knowledge-base"));
 
 // New SEO landing pages
 const TypingPractice = lazy(() => import("@/pages/typing-practice"));
@@ -76,6 +77,19 @@ const KeybrAlternative = lazy(() => import("@/pages/keybr-alternative"));
 const TypingTestJobs = lazy(() => import("@/pages/typing-test-jobs"));
 const TouchTyping = lazy(() => import("@/pages/touch-typing"));
 const SpanishTypingTest = lazy(() => import("@/pages/es/typing-test"));
+
+// Pillar-Cluster Content Pages
+const WhatIsWpm = lazy(() => import("@/pages/what-is-wpm"));
+const HowToTypeFaster = lazy(() => import("@/pages/how-to-type-faster"));
+const KeyboardLayouts = lazy(() => import("@/pages/keyboard-layouts"));
+const TypingForBeginners = lazy(() => import("@/pages/typing-for-beginners"));
+const DataEntryTypingTest = lazy(() => import("@/pages/data-entry-typing-test"));
+const TypingTestForKids = lazy(() => import("@/pages/typing-test-for-kids"));
+const MobileTypingTest = lazy(() => import("@/pages/mobile-typing-test"));
+
+// Programming Language Typing Test Pages
+const JavaScriptTypingTest = lazy(() => import("@/pages/javascript-typing-test"));
+const PythonTypingTest = lazy(() => import("@/pages/python-typing-test"));
 
 // Loading component for Suspense fallback
 function PageLoader() {
@@ -123,6 +137,15 @@ function Router() {
                 <Route path="/typing-test-jobs" component={TypingTestJobs} />
                 <Route path="/touch-typing" component={TouchTyping} />
                 <Route path="/es/typing-test" component={SpanishTypingTest} />
+                <Route path="/what-is-wpm" component={WhatIsWpm} />
+                <Route path="/how-to-type-faster" component={HowToTypeFaster} />
+                <Route path="/keyboard-layouts" component={KeyboardLayouts} />
+                <Route path="/typing-for-beginners" component={TypingForBeginners} />
+                <Route path="/data-entry-typing-test" component={DataEntryTypingTest} />
+                <Route path="/typing-test-for-kids" component={TypingTestForKids} />
+                <Route path="/mobile-typing-test" component={MobileTypingTest} />
+                <Route path="/javascript-typing-test" component={JavaScriptTypingTest} />
+                <Route path="/python-typing-test" component={PythonTypingTest} />
                 <Route path="/profile" component={Profile} />
                 <Route path="/profile/edit" component={ProfileEdit} />
                 <Route path="/leaderboard" component={Leaderboard} />
@@ -151,6 +174,7 @@ function Router() {
                 <Route path="/about" component={About} />
                 <Route path="/contact" component={Contact} />
                 <Route path="/faq" component={FAQ} />
+                <Route path="/knowledge" component={KnowledgeBase} />
                 <Route path="/verify" component={Verify} />
                 <Route path="/verify/:verificationId" component={Verify} />
                 <Route path="/learn" component={Learn} />

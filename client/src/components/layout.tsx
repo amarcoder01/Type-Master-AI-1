@@ -781,7 +781,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       >
         <div className="container mx-auto px-4 py-8">
           {/* Footer Links Grid - SEO optimized internal linking */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 mb-8 text-sm">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-6 mb-8 text-sm">
             {/* Typing Tests Column */}
             <div>
               <h3 className="font-semibold text-foreground mb-3 text-xs uppercase tracking-wider">Typing Tests</h3>
@@ -802,8 +802,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <Link href="/typing-practice" className="block text-muted-foreground hover:text-primary transition-colors">Typing Practice</Link>
                 <Link href="/code-mode" className="block text-muted-foreground hover:text-primary transition-colors">Code Typing</Link>
                 <Link href="/typing-games" className="block text-muted-foreground hover:text-primary transition-colors">Typing Games</Link>
-                <Link href="/dictation-mode" className="block text-muted-foreground hover:text-primary transition-colors">Dictation Mode</Link>
-                <Link href="/stress-test" className="block text-muted-foreground hover:text-primary transition-colors">Stress Test</Link>
+                <Link href="/typing-test-for-kids" className="block text-muted-foreground hover:text-primary transition-colors">Typing for Kids</Link>
+                <Link href="/mobile-typing-test" className="block text-muted-foreground hover:text-primary transition-colors">Mobile Typing Test</Link>
+                <Link href="/data-entry-typing-test" className="block text-muted-foreground hover:text-primary transition-colors">Data Entry Test</Link>
               </nav>
             </div>
             
@@ -823,9 +824,25 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div>
               <h3 className="font-semibold text-foreground mb-3 text-xs uppercase tracking-wider">Learn</h3>
               <nav className="space-y-2" aria-label="Learning resources">
-                <Link href="/learn" className="block text-muted-foreground hover:text-primary transition-colors">Learn Touch Typing</Link>
-                <Link href="/faq" className="block text-muted-foreground hover:text-primary transition-colors">FAQ</Link>
+                <Link href="/learn" className="block text-muted-foreground hover:text-primary transition-colors font-medium">Learn Touch Typing</Link>
+                <Link href="/touch-typing" className="block text-muted-foreground hover:text-primary transition-colors">Touch Typing Guide</Link>
+                <Link href="/typing-for-beginners" className="block text-muted-foreground hover:text-primary transition-colors">Typing for Beginners</Link>
+                <Link href="/how-to-type-faster" className="block text-muted-foreground hover:text-primary transition-colors">How to Type Faster</Link>
+                <Link href="/what-is-wpm" className="block text-muted-foreground hover:text-primary transition-colors">What is WPM?</Link>
+                <Link href="/keyboard-layouts" className="block text-muted-foreground hover:text-primary transition-colors">Keyboard Layouts</Link>
+                <Link href="/average-typing-speed" className="block text-muted-foreground hover:text-primary transition-colors">Average Typing Speed</Link>
+                <Link href="/typing-speed-chart" className="block text-muted-foreground hover:text-primary transition-colors">Typing Speed Chart</Link>
+              </nav>
+            </div>
+            
+            {/* Help & FAQ Column */}
+            <div>
+              <h3 className="font-semibold text-foreground mb-3 text-xs uppercase tracking-wider">Help & FAQ</h3>
+              <nav className="space-y-2" aria-label="Help and FAQ">
+                <Link href="/faq" className="block text-muted-foreground hover:text-primary transition-colors font-medium">FAQ Hub</Link>
                 <Link href="/chat" className="block text-muted-foreground hover:text-primary transition-colors">AI Typing Coach</Link>
+                <Link href="/average-typing-speed" className="block text-muted-foreground hover:text-primary transition-colors">Average Typing Speed</Link>
+                <Link href="/typing-speed-chart" className="block text-muted-foreground hover:text-primary transition-colors">Typing Speed Chart</Link>
                 <Link href="/analytics" className="block text-muted-foreground hover:text-primary transition-colors">Typing Analytics</Link>
                 <Link href="/verify" className="block text-muted-foreground hover:text-primary transition-colors">Verify Certificate</Link>
               </nav>

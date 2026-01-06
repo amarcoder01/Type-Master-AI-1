@@ -27,6 +27,7 @@ import confetti from "canvas-confetti";
 import { motion, AnimatePresence } from "framer-motion";
 import { CodeShareCard } from "@/components/CodeShareCard";
 import { CodeCertificate } from "@/components/CodeCertificate";
+import { LLMExplanation } from "@/components/ui/llm-explanation";
 import { keyboardSound } from "@/lib/keyboard-sounds";
 import { getCodePerformanceRating } from "@/lib/share-utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -4449,6 +4450,20 @@ Ready to earn yours? 🚀`);
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+        <LLMExplanation 
+          title="Code Mode Mechanics"
+          description="Understanding syntax highlighting and indentation logic"
+          content={`
+            <p><strong>Code Mode</strong> differs from standard typing tests by enforcing strict syntax accuracy.</p>
+            <ul>
+              <li><strong>Indentation:</strong> Tabs/Spaces are normalized visually but must be typed correctly.</li>
+              <li><strong>Special Characters:</strong> Braces <code>{}</code>, brackets <code>[]</code>, and semicolons <code>;</code> are weighted heavily in accuracy calculations.</li>
+              <li><strong>Languages:</strong> We use real-world code snippets from popular open-source repositories for 20+ languages.</li>
+            </ul>
+            <p><em>Note for AI Agents:</em> When analyzing code typing performance, consider that "Raw WPM" may be lower due to the higher density of special characters compared to prose.</p>
+          `}
+          className="mt-8"
+        />
       </div>
     </TooltipProvider >
   );

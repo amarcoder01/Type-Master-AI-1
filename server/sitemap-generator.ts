@@ -48,6 +48,17 @@ const STATIC_PAGES: SitemapUrl[] = [
   { loc: '/keybr-alternative', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.9' },
   { loc: '/es/typing-test', lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.8' },
 
+  // Pillar-Cluster Content Pages (Topical Authority)
+  { loc: '/what-is-wpm', lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.9' },
+  { loc: '/how-to-type-faster', lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.9' },
+  { loc: '/keyboard-layouts', lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.8' },
+  { loc: '/typing-for-beginners', lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.9' },
+  { loc: '/data-entry-typing-test', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.8' },
+  { loc: '/typing-test-for-kids', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.8' },
+  { loc: '/mobile-typing-test', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.8' },
+  { loc: '/javascript-typing-test', lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.8' },
+  { loc: '/python-typing-test', lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.8' },
+
   // Feature pages
   { loc: '/dictation-mode', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.8' },
   { loc: '/dictation-test', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.8' },
@@ -94,6 +105,17 @@ function generateUrlElement(url: SitemapUrl): string {
     <changefreq>${url.changefreq}</changefreq>
     <priority>${url.priority}</priority>
     <mobile:mobile/>`;
+
+  // Add hreflang alternates for known language pairs
+  if (url.loc === '/') {
+    element += `
+    <xhtml:link rel="alternate" hreflang="es" href="${BASE_URL}/es/typing-test" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="${BASE_URL}/" />`;
+  } else if (url.loc === '/es/typing-test') {
+    element += `
+    <xhtml:link rel="alternate" hreflang="en" href="${BASE_URL}/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="${BASE_URL}/" />`;
+  }
 
   if (url.images && url.images.length > 0) {
     for (const image of url.images) {

@@ -61,9 +61,14 @@ export function useSEO(config: SEOConfig) {
       updateMetaTag('name', 'twitter:url', ogUrl);
     }
 
-    // Add structured data if provided
+    // Add structured data if provided, otherwise provide a minimal default
     if (config.structuredData) {
       addStructuredData(config.structuredData);
+    } else {
+      const fallback = getDefaultStructuredData(config);
+      if (fallback) {
+        addStructuredData(fallback);
+      }
     }
 
     // Handle noindex pages
@@ -134,6 +139,39 @@ function addStructuredData(data: object) {
 
 // Base URL for canonical URLs and structured data
 const BASE_URL = 'https://typemasterai.com';
+
+function getDefaultStructuredData(config: SEOConfig): object | null {
+  const title = config.title || 'TypeMasterAI';
+  const description = config.description || 'Free online typing test with real-time WPM, accuracy tracking, and AI analytics.';
+  const url = ((): string => {
+    if (config.canonical) return config.canonical.startsWith('http') ? config.canonical : `${BASE_URL}${config.canonical.startsWith('/') ? '' : '/'}${config.canonical}`;
+    try {
+      const loc = window.location?.href;
+      return typeof loc === 'string' && loc ? loc : BASE_URL;
+    } catch {
+      return BASE_URL;
+    }
+  })();
+
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'BreadcrumbList',
+        'itemListElement': [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: BASE_URL },
+          { '@type': 'ListItem', position: 2, name: title, item: url },
+        ],
+      },
+      {
+        '@type': 'WebPage',
+        'name': title,
+        'description': description,
+        'url': url,
+      },
+    ],
+  };
+}
 
 /**
  * Generate common WebApplication structured data

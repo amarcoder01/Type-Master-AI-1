@@ -65,6 +65,22 @@ function generateMetaTags(config: ReturnType<typeof getSEOConfig>, path: string)
 
   const ogImage = `${BASE_URL_CONST}/opengraph.jpg`;
   const robotsContent = config.noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
+  const hreflang = (() => {
+    // Spanish localized page: include es/en/x-default
+    if (path.startsWith('/es/')) {
+      const esHref = `${BASE_URL_CONST}${path}`;
+      const enHref = `${BASE_URL_CONST}/`;
+      return `\n    <link rel="alternate" hreflang="es" href="${esHref}" />\n    <link rel="alternate" hreflang="en" href="${enHref}" />\n    <link rel="alternate" hreflang="x-default" href="${enHref}" />`;
+    }
+    // English home route: advertise Spanish alternate
+    if (path === '/') {
+      const esHref = `${BASE_URL_CONST}/es/typing-test`;
+      const enHref = `${BASE_URL_CONST}/`;
+      return `\n    <link rel="alternate" hreflang="es" href="${esHref}" />\n    <link rel="alternate" hreflang="x-default" href="${enHref}" />`;
+    }
+    // Other pages: default x-default only
+    return `\n    <link rel=\"alternate\" hreflang=\"x-default\" href=\"${BASE_URL_CONST}/\" />`;
+  })();
 
   return `
     <title>${escapeHtml(config.title)}</title>
@@ -91,6 +107,7 @@ function generateMetaTags(config: ReturnType<typeof getSEOConfig>, path: string)
     <meta name="twitter:title" content="${escapeHtml(config.title)}" />
     <meta name="twitter:description" content="${escapeHtml(config.description)}" />
     <meta name="twitter:image" content="${ogImage}" />
+    ${hreflang}
   `;
 }
 
@@ -106,6 +123,133 @@ function escapeHtml(text: string): string {
     "'": '&#039;',
   };
   return text.replace(/[&<>"']/g, (m) => map[m]);
+}
+
+function generateStructuredDataScript(path: string, config: ReturnType<typeof getSEOConfig> | null): string {
+  if (!config) return '';
+
+  const base = BASE_URL_CONST;
+
+  const scriptTag = (obj: any) =>
+    `<script type="application/ld+json" data-dynamic-seo="true">${JSON.stringify(obj)}</script>`;
+
+  if (path === '/') {
+    const graph = [
+      {
+        '@type': 'WebSite',
+        '@id': `${base}/#website`,
+        url: base,
+        name: 'TypeMasterAI - Free Online Typing Test',
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: `${base}/?q={search_term_string}`,
+          'query-input': 'required name=search_term_string',
+        },
+      },
+      {
+        '@type': 'Organization',
+        '@id': `${base}/#organization`,
+        name: 'TypeMasterAI',
+        url: base,
+        logo: {
+          '@type': 'ImageObject',
+          url: `${base}/icon-512x512.png`,
+        },
+      },
+      {
+        '@type': 'SoftwareApplication',
+        name: 'TypeMasterAI',
+        applicationCategory: 'EducationalApplication',
+        operatingSystem: 'Web Browser',
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      },
+    ];
+    return scriptTag({ '@context': 'https://schema.org', '@graph': graph });
+  }
+
+  if (path === '/multiplayer' || path === '/typing-games') {
+    return scriptTag({
+      '@context': 'https://schema.org',
+      '@type': 'VideoGame',
+      name: config.title,
+      description: config.description,
+      applicationCategory: 'Game',
+      gamePlatform: 'Web Browser',
+      author: { '@type': 'Organization', name: 'TypeMasterAI', url: base },
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    });
+  }
+
+  if (path === '/leaderboard' || path === '/code-leaderboard' || path === '/stress-leaderboard') {
+    return scriptTag({
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: config.title,
+      description: config.description,
+      itemListOrder: 'https://schema.org/ItemListOrderDescending',
+    });
+  }
+
+  if (path === '/learn') {
+    return scriptTag({
+      '@context': 'https://schema.org',
+      '@type': 'Course',
+      name: 'Touch Typing Fundamentals',
+      description: 'Comprehensive touch typing course with multi-level curriculum.',
+      provider: { '@type': 'Organization', name: 'TypeMasterAI', url: base },
+      isAccessibleForFree: true,
+      educationalLevel: 'Beginner',
+    });
+  }
+
+  if (path === '/faq') {
+    return scriptTag({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        { '@type': 'Question', name: 'How do I test my typing speed?', acceptedAnswer: { '@type': 'Answer', text: 'Visit TypeMasterAI, start typing, and see real-time WPM and accuracy.' } },
+        { '@type': 'Question', name: 'Is TypeMasterAI free?', acceptedAnswer: { '@type': 'Answer', text: 'Yes, it is 100% free with unlimited tests and features.' } },
+      ],
+    });
+  }
+
+  if (path === '/dictation-test' || path === '/dictation-mode') {
+    return scriptTag({
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      speakable: { '@type': 'SpeakableSpecification', cssSelector: ['.dictation-text'] },
+    });
+  }
+
+  const softwareAppPages = new Set([
+    '/code-mode',
+    '/typing-practice',
+    '/wpm-test',
+    '/keyboard-test',
+    '/typing-certificate',
+    '/1-minute-typing-test',
+    '/3-minute-typing-test',
+    '/5-minute-typing-test',
+  ]);
+  if (softwareAppPages.has(path)) {
+    return scriptTag({
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      name: config.title,
+      description: config.description,
+      applicationCategory: 'EducationalApplication',
+      operatingSystem: 'Web Browser',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    });
+  }
+
+  return scriptTag({
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: config.title,
+    description: config.description,
+    url: config.canonical,
+  });
 }
 
 /**
@@ -193,15 +337,21 @@ export function createSEOPrerender(distPath: string) {
       const seoConfig = getSEOConfig(req.path);
       
       if (!seoConfig) {
-        // No specific config, serve default
-        return next();
+        // For crawlers, return a proper 404 with noindex to avoid soft-404 issues
+        const notFoundHtml = `<!doctype html><html lang="en"><head><meta charset="utf-8" /><meta name="robots" content="noindex, nofollow" /><title>404 Not Found</title></head><body>Not Found</body></html>`;
+        res.set('Content-Type', 'text/html');
+        res.set('Vary', 'User-Agent, Accept-Language');
+        res.set('X-Robots-Tag', 'noindex, nofollow');
+        return res.status(404).send(notFoundHtml);
       }
 
-      // Generate and inject meta tags
+      // Generate and inject meta tags (and JSON-LD structured data)
       const metaTags = generateMetaTags(seoConfig, req.path);
-      const html = injectMetaTags(htmlTemplate, metaTags);
+      const structured = generateStructuredDataScript(req.path, seoConfig);
+      const html = injectMetaTags(htmlTemplate, metaTags + (structured ? `\n    ${structured}` : ''));
 
       res.set('Content-Type', 'text/html');
+      res.set('Vary', 'User-Agent, Accept-Language');
       res.set('X-Robots-Tag', seoConfig.noindex ? 'noindex' : 'index');
       return res.send(html);
     } catch (error) {

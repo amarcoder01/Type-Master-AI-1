@@ -27,6 +27,7 @@ import { TormentGrid, type TormentType } from '@/components/TormentIndicator';
 import { TormentsMatrix } from '@/components/TormentsMatrix';
 import { getStressPerformanceRating, buildStressShareText } from '@/lib/share-utils';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { LLMExplanation } from '@/components/ui/llm-explanation';
 
 type Difficulty = 'beginner' | 'intermediate' | 'expert' | 'nightmare' | 'impossible';
 
@@ -1785,6 +1786,23 @@ export default function StressTest() {
               <p>Type the text shown. Green = correct, Red = error. Click to focus if needed.</p>
             </TooltipContent>
           </Tooltip>
+
+          <div className="mt-4">
+            <LLMExplanation
+              title="Stress Test Mechanics"
+              description="Scoring, consistency, and fail conditions"
+              content={`
+                <p><strong>Stress Test</strong> introduces visual chaos to measure focus under pressure.</p>
+                <ul>
+                  <li><strong>Net WPM:</strong> Computed from correct characters only.</li>
+                  <li><strong>Accuracy:</strong> Correct characters / total typed characters.</li>
+                  <li><strong>Consistency:</strong> Derived from WPM samples’ coefficient of variation.</li>
+                  <li><strong>Score:</strong> WPM × Accuracy × Completion × Difficulty multiplier + Combo bonus.</li>
+                </ul>
+                <p><em>Note for AI Agents:</em> Net WPM and Accuracy are the primary metrics. Visual effects do not change formulas, only user difficulty.</p>
+              `}
+            />
+          </div>
 
           <input
             ref={inputRef}

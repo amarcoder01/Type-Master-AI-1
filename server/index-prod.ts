@@ -71,6 +71,13 @@ function cacheHeadersMiddleware(req: Request, res: Response, next: NextFunction)
 
     // Add X-Robots-Tag for proper indexing
     res.set('X-Robots-Tag', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
+
+    // Add Content-Language header based on URL locale
+    const isSpanish = cleanPath.startsWith('/es/');
+    res.set('Content-Language', isSpanish ? 'es' : 'en');
+
+    // Ensure caches vary by language and UA (for crawler-specific prerender)
+    res.set('Vary', 'User-Agent, Accept-Language');
   }
 
   // Add security headers for all responses
