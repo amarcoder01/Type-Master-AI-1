@@ -4,8 +4,9 @@
  */
 
 import { storage } from './storage';
+import { BASE_URL } from './config';
 
-const BASE_URL = 'https://typemasterai.com';
+// BASE_URL now comes from env-driven config
 
 interface SitemapUrl {
   loc: string;
@@ -78,11 +79,16 @@ const STATIC_PAGES: SitemapUrl[] = [
   // Educational content
   { loc: '/learn', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.8' },
   { loc: '/faq', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.7' },
+  { loc: '/knowledge', lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.7' },
   { loc: '/chat', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.7' },
 
   // About & Contact
   { loc: '/about', lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.6' },
   { loc: '/contact', lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.5' },
+
+  // Blog landing pages
+  { loc: '/blog', lastmod: new Date().toISOString().split('T')[0], changefreq: 'daily', priority: '0.8' },
+  { loc: '/blog/tags', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.6' },
 
   // Verification
   { loc: '/verify', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.5' },
@@ -203,6 +209,33 @@ ${urlElements}
   }
 }
 
+export async function generateBlogSitemap(): Promise<string> {
+  const today = new Date().toISOString().split('T')[0];
+  try {
+    const posts = await storage.getRecentPublishedBlogPosts(1000);
+    const urlElements = posts.map((post) => {
+      const lastmod = (post.updatedAt ? new Date(post.updatedAt as any) : new Date()).toISOString().split('T')[0];
+      const images = post.coverImageUrl
+        ? `\n    <image:image>\n      <image:loc>${post.coverImageUrl}</image:loc>\n      <image:title>${escapeXml(post.title)}</image:title>\n    </image:image>`
+        : '';
+      return `  <url>
+    <loc>${BASE_URL}/blog/${post.slug}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>${images}
+  </url>`;
+    }).join('\n');
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+${urlElements}
+</urlset>`;
+  } catch (error) {
+    console.error('[Sitemap] Error generating blog sitemap:', error);
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>`;
+  }
+}
 /**
  * Generate sitemap for verified certificates
  */
@@ -256,6 +289,10 @@ export function generateSitemapIndex(): string {
   </sitemap>
   <sitemap>
     <loc>${BASE_URL}/sitemap-certificates.xml</loc>
+    <lastmod>${today}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>${BASE_URL}/sitemap-blog.xml</loc>
     <lastmod>${today}</lastmod>
   </sitemap>
 </sitemapindex>`;

@@ -77,6 +77,11 @@ const KeybrAlternative = lazy(() => import("@/pages/keybr-alternative"));
 const TypingTestJobs = lazy(() => import("@/pages/typing-test-jobs"));
 const TouchTyping = lazy(() => import("@/pages/touch-typing"));
 const SpanishTypingTest = lazy(() => import("@/pages/es/typing-test"));
+const BlogIndex = lazy(() => import("@/blog/index"));
+const BlogPostPage = lazy(() => import("@/blog/post"));
+const BlogAdmin = lazy(() => import("@/blog-admin/index"));
+const BlogTagPage = lazy(() => import("@/blog/tag"));
+const BlogTagsPage = lazy(() => import("@/blog/tags"));
 
 // Pillar-Cluster Content Pages
 const WhatIsWpm = lazy(() => import("@/pages/what-is-wpm"));
@@ -90,6 +95,14 @@ const MobileTypingTest = lazy(() => import("@/pages/mobile-typing-test"));
 // Programming Language Typing Test Pages
 const JavaScriptTypingTest = lazy(() => import("@/pages/javascript-typing-test"));
 const PythonTypingTest = lazy(() => import("@/pages/python-typing-test"));
+
+// New Authority Landing Pages
+const FreeOnlineTypingTest = lazy(() => import("@/pages/free-online-typing-test"));
+const CPMTest = lazy(() => import("@/pages/cpm-test"));
+const TypingSpeedRequirements = lazy(() => import("@/pages/typing-speed-requirements"));
+const TypingAccuracyTest = lazy(() => import("@/pages/typing-accuracy-test"));
+const ProfessionalTypingTest = lazy(() => import("@/pages/professional-typing-test"));
+const StudentTypingTest = lazy(() => import("@/pages/student-typing-test"));
 
 // Loading component for Suspense fallback
 function PageLoader() {
@@ -146,6 +159,12 @@ function Router() {
                 <Route path="/mobile-typing-test" component={MobileTypingTest} />
                 <Route path="/javascript-typing-test" component={JavaScriptTypingTest} />
                 <Route path="/python-typing-test" component={PythonTypingTest} />
+                <Route path="/free-online-typing-test" component={FreeOnlineTypingTest} />
+                <Route path="/cpm-test" component={CPMTest} />
+                <Route path="/typing-speed-requirements" component={TypingSpeedRequirements} />
+                <Route path="/typing-accuracy-test" component={TypingAccuracyTest} />
+                <Route path="/professional-typing-test" component={ProfessionalTypingTest} />
+                <Route path="/student-typing-test" component={StudentTypingTest} />
                 <Route path="/profile" component={Profile} />
                 <Route path="/profile/edit" component={ProfileEdit} />
                 <Route path="/leaderboard" component={Leaderboard} />
@@ -155,6 +174,10 @@ function Router() {
                 <Route path="/race/:id" component={Race} />
                 <Route path="/code-mode" component={CodeMode} />
                 <Route path="/code-leaderboard" component={CodeLeaderboard} />
+                <Route path="/blog" component={BlogIndex} />
+                <Route path="/blog/:slug" component={BlogPostPage} />
+                <Route path="/blog/tag/:slug" component={BlogTagPage} />
+                <Route path="/blog/tags" component={BlogTagsPage} />
                 {/* HIDDEN: Book mode temporarily disabled */}
                 {/* <Route path="/book-mode" component={BookMode} /> */}
                 <Route path="/dictation-mode" component={DictationMode} />
@@ -181,6 +204,7 @@ function Router() {
                 <Route path="/ai-transparency" component={AITransparency} />
                 <Route path="/accessibility" component={AccessibilityStatement} />
                 <Route path="/admin/feedback" component={AdminFeedbackDashboard} />
+                <Route path="/admin/blog" component={BlogAdmin} />
                 <Route component={NotFound} />
               </Switch>
             </Suspense>

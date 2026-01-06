@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { BookOpen, Brain, Keyboard, Terminal, Zap, Info, ShieldCheck } from "lucide-react";
 
 export default function KnowledgeBase() {
@@ -288,6 +289,21 @@ export default function KnowledgeBase() {
             </AccordionContent>
           </AccordionItem>
         </Accordion>
+      </section>
+
+      {/* Call to Action */}
+      <section className="text-center space-y-6 py-8">
+        <h2 className="text-2xl font-bold">Ready to apply this knowledge?</h2>
+        <div className="flex flex-wrap justify-center gap-4">
+          <Button size="lg" onClick={() => window.location.href = '/'} className="font-semibold">
+            <Keyboard className="mr-2 h-5 w-5" />
+            Start Typing Test
+          </Button>
+          <Button size="lg" variant="outline" onClick={() => window.location.href = '/learn'} className="font-semibold">
+            <BookOpen className="mr-2 h-5 w-5" />
+            Learn Touch Typing
+          </Button>
+        </div>
       </section>
 
       {/* LLM-Specific Footer Note */}

@@ -179,6 +179,17 @@ import {
   certificateVerificationLogs,
   type CertificateVerificationLog,
   type InsertCertificateVerificationLog,
+  blogCategories,
+  blogPosts,
+  blogTags,
+  blogPostTags,
+  blogPostViews,
+  type BlogCategory,
+  type InsertBlogCategory,
+  type BlogPost,
+  type InsertBlogPost,
+  type BlogPostView,
+  type InsertBlogPostView,
 } from "@shared/schema";
 import { eq, desc, sql, and, notInArray, or, isNull, inArray } from "drizzle-orm";
 
@@ -838,6 +849,35 @@ export interface IStorage {
   getRaceParticipationByRaceAndUser(raceId: number, userId: string): Promise<RaceParticipant | undefined>;
   getDictationTestById(id: number): Promise<DictationTest | undefined>;
   getStressTestById(id: number): Promise<StressTest | undefined>;
+
+  // Blog Posts
+  createBlogPost(input: InsertBlogPost & { tags?: string[] }): Promise<BlogPost>;
+  updateBlogPost(id: number, input: Partial<InsertBlogPost> & { tags?: string[] }): Promise<BlogPost | undefined>;
+  deleteBlogPost(id: number): Promise<void>;
+  getBlogPostById(id: number): Promise<BlogPost | undefined>;
+  getBlogPostBySlug(slug: string): Promise<BlogPost | undefined>;
+  getPublishedBlogPosts(options: { page: number; limit: number; tagSlugs?: string[]; categorySlug?: string }): Promise<{ posts: BlogPost[]; total: number }>;
+  getRelatedBlogPosts(slug: string, limit: number): Promise<BlogPost[]>;
+  getRecentPublishedBlogPosts(limit: number): Promise<BlogPost[]>;
+  getPublishedBlogPostsCursor(options: { limit: number; after?: Date | null; tagSlugs?: string[] }): Promise<BlogPost[]>;
+  getFeaturedBlogPosts(limit: number): Promise<BlogPost[]>;
+  getScheduledBlogPosts(): Promise<BlogPost[]>;
+  publishScheduledPosts(): Promise<number>;
+  getAllBlogPosts(options: { page: number; limit: number; status?: string }): Promise<{ posts: BlogPost[]; total: number }>;
+  incrementBlogPostViewCount(postId: number): Promise<void>;
+  
+  // Blog Categories
+  createBlogCategory(input: InsertBlogCategory): Promise<BlogCategory>;
+  updateBlogCategory(id: number, input: Partial<InsertBlogCategory>): Promise<BlogCategory | undefined>;
+  deleteBlogCategory(id: number): Promise<void>;
+  getBlogCategoryById(id: number): Promise<BlogCategory | undefined>;
+  getBlogCategoryBySlug(slug: string): Promise<BlogCategory | undefined>;
+  getAllBlogCategories(): Promise<BlogCategory[]>;
+  
+  // Blog Post Views
+  recordBlogPostView(view: InsertBlogPostView): Promise<void>;
+  getBlogPostViewsCount(postId: number, since?: Date): Promise<number>;
+  getPopularBlogPosts(limit: number, days?: number): Promise<BlogPost[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -6157,6 +6197,179 @@ export class DatabaseStorage implements IStorage {
     };
   }
 
+  async createBlogPost(input: InsertBlogPost & { tags?: string[] }): Promise<BlogPost> {
+    return await db.transaction(async (tx) => {
+      const [created] = await tx.insert(blogPosts).values(input).returning();
+      const tagSlugs = (input.tags || []).map(s => s.trim().toLowerCase()).filter(Boolean);
+      for (const slug of tagSlugs) {
+        const existing = await tx.select().from(blogTags).where(eq(blogTags.slug, slug)).limit(1);
+        let tagId: number;
+        if (existing[0]) {
+          tagId = (existing[0] as any).id as number;
+        } else {
+          const name = slug.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+          const [tag] = await tx.insert(blogTags).values({ slug, name }).returning();
+          tagId = (tag as any).id as number;
+        }
+        await tx.insert(blogPostTags).values({ postId: (created as any).id as number, tagId });
+      }
+      return created;
+    });
+  }
+
+  async updateBlogPost(id: number, input: Partial<InsertBlogPost> & { tags?: string[] }): Promise<BlogPost | undefined> {
+    return await db.transaction(async (tx) => {
+      const updatedList = await tx.update(blogPosts).set(input).where(eq(blogPosts.id, id)).returning();
+      const updated = updatedList[0];
+      if (!updated) return undefined;
+      if (input.tags) {
+        await tx.delete(blogPostTags).where(eq(blogPostTags.postId, id));
+        const tagSlugs = input.tags.map(s => s.trim().toLowerCase()).filter(Boolean);
+        for (const slug of tagSlugs) {
+          const existing = await tx.select().from(blogTags).where(eq(blogTags.slug, slug)).limit(1);
+          let tagId: number;
+          if (existing[0]) {
+            tagId = (existing[0] as any).id as number;
+          } else {
+            const name = slug.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+            const [tag] = await tx.insert(blogTags).values({ slug, name }).returning();
+            tagId = (tag as any).id as number;
+          }
+          await tx.insert(blogPostTags).values({ postId: id, tagId });
+        }
+      }
+      return updated;
+    });
+  }
+
+  async deleteBlogPost(id: number): Promise<void> {
+    await db.transaction(async (tx) => {
+      await tx.delete(blogPostTags).where(eq(blogPostTags.postId, id));
+      await tx.delete(blogPosts).where(eq(blogPosts.id, id));
+    });
+  }
+
+  async getBlogPostBySlug(slug: string): Promise<BlogPost | undefined> {
+    const result = await db.select().from(blogPosts).where(eq(blogPosts.slug, slug)).limit(1);
+    return result[0];
+  }
+
+  async getPublishedBlogPosts(options: { page: number; limit: number; tagSlugs?: string[] }): Promise<{ posts: BlogPost[]; total: number }> {
+    const page = Math.max(1, options.page || 1);
+    const limit = Math.min(50, Math.max(1, options.limit || 10));
+    const offset = (page - 1) * limit;
+    const tagSlugs = options.tagSlugs && options.tagSlugs.length ? options.tagSlugs.map(s => s.toLowerCase()) : [];
+    if (tagSlugs.length === 0) {
+      const [posts, countRes] = await Promise.all([
+        db.select().from(blogPosts)
+          .where(eq(blogPosts.status, "published"))
+          .orderBy(desc(blogPosts.publishedAt ?? blogPosts.createdAt))
+          .limit(limit)
+          .offset(offset),
+        db.execute(sql`SELECT COUNT(*)::int as count FROM blog_posts WHERE status = 'published'`),
+      ]);
+      const total = (countRes.rows[0] as any)?.count || 0;
+      return { posts, total };
+    }
+    const posts = await db.execute(sql`
+      SELECT bp.*
+      FROM blog_posts bp
+      INNER JOIN blog_post_tags bpt ON bpt.post_id = bp.id
+      INNER JOIN blog_tags bt ON bt.id = bpt.tag_id
+      WHERE bp.status = 'published' AND bt.slug = ANY(${sql.array(tagSlugs)})
+      GROUP BY bp.id
+      ORDER BY COALESCE(bp.published_at, bp.created_at) DESC
+      LIMIT ${limit} OFFSET ${offset}
+    `);
+    const countRes = await db.execute(sql`
+      SELECT COUNT(DISTINCT bp.id)::int as count
+      FROM blog_posts bp
+      INNER JOIN blog_post_tags bpt ON bpt.post_id = bp.id
+      INNER JOIN blog_tags bt ON bt.id = bpt.tag_id
+      WHERE bp.status = 'published' AND bt.slug = ANY(${sql.array(tagSlugs)})
+    `);
+    const total = (countRes.rows[0] as any)?.count || 0;
+    return { posts: posts.rows as any[], total };
+  }
+
+  async getRelatedBlogPosts(slug: string, limit: number): Promise<BlogPost[]> {
+    const base = await this.getBlogPostBySlug(slug);
+    if (!base) return [];
+    const tagBased = await db.execute(sql`
+      SELECT DISTINCT bp.*
+      FROM blog_posts bp
+      INNER JOIN blog_post_tags bpt ON bpt.post_id = bp.id
+      WHERE bp.status = 'published' AND bp.slug <> ${slug}
+        AND bpt.tag_id IN (
+          SELECT tag_id FROM blog_post_tags WHERE post_id = ${sql.literal((base as any).id)}
+        )
+      ORDER BY COALESCE(bp.published_at, bp.created_at) DESC
+      LIMIT ${limit}
+    `);
+    const tagResults = tagBased.rows as any[];
+    if (tagResults.length >= limit) return tagResults;
+    const needed = limit - tagResults.length;
+    const recent = await db.select().from(blogPosts)
+      .where(and(eq(blogPosts.status, "published"), sql`${blogPosts.slug} <> ${slug}`))
+      .orderBy(desc(blogPosts.publishedAt ?? blogPosts.createdAt))
+      .limit(50);
+    const tokens = String((base as any).title || '').toLowerCase().split(/\W+/).filter(w => w.length > 3);
+    const scored = recent
+      .filter(p => !tagResults.find(r => r.id === (p as any).id))
+      .map(p => {
+        const text = `${(p as any).title} ${(p as any).excerpt || ''}`.toLowerCase();
+        const score = tokens.reduce((acc, t) => acc + (text.includes(t) ? 1 : 0), 0);
+        return { p, score };
+      })
+      .sort((a, b) => b.score - a.score)
+      .slice(0, needed)
+      .map(({ p }) => p as any);
+    return [...tagResults, ...scored];
+  }
+
+  async getRecentPublishedBlogPosts(limit: number): Promise<BlogPost[]> {
+    const posts = await db.select().from(blogPosts)
+      .where(eq(blogPosts.status, "published"))
+      .orderBy(desc(blogPosts.publishedAt ?? blogPosts.createdAt))
+      .limit(limit);
+    return posts;
+  }
+
+  async getPublishedBlogPostsCursor(options: { limit: number; after?: Date | null; tagSlugs?: string[] }): Promise<BlogPost[]> {
+    const limit = Math.min(50, Math.max(1, options.limit || 10));
+    const after = options.after || null;
+    const tagSlugs = options.tagSlugs && options.tagSlugs.length ? options.tagSlugs.map(s => s.toLowerCase()) : [];
+    if (tagSlugs.length === 0) {
+      if (after) {
+        const posts = await db.select().from(blogPosts)
+          .where(and(
+            eq(blogPosts.status, "published"),
+            sql`${(blogPosts.publishedAt ?? blogPosts.createdAt)} < ${after}`
+          ))
+          .orderBy(desc(blogPosts.publishedAt ?? blogPosts.createdAt))
+          .limit(limit);
+        return posts;
+      }
+      const posts = await db.select().from(blogPosts)
+        .where(eq(blogPosts.status, "published"))
+        .orderBy(desc(blogPosts.publishedAt ?? blogPosts.createdAt))
+        .limit(limit);
+      return posts;
+    }
+    const res = await db.execute(sql`
+      SELECT bp.*
+      FROM blog_posts bp
+      INNER JOIN blog_post_tags bpt ON bpt.post_id = bp.id
+      INNER JOIN blog_tags bt ON bt.id = bpt.tag_id
+      WHERE bp.status = 'published' AND bt.slug = ANY(${sql.array(tagSlugs)})
+        ${after ? sql`AND COALESCE(bp.published_at, bp.created_at) < ${after}` : sql``}
+      GROUP BY bp.id
+      ORDER BY COALESCE(bp.published_at, bp.created_at) DESC
+      LIMIT ${limit}
+    `);
+    return res.rows as any[];
+  }
+
   // ============================================================================
   // SITEMAP HELPERS
   // ============================================================================
@@ -6184,6 +6397,155 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(certificates.createdAt))
       .limit(limit);
     return results;
+  }
+
+  async getAllBlogTagsWithCounts(): Promise<Array<{ slug: string; name: string; count: number }>> {
+    const res = await db.execute(sql`
+      SELECT bt.slug, bt.name, COUNT(bpt.post_id)::int as count
+      FROM blog_tags bt
+      LEFT JOIN blog_post_tags bpt ON bpt.tag_id = bt.id
+      LEFT JOIN blog_posts bp ON bpt.post_id = bp.id AND bp.status = 'published'
+      GROUP BY bt.slug, bt.name
+      ORDER BY count DESC, bt.name ASC
+    `);
+    return res.rows as any[];
+  }
+
+  // ============================================================================
+  // BLOG CATEGORIES
+  // ============================================================================
+
+  async createBlogCategory(input: InsertBlogCategory): Promise<BlogCategory> {
+    const [created] = await db.insert(blogCategories).values(input).returning();
+    return created;
+  }
+
+  async updateBlogCategory(id: number, input: Partial<InsertBlogCategory>): Promise<BlogCategory | undefined> {
+    const [updated] = await db.update(blogCategories).set(input).where(eq(blogCategories.id, id)).returning();
+    return updated;
+  }
+
+  async deleteBlogCategory(id: number): Promise<void> {
+    await db.delete(blogCategories).where(eq(blogCategories.id, id));
+  }
+
+  async getBlogCategoryById(id: number): Promise<BlogCategory | undefined> {
+    const result = await db.select().from(blogCategories).where(eq(blogCategories.id, id)).limit(1);
+    return result[0];
+  }
+
+  async getBlogCategoryBySlug(slug: string): Promise<BlogCategory | undefined> {
+    const result = await db.select().from(blogCategories).where(eq(blogCategories.slug, slug)).limit(1);
+    return result[0];
+  }
+
+  async getAllBlogCategories(): Promise<BlogCategory[]> {
+    return await db.select().from(blogCategories)
+      .where(eq(blogCategories.isActive, true))
+      .orderBy(blogCategories.sortOrder, blogCategories.name);
+  }
+
+  // ============================================================================
+  // BLOG POST EXTENSIONS
+  // ============================================================================
+
+  async getBlogPostById(id: number): Promise<BlogPost | undefined> {
+    const result = await db.select().from(blogPosts).where(eq(blogPosts.id, id)).limit(1);
+    return result[0];
+  }
+
+  async getFeaturedBlogPosts(limit: number): Promise<BlogPost[]> {
+    return await db.select().from(blogPosts)
+      .where(and(
+        eq(blogPosts.status, "published"),
+        eq(blogPosts.isFeatured, true)
+      ))
+      .orderBy(blogPosts.featuredOrder, desc(blogPosts.publishedAt ?? blogPosts.createdAt))
+      .limit(limit);
+  }
+
+  async getScheduledBlogPosts(): Promise<BlogPost[]> {
+    const now = new Date();
+    return await db.select().from(blogPosts)
+      .where(and(
+        eq(blogPosts.status, "scheduled"),
+        sql`${blogPosts.scheduledAt} <= ${now}`
+      ));
+  }
+
+  async publishScheduledPosts(): Promise<number> {
+    const now = new Date();
+    const result = await db.update(blogPosts)
+      .set({ status: "published", publishedAt: now })
+      .where(and(
+        eq(blogPosts.status, "scheduled"),
+        sql`${blogPosts.scheduledAt} <= ${now}`
+      ))
+      .returning();
+    return result.length;
+  }
+
+  async getAllBlogPosts(options: { page: number; limit: number; status?: string }): Promise<{ posts: BlogPost[]; total: number }> {
+    const page = Math.max(1, options.page || 1);
+    const limit = Math.min(50, Math.max(1, options.limit || 10));
+    const offset = (page - 1) * limit;
+    
+    const conditions = options.status ? eq(blogPosts.status, options.status) : undefined;
+    
+    const [posts, countRes] = await Promise.all([
+      db.select().from(blogPosts)
+        .where(conditions)
+        .orderBy(desc(blogPosts.updatedAt))
+        .limit(limit)
+        .offset(offset),
+      db.execute(sql`SELECT COUNT(*)::int as count FROM blog_posts ${options.status ? sql`WHERE status = ${options.status}` : sql``}`),
+    ]);
+    
+    const total = (countRes.rows[0] as any)?.count || 0;
+    return { posts, total };
+  }
+
+  async incrementBlogPostViewCount(postId: number): Promise<void> {
+    await db.execute(sql`
+      UPDATE blog_posts 
+      SET view_count = view_count + 1 
+      WHERE id = ${postId}
+    `);
+  }
+
+  // ============================================================================
+  // BLOG POST VIEWS / ANALYTICS
+  // ============================================================================
+
+  async recordBlogPostView(view: InsertBlogPostView): Promise<void> {
+    await db.insert(blogPostViews).values(view);
+    await this.incrementBlogPostViewCount(view.postId);
+  }
+
+  async getBlogPostViewsCount(postId: number, since?: Date): Promise<number> {
+    const result = await db.execute(sql`
+      SELECT COUNT(*)::int as count 
+      FROM blog_post_views 
+      WHERE post_id = ${postId}
+      ${since ? sql`AND viewed_at >= ${since}` : sql``}
+    `);
+    return (result.rows[0] as any)?.count || 0;
+  }
+
+  async getPopularBlogPosts(limit: number, days: number = 30): Promise<BlogPost[]> {
+    const since = new Date();
+    since.setDate(since.getDate() - days);
+    
+    const result = await db.execute(sql`
+      SELECT bp.*, COUNT(bpv.id)::int as recent_views
+      FROM blog_posts bp
+      LEFT JOIN blog_post_views bpv ON bpv.post_id = bp.id AND bpv.viewed_at >= ${since}
+      WHERE bp.status = 'published'
+      GROUP BY bp.id
+      ORDER BY recent_views DESC, bp.view_count DESC
+      LIMIT ${limit}
+    `);
+    return result.rows as any[];
   }
 }
 

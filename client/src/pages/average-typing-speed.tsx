@@ -1,6 +1,6 @@
 import { Link } from 'wouter';
 import { BarChart, Users, TrendingUp, Zap, Target, ArrowRight, Brain, Keyboard } from 'lucide-react';
-import { useSEO } from '@/lib/seo';
+import { useSEO, SEO_CONFIGS, getBreadcrumbSchema, getFAQSchema, TYPING_KEYWORDS } from '@/lib/seo';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -8,29 +8,46 @@ import { AuthorBio } from '@/components/author-bio';
 
 export default function AverageTypingSpeed() {
     useSEO({
-        title: 'Average Typing Speed by Age & Gender | WPM Statistics 2026 - TypeMasterAI',
-        description: 'What is the average typing speed? Explore detailed WPM statistics by age, gender, and profession. Learn how you compare to the global average and how to improve your speed.',
-        keywords: 'average typing speed, avg wpm, average words per minute, typing speed by age, average typing speed for students, professional typing speed, good typing speed',
-        canonical: 'https://typemasterai.com/average-typing-speed',
-        ogUrl: 'https://typemasterai.com/average-typing-speed',
+        ...SEO_CONFIGS.averageTypingSpeed,
         structuredData: {
             '@context': 'https://schema.org',
-            '@type': 'Article',
-            headline: 'Average Typing Speed Statistics by Age and Profession',
-            image: 'https://typemasterai.com/opengraph.jpg',
-            author: {
-                '@type': 'Organization',
-                name: 'TypeMasterAI'
-            },
-            publisher: {
-                '@type': 'Organization',
-                name: 'TypeMasterAI',
-                logo: {
-                    '@type': 'ImageObject',
-                    url: 'https://typemasterai.com/icon-512x512.png'
-                }
-            },
-            description: 'Comprehensive analysis of average typing speeds across different demographics and professions.',
+            '@graph': [
+                {
+                    '@type': 'Article',
+                    headline: 'Average Typing Speed by Age & Profession | Complete 2025 Statistics',
+                    image: 'https://typemasterai.com/opengraph.jpg',
+                    author: {
+                        '@type': 'Organization',
+                        name: 'TypeMasterAI',
+                        url: 'https://typemasterai.com'
+                    },
+                    publisher: {
+                        '@type': 'Organization',
+                        name: 'TypeMasterAI',
+                        logo: {
+                            '@type': 'ImageObject',
+                            url: 'https://typemasterai.com/icon-512x512.png'
+                        }
+                    },
+                    datePublished: '2024-01-15',
+                    dateModified: '2025-01-06',
+                    description: 'Comprehensive analysis of average typing speeds by age group, profession, and skill level with WPM benchmarks and percentiles.',
+                    mainEntityOfPage: {
+                        '@type': 'WebPage',
+                        '@id': 'https://typemasterai.com/average-typing-speed'
+                    }
+                },
+                getBreadcrumbSchema([
+                    { name: 'Home', url: 'https://typemasterai.com' },
+                    { name: 'Average Typing Speed', url: 'https://typemasterai.com/average-typing-speed' }
+                ]),
+                getFAQSchema([
+                    { question: 'What is the average typing speed?', answer: 'The global average typing speed is approximately 40-41 WPM (Words Per Minute) with 92% accuracy. However, this varies significantly by age, profession, and experience level.' },
+                    { question: 'What is a good typing speed for a job?', answer: 'Most office jobs require 40-50 WPM minimum. Data entry positions typically require 60-80 WPM, while transcriptionists need 80-100+ WPM. Administrative roles usually expect 50-65 WPM.' },
+                    { question: 'What is the average typing speed by age?', answer: 'Children (8-12): 15-25 WPM, Teens (13-17): 30-45 WPM, Young Adults (18-25): 40-60 WPM, Adults (26-45): 45-65 WPM, Seniors (60+): 30-45 WPM.' },
+                    { question: 'Is 60 WPM a good typing speed?', answer: 'Yes, 60 WPM is above average and considered good for most jobs. It puts you in the top 40% of typists and exceeds requirements for most office and administrative positions.' },
+                ])
+            ]
         }
     });
 

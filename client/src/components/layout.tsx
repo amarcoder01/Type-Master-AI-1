@@ -770,7 +770,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <main className="flex-1 pt-16 pb-12 container mx-auto px-4">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-primary text-primary-foreground px-3 py-2 rounded">
+        Skip to main content
+      </a>
+      <main id="main-content" className="flex-1 pt-16 pb-12 container mx-auto px-4" role="main" aria-label="Main content">
         {children}
       </main>
 
@@ -840,6 +843,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <h3 className="font-semibold text-foreground mb-3 text-xs uppercase tracking-wider">Help & FAQ</h3>
               <nav className="space-y-2" aria-label="Help and FAQ">
                 <Link href="/faq" className="block text-muted-foreground hover:text-primary transition-colors font-medium">FAQ Hub</Link>
+                <Link href="/knowledge" className="block text-muted-foreground hover:text-primary transition-colors">Knowledge Base</Link>
                 <Link href="/chat" className="block text-muted-foreground hover:text-primary transition-colors">AI Typing Coach</Link>
                 <Link href="/average-typing-speed" className="block text-muted-foreground hover:text-primary transition-colors">Average Typing Speed</Link>
                 <Link href="/typing-speed-chart" className="block text-muted-foreground hover:text-primary transition-colors">Typing Speed Chart</Link>
@@ -868,6 +872,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <Link href="/privacy-policy" className="block text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link>
                 <Link href="/terms-of-service" className="block text-muted-foreground hover:text-primary transition-colors">Terms of Service</Link>
                 <Link href="/accessibility" className="block text-muted-foreground hover:text-primary transition-colors">Accessibility</Link>
+                <Link href="/blog" className="block text-muted-foreground hover:text-primary transition-colors">Blog</Link>
               </nav>
             </div>
           </div>

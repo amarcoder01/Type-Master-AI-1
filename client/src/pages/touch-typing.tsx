@@ -1,6 +1,6 @@
 import { Link } from 'wouter';
 import { Keyboard, Hand, Zap, Eye, Brain, CheckCircle, ArrowRight } from 'lucide-react';
-import { useSEO } from '@/lib/seo';
+import { useSEO, SEO_CONFIGS, getBreadcrumbSchema, getFAQSchema } from '@/lib/seo';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Breadcrumbs } from '@/components/breadcrumbs';
@@ -8,21 +8,37 @@ import { AuthorBio } from '@/components/author-bio';
 
 export default function TouchTypingPage() {
     useSEO({
-        title: 'What is Touch Typing? | Learn Faster Typing - TypeMasterAI',
-        description: 'Learn the fundamentals of touch typing. Discover how to type without looking at the keyboard, improve your speed to 60+ WPM, and reduce physical strain.',
-        keywords: 'what is touch typing, learn touch typing, touch typing guide, proper finger placement, home row keys, typing without looking',
-        canonical: 'https://typemasterai.com/touch-typing',
-        ogUrl: 'https://typemasterai.com/touch-typing',
+        ...SEO_CONFIGS.touchTyping,
         structuredData: {
             '@context': 'https://schema.org',
-            '@type': 'Article',
-            headline: 'The Ultimate Guide to Touch Typing',
-            description: 'Educational guide on touch typing techniques, finger placement, and benefits.',
-            image: 'https://typemasterai.com/opengraph.jpg',
-            author: {
-                '@type': 'Organization',
-                name: 'TypeMasterAI'
-            }
+            '@graph': [
+                {
+                    '@type': 'HowTo',
+                    'name': 'How to Learn Touch Typing',
+                    'description': 'Step-by-step guide to mastering touch typing for faster, more accurate typing without looking at the keyboard.',
+                    'totalTime': 'P4W',
+                    'tool': [
+                        { '@type': 'HowToTool', 'name': 'Keyboard' },
+                        { '@type': 'HowToTool', 'name': 'TypeMasterAI Typing Test' }
+                    ],
+                    'step': [
+                        { '@type': 'HowToStep', 'position': 1, 'name': 'Learn Home Row Position', 'text': 'Place fingers on ASDF and JKL; keys. Feel the bumps on F and J.' },
+                        { '@type': 'HowToStep', 'position': 2, 'name': 'Practice Without Looking', 'text': 'Cover your hands and focus on the screen, not the keyboard.' },
+                        { '@type': 'HowToStep', 'position': 3, 'name': 'Master Each Finger Zone', 'text': 'Each finger is responsible for specific keys. Practice finger-specific exercises.' },
+                        { '@type': 'HowToStep', 'position': 4, 'name': 'Build Muscle Memory', 'text': 'Practice 15-30 minutes daily to develop automatic key recognition.' },
+                        { '@type': 'HowToStep', 'position': 5, 'name': 'Increase Speed Gradually', 'text': 'Focus on accuracy first, speed will naturally follow with practice.' }
+                    ]
+                },
+                getBreadcrumbSchema([
+                    { name: 'Home', url: 'https://typemasterai.com' },
+                    { name: 'Touch Typing Guide', url: 'https://typemasterai.com/touch-typing' }
+                ]),
+                getFAQSchema([
+                    { question: 'What is touch typing?', answer: 'Touch typing is a method of typing using all ten fingers without looking at the keyboard, relying on muscle memory to find keys.' },
+                    { question: 'How long does it take to learn touch typing?', answer: 'Most people can learn basic touch typing in 2-4 weeks with daily practice of 15-30 minutes. Mastery takes 2-3 months.' },
+                    { question: 'Is touch typing faster than hunt-and-peck?', answer: 'Yes, touch typists average 60-80 WPM compared to 30-40 WPM for hunt-and-peck typists. Touch typing is 2-3x faster.' }
+                ])
+            ]
         }
     });
 

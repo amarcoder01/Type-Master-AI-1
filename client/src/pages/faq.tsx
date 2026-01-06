@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'wouter';
-import { ChevronDown, Keyboard, HelpCircle, Zap, Code, Users, Globe, Trophy, Shield, Headphones, Search, Sparkles, ArrowRight } from 'lucide-react';
+import { ChevronDown, Keyboard, HelpCircle, Zap, Code, Users, Globe, Trophy, Shield, Headphones, Search, Sparkles, ArrowRight, BookOpen, Gauge, BarChart2, Hand, Briefcase, Gamepad2, Smartphone } from 'lucide-react';
 import { useSEO } from '@/lib/seo';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { cn } from '@/lib/utils';
@@ -530,6 +530,139 @@ export default function FAQPage() {
           </div>
         </section>
 
+        {/* Educational Guides Section */}
+        <section className="mt-10">
+          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <BookOpen className="w-5 h-5 text-primary" />
+            Educational Guides
+          </h3>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Link href="/learn">
+              <Card className="bg-card/30 hover:border-primary/50 transition-colors cursor-pointer h-full">
+                <CardContent className="p-4">
+                  <Sparkles className="w-6 h-6 text-primary mb-2" />
+                  <div className="font-semibold mb-1">Learn Touch Typing</div>
+                  <p className="text-xs text-muted-foreground">Complete guide to mastering touch typing</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link href="/touch-typing">
+              <Card className="bg-card/30 hover:border-primary/50 transition-colors cursor-pointer h-full">
+                <CardContent className="p-4">
+                  <Hand className="w-6 h-6 text-primary mb-2" />
+                  <div className="font-semibold mb-1">Touch Typing Guide</div>
+                  <p className="text-xs text-muted-foreground">Proper finger placement and technique</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link href="/typing-for-beginners">
+              <Card className="bg-card/30 hover:border-primary/50 transition-colors cursor-pointer h-full">
+                <CardContent className="p-4">
+                  <BookOpen className="w-6 h-6 text-primary mb-2" />
+                  <div className="font-semibold mb-1">Typing for Beginners</div>
+                  <p className="text-xs text-muted-foreground">Start from scratch with step-by-step lessons</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link href="/what-is-wpm">
+              <Card className="bg-card/30 hover:border-primary/50 transition-colors cursor-pointer h-full">
+                <CardContent className="p-4">
+                  <Gauge className="w-6 h-6 text-primary mb-2" />
+                  <div className="font-semibold mb-1">What is WPM?</div>
+                  <p className="text-xs text-muted-foreground">Understand words per minute calculation</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link href="/how-to-type-faster">
+              <Card className="bg-card/30 hover:border-primary/50 transition-colors cursor-pointer h-full">
+                <CardContent className="p-4">
+                  <Zap className="w-6 h-6 text-primary mb-2" />
+                  <div className="font-semibold mb-1">How to Type Faster</div>
+                  <p className="text-xs text-muted-foreground">Proven tips to increase your WPM</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link href="/keyboard-layouts">
+              <Card className="bg-card/30 hover:border-primary/50 transition-colors cursor-pointer h-full">
+                <CardContent className="p-4">
+                  <Keyboard className="w-6 h-6 text-primary mb-2" />
+                  <div className="font-semibold mb-1">Keyboard Layouts</div>
+                  <p className="text-xs text-muted-foreground">Compare QWERTY, Dvorak, and Colemak</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link href="/average-typing-speed">
+              <Card className="bg-card/30 hover:border-primary/50 transition-colors cursor-pointer h-full">
+                <CardContent className="p-4">
+                  <BarChart2 className="w-6 h-6 text-primary mb-2" />
+                  <div className="font-semibold mb-1">Average Typing Speed</div>
+                  <p className="text-xs text-muted-foreground">Speed benchmarks by age and profession</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link href="/typing-speed-chart">
+              <Card className="bg-card/30 hover:border-primary/50 transition-colors cursor-pointer h-full">
+                <CardContent className="p-4">
+                  <Trophy className="w-6 h-6 text-primary mb-2" />
+                  <div className="font-semibold mb-1">Typing Speed Chart</div>
+                  <p className="text-xs text-muted-foreground">See where you rank on the speed scale</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link href="/typing-test-jobs">
+              <Card className="bg-card/30 hover:border-primary/50 transition-colors cursor-pointer h-full">
+                <CardContent className="p-4">
+                  <Briefcase className="w-6 h-6 text-primary mb-2" />
+                  <div className="font-semibold mb-1">Typing for Jobs</div>
+                  <p className="text-xs text-muted-foreground">WPM requirements for careers</p>
+                </CardContent>
+              </Card>
+            </Link>
+          </div>
+        </section>
+
+        {/* Specialized Practice Section */}
+        <section className="mt-10">
+          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <Keyboard className="w-5 h-5 text-primary" />
+            Specialized Practice
+          </h3>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Link href="/typing-test-for-kids">
+              <Card className="bg-card/30 hover:border-primary/50 transition-colors cursor-pointer h-full">
+                <CardContent className="p-4 text-center">
+                  <Gamepad2 className="w-6 h-6 text-primary mx-auto mb-2" />
+                  <div className="font-semibold text-sm">Typing for Kids</div>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link href="/data-entry-typing-test">
+              <Card className="bg-card/30 hover:border-primary/50 transition-colors cursor-pointer h-full">
+                <CardContent className="p-4 text-center">
+                  <Briefcase className="w-6 h-6 text-primary mx-auto mb-2" />
+                  <div className="font-semibold text-sm">Data Entry Test</div>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link href="/mobile-typing-test">
+              <Card className="bg-card/30 hover:border-primary/50 transition-colors cursor-pointer h-full">
+                <CardContent className="p-4 text-center">
+                  <Smartphone className="w-6 h-6 text-primary mx-auto mb-2" />
+                  <div className="font-semibold text-sm">Mobile Test</div>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link href="/code-mode">
+              <Card className="bg-card/30 hover:border-primary/50 transition-colors cursor-pointer h-full">
+                <CardContent className="p-4 text-center">
+                  <Code className="w-6 h-6 text-primary mx-auto mb-2" />
+                  <div className="font-semibold text-sm">Code Typing</div>
+                </CardContent>
+              </Card>
+            </Link>
+          </div>
+        </section>
+
         {/* Quick Links */}
         <section className="mt-10">
           <h3 className="text-lg font-semibold mb-4">Explore More</h3>
@@ -542,26 +675,26 @@ export default function FAQPage() {
                 </CardContent>
               </Card>
             </Link>
-            <Link href="/learn">
+            <Link href="/typing-games">
               <Card className="bg-card/30 hover:border-primary/50 transition-colors cursor-pointer h-full">
                 <CardContent className="p-4 text-center">
-                  <Sparkles className="w-6 h-6 text-primary mx-auto mb-2" />
-                  <div className="font-semibold text-sm">Learn Typing</div>
+                  <Gamepad2 className="w-6 h-6 text-primary mx-auto mb-2" />
+                  <div className="font-semibold text-sm">Typing Games</div>
                 </CardContent>
               </Card>
             </Link>
-            <Link href="/what-is-wpm">
+            <Link href="/multiplayer">
               <Card className="bg-card/30 hover:border-primary/50 transition-colors cursor-pointer h-full">
                 <CardContent className="p-4 text-center">
-                  <Zap className="w-6 h-6 text-primary mx-auto mb-2" />
-                  <div className="font-semibold text-sm">What is WPM?</div>
+                  <Users className="w-6 h-6 text-primary mx-auto mb-2" />
+                  <div className="font-semibold text-sm">Multiplayer</div>
                 </CardContent>
               </Card>
             </Link>
             <Link href="/about">
               <Card className="bg-card/30 hover:border-primary/50 transition-colors cursor-pointer h-full">
                 <CardContent className="p-4 text-center">
-                  <Users className="w-6 h-6 text-primary mx-auto mb-2" />
+                  <HelpCircle className="w-6 h-6 text-primary mx-auto mb-2" />
                   <div className="font-semibold text-sm">About Us</div>
                 </CardContent>
               </Card>

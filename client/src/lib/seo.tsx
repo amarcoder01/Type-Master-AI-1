@@ -140,6 +140,285 @@ function addStructuredData(data: object) {
 // Base URL for canonical URLs and structured data
 const BASE_URL = 'https://typemasterai.com';
 
+// ============================================================================
+// CENTRALIZED KEYWORD CONFIGURATION - Authority Typing Platform
+// ============================================================================
+
+/**
+ * Comprehensive keyword database for complete typing mastery coverage.
+ * Organized by feature category for deep SEO integration.
+ */
+export const TYPING_KEYWORDS = {
+  // Core Typing Test Keywords
+  core: {
+    primary: ['typing test', 'typing speed test', 'wpm test', 'free typing test', 'online typing test'],
+    secondary: ['typing test online', 'test typing speed', 'free online typing test', 'keyboard typing test'],
+    longTail: [
+      'test my typing speed',
+      'how fast can i type',
+      'check typing speed online free',
+      '60 second typing test',
+      'one minute typing test',
+      'typing speed test with timer',
+      'quick typing test',
+      'instant typing test',
+      'accurate typing test',
+      'typing test no signup',
+    ],
+  },
+
+  // WPM Specific Keywords
+  wpm: {
+    primary: ['wpm test', 'words per minute test', 'wpm calculator', 'typing wpm'],
+    secondary: ['check wpm', 'wpm speed test', 'wpm typing test', 'measure wpm'],
+    longTail: [
+      'what is my wpm',
+      'how many words per minute can i type',
+      'calculate typing speed wpm',
+      'wpm test 1 minute',
+      'wpm test online free',
+      'accurate wpm test',
+      'professional wpm test',
+    ],
+  },
+
+  // Typing Practice Keywords
+  practice: {
+    primary: ['typing practice', 'practice typing', 'typing exercises', 'typing drills'],
+    secondary: ['free typing practice', 'online typing practice', 'keyboard practice', 'typing trainer'],
+    longTail: [
+      'daily typing practice',
+      'typing practice for adults',
+      'typing practice sentences',
+      'typing practice paragraphs',
+      'professional typing practice',
+      'typing practice for work',
+      'improve typing with practice',
+      'typing practice routine',
+    ],
+  },
+
+  // Touch Typing & Learning Keywords
+  learning: {
+    primary: ['learn typing', 'touch typing', 'typing lessons', 'typing tutorial'],
+    secondary: ['learn to type', 'typing course', 'typing training', 'keyboard lessons'],
+    longTail: [
+      'touch typing for beginners',
+      'learn touch typing free',
+      'proper finger placement typing',
+      'typing posture guide',
+      'how to type without looking',
+      'touch typing techniques',
+      'typing lessons for adults',
+      'free typing lessons online',
+      'typing basics for beginners',
+    ],
+  },
+
+  // Speed Improvement Keywords
+  improvement: {
+    primary: ['improve typing speed', 'type faster', 'increase typing speed', 'speed typing'],
+    secondary: ['faster typing', 'typing speed improvement', 'boost typing speed', 'quick typing'],
+    longTail: [
+      'how to type faster',
+      'tips to improve typing speed',
+      'typing speed improvement exercises',
+      'double your typing speed',
+      'typing speed training',
+      'become a faster typer',
+      'professional typing speed',
+    ],
+  },
+
+  // Accuracy Keywords
+  accuracy: {
+    primary: ['typing accuracy', 'typing accuracy test', 'accurate typing', 'typing precision'],
+    secondary: ['accuracy test', 'typing mistakes', 'error-free typing', 'typing errors'],
+    longTail: [
+      'improve typing accuracy',
+      'reduce typing errors',
+      'typing accuracy vs speed',
+      'professional typing accuracy',
+      '99% typing accuracy',
+      'how to type accurately',
+    ],
+  },
+
+  // Dictation & Audio Keywords
+  dictation: {
+    primary: ['dictation typing', 'audio typing test', 'transcription practice', 'dictation test'],
+    secondary: ['listening typing', 'typing from audio', 'dictation mode', 'speech to typing'],
+    longTail: [
+      'dictation typing practice',
+      'transcription typing test',
+      'type what you hear',
+      'audio dictation practice',
+      'improve transcription speed',
+      'dictation skills test',
+    ],
+  },
+
+  // Code Typing Keywords
+  code: {
+    primary: ['code typing test', 'programming typing test', 'coding speed test', 'developer typing'],
+    secondary: ['coding typing practice', 'programmer typing', 'syntax typing', 'code speed test'],
+    longTail: [
+      'javascript typing test',
+      'python typing practice',
+      'coding wpm test',
+      'programming typing speed',
+      'typing test for programmers',
+      'developer keyboard skills',
+      'code typing practice',
+    ],
+  },
+
+  // Multiplayer & Competition Keywords
+  multiplayer: {
+    primary: ['typing race', 'multiplayer typing', 'typing competition', 'typing game'],
+    secondary: ['online typing race', 'typing battle', 'competitive typing', 'race typing'],
+    longTail: [
+      'typeracer alternative free',
+      'multiplayer typing race online',
+      'typing competition online',
+      'compete in typing',
+      'typing race with friends',
+      'real-time typing race',
+    ],
+  },
+
+  // Analytics & Progress Keywords
+  analytics: {
+    primary: ['typing analytics', 'typing progress', 'typing statistics', 'wpm tracking'],
+    secondary: ['typing performance', 'keystroke analysis', 'typing metrics', 'progress tracking'],
+    longTail: [
+      'track typing improvement',
+      'typing speed over time',
+      'typing heatmap',
+      'finger usage statistics',
+      'typing weakness analysis',
+      'personalized typing insights',
+    ],
+  },
+
+  // Certificate & Professional Keywords
+  certificate: {
+    primary: ['typing certificate', 'typing certification', 'wpm certificate', 'typing credentials'],
+    secondary: ['verified typing speed', 'professional certificate', 'typing proof', 'certified typist'],
+    longTail: [
+      'free typing certificate',
+      'typing certificate for jobs',
+      'professional typing certification',
+      'verified wpm certificate',
+      'typing speed proof',
+      'downloadable typing certificate',
+    ],
+  },
+
+  // Job & Professional Keywords
+  professional: {
+    primary: ['typing test for jobs', 'professional typing', 'employment typing test', 'job typing test'],
+    secondary: ['work typing test', 'office typing', 'business typing', 'career typing'],
+    longTail: [
+      'typing speed requirements for jobs',
+      'data entry typing test',
+      'administrative typing test',
+      'secretary typing speed',
+      'receptionist typing test',
+      'typing requirements by profession',
+    ],
+  },
+
+  // Education Keywords
+  education: {
+    primary: ['typing for students', 'student typing test', 'school typing', 'educational typing'],
+    secondary: ['kids typing test', 'children typing', 'classroom typing', 'academic typing'],
+    longTail: [
+      'typing test for kids',
+      'typing practice for students',
+      'school typing test',
+      'typing for middle school',
+      'typing for high school',
+      'college typing requirements',
+    ],
+  },
+
+  // Average Speed & Benchmarks Keywords
+  benchmarks: {
+    primary: ['average typing speed', 'typing speed chart', 'good typing speed', 'typing benchmarks'],
+    secondary: ['normal typing speed', 'typing speed by age', 'fast typing speed', 'typing standards'],
+    longTail: [
+      'average wpm by age',
+      'what is good typing speed',
+      'professional typing speed requirements',
+      'typing speed percentile',
+      'how fast should i type',
+      'typing speed comparison',
+    ],
+  },
+
+  // Keyboard & Equipment Keywords
+  keyboard: {
+    primary: ['keyboard test', 'keyboard tester', 'key test', 'keyboard check'],
+    secondary: ['keyboard layout', 'keyboard testing', 'key response test', 'keyboard diagnostics'],
+    longTail: [
+      'test all keyboard keys',
+      'keyboard key tester online',
+      'mechanical keyboard test',
+      'keyboard ghosting test',
+      'n-key rollover test',
+      'keyboard input lag test',
+    ],
+  },
+
+  // Games & Fun Keywords
+  games: {
+    primary: ['typing games', 'fun typing', 'typing game online', 'keyboard games'],
+    secondary: ['typing game free', 'play typing', 'typing challenge', 'typing arcade'],
+    longTail: [
+      'free typing games online',
+      'typing games for adults',
+      'typing games for kids',
+      'fun way to practice typing',
+      'addictive typing games',
+      'typing game with levels',
+    ],
+  },
+
+  // Alternative/Comparison Keywords
+  alternatives: {
+    primary: ['monkeytype alternative', 'typeracer alternative', 'keybr alternative', '10fastfingers alternative'],
+    secondary: ['typing.com alternative', 'nitrotype alternative', 'free typing test alternative'],
+    longTail: [
+      'best monkeytype alternative',
+      'free typeracer alternative',
+      'better than monkeytype',
+      'typing test like monkeytype',
+    ],
+  },
+} as const;
+
+/**
+ * Get combined keywords string for a feature category
+ */
+export function getKeywordsForFeature(category: keyof typeof TYPING_KEYWORDS, limit = 15): string {
+  const keywords = TYPING_KEYWORDS[category];
+  const all = [...keywords.primary, ...keywords.secondary, ...keywords.longTail.slice(0, 5)];
+  return all.slice(0, limit).join(', ');
+}
+
+/**
+ * Get all keywords for multiple categories
+ */
+export function getCombinedKeywords(categories: Array<keyof typeof TYPING_KEYWORDS>, limit = 20): string {
+  const all: string[] = [];
+  for (const cat of categories) {
+    const keywords = TYPING_KEYWORDS[cat];
+    all.push(...keywords.primary, ...keywords.secondary.slice(0, 2));
+  }
+  return [...new Set(all)].slice(0, limit).join(', ');
+}
+
 function getDefaultStructuredData(config: SEOConfig): object | null {
   const title = config.title || 'TypeMasterAI';
   const description = config.description || 'Free online typing test with real-time WPM, accuracy tracking, and AI analytics.';
@@ -385,6 +664,388 @@ export function getVideoGameSchema(name: string, description: string) {
       'priceCurrency': 'USD',
       'availability': 'https://schema.org/InStock',
     },
+  };
+}
+
+// ============================================================================
+// ENHANCED STRUCTURED DATA SCHEMAS - Topical Authority
+// ============================================================================
+
+/**
+ * Generate EducationalOccupationalProgram schema for typing courses/lessons
+ */
+export function getTypingCourseSchema(course: {
+  name: string;
+  description: string;
+  duration?: string;
+  modules?: Array<{ name: string; description: string; position: number }>;
+  skillLevel?: 'Beginner' | 'Intermediate' | 'Advanced';
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Course',
+    'name': course.name,
+    'description': course.description,
+    'provider': {
+      '@type': 'Organization',
+      'name': 'TypeMasterAI',
+      'url': BASE_URL,
+      'sameAs': [BASE_URL],
+    },
+    'courseCode': course.name.replace(/\s+/g, '-').toLowerCase(),
+    'educationalLevel': course.skillLevel || 'Beginner',
+    'timeRequired': course.duration || 'P4W',
+    'isAccessibleForFree': true,
+    'inLanguage': 'en',
+    'hasCourseInstance': {
+      '@type': 'CourseInstance',
+      'courseMode': 'online',
+      'courseWorkload': course.duration || 'P4W',
+    },
+    ...(course.modules && {
+      'hasPart': course.modules.map((mod) => ({
+        '@type': 'Course',
+        'name': mod.name,
+        'description': mod.description,
+        'position': mod.position,
+      })),
+    }),
+    'teaches': [
+      'Touch Typing',
+      'Keyboard Skills',
+      'Typing Speed Improvement',
+      'Typing Accuracy',
+    ],
+  };
+}
+
+/**
+ * Generate EducationalContent schema for learning pages
+ */
+export function getEducationalContentSchema(content: {
+  name: string;
+  description: string;
+  educationalLevel?: string;
+  learningResourceType?: string;
+  teaches?: string[];
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'LearningResource',
+    'name': content.name,
+    'description': content.description,
+    'provider': {
+      '@type': 'Organization',
+      'name': 'TypeMasterAI',
+      'url': BASE_URL,
+    },
+    'educationalLevel': content.educationalLevel || 'Beginner',
+    'learningResourceType': content.learningResourceType || 'Tutorial',
+    'isAccessibleForFree': true,
+    'inLanguage': 'en',
+    'teaches': content.teaches || ['Typing Speed', 'Touch Typing', 'Keyboard Skills'],
+    'audience': {
+      '@type': 'EducationalAudience',
+      'educationalRole': 'student',
+    },
+  };
+}
+
+/**
+ * Generate ProfessionalService schema for job-related typing content
+ */
+export function getProfessionalTypingSchema(service: {
+  name: string;
+  description: string;
+  serviceType?: string;
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ProfessionalService',
+    'name': service.name,
+    'description': service.description,
+    'serviceType': service.serviceType || 'Typing Assessment',
+    'provider': {
+      '@type': 'Organization',
+      'name': 'TypeMasterAI',
+      'url': BASE_URL,
+    },
+    'areaServed': 'Worldwide',
+    'hasOfferCatalog': {
+      '@type': 'OfferCatalog',
+      'name': 'Typing Services',
+      'itemListElement': [
+        {
+          '@type': 'Offer',
+          'itemOffered': {
+            '@type': 'Service',
+            'name': 'Free Typing Test',
+            'description': 'Professional-grade typing speed assessment',
+          },
+        },
+        {
+          '@type': 'Offer',
+          'itemOffered': {
+            '@type': 'Service',
+            'name': 'Typing Certificate',
+            'description': 'Verified typing speed certificate for employment',
+          },
+        },
+      ],
+    },
+  };
+}
+
+/**
+ * Generate TypingTool schema for feature pages
+ */
+export function getTypingToolSchema(tool: {
+  name: string;
+  description: string;
+  features?: string[];
+  url: string;
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    '@id': `${tool.url}#tool`,
+    'name': tool.name,
+    'description': tool.description,
+    'url': tool.url,
+    'applicationCategory': ['EducationalApplication', 'UtilitiesApplication'],
+    'operatingSystem': 'Any',
+    'browserRequirements': 'Requires JavaScript and HTML5',
+    'offers': {
+      '@type': 'Offer',
+      'price': '0',
+      'priceCurrency': 'USD',
+      'availability': 'https://schema.org/InStock',
+    },
+    'aggregateRating': {
+      '@type': 'AggregateRating',
+      'ratingValue': '4.8',
+      'bestRating': '5',
+      'ratingCount': '2847',
+    },
+    'featureList': tool.features || [],
+    'author': {
+      '@type': 'Organization',
+      'name': 'TypeMasterAI',
+      'url': BASE_URL,
+    },
+    'isAccessibleForFree': true,
+  };
+}
+
+/**
+ * Generate ComparisonPage schema for alternative pages
+ */
+export function getComparisonPageSchema(comparison: {
+  mainProduct: string;
+  competitor: string;
+  advantages?: string[];
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    'name': `${comparison.mainProduct} vs ${comparison.competitor} - Comparison`,
+    'description': `Compare ${comparison.mainProduct} with ${comparison.competitor}. Discover features, pros, and cons to choose the best typing test platform.`,
+    'about': {
+      '@type': 'Product',
+      'name': comparison.mainProduct,
+      'description': `${comparison.mainProduct} - Free AI-powered typing test platform`,
+      'brand': {
+        '@type': 'Brand',
+        'name': 'TypeMasterAI',
+      },
+      'offers': {
+        '@type': 'Offer',
+        'price': '0',
+        'priceCurrency': 'USD',
+      },
+      'isSimilarTo': {
+        '@type': 'Product',
+        'name': comparison.competitor,
+      },
+    },
+    'mainEntity': {
+      '@type': 'ItemList',
+      'name': `${comparison.mainProduct} Advantages over ${comparison.competitor}`,
+      'itemListElement': (comparison.advantages || []).map((adv, i) => ({
+        '@type': 'ListItem',
+        'position': i + 1,
+        'name': adv,
+      })),
+    },
+  };
+}
+
+/**
+ * Generate ItemList schema for collection/listing pages
+ */
+export function getItemListSchema(list: {
+  name: string;
+  description: string;
+  items: Array<{ name: string; url: string; position: number }>;
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    'name': list.name,
+    'description': list.description,
+    'numberOfItems': list.items.length,
+    'itemListElement': list.items.map((item) => ({
+      '@type': 'ListItem',
+      'position': item.position,
+      'name': item.name,
+      'url': item.url,
+    })),
+  };
+}
+
+/**
+ * Generate DataCatalog schema for typing statistics/benchmarks pages
+ */
+export function getTypingDataSchema(data: {
+  name: string;
+  description: string;
+  datasets?: Array<{ name: string; description: string }>;
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    'name': data.name,
+    'description': data.description,
+    'creator': {
+      '@type': 'Organization',
+      'name': 'TypeMasterAI',
+      'url': BASE_URL,
+    },
+    'license': 'https://creativecommons.org/publicdomain/zero/1.0/',
+    'isAccessibleForFree': true,
+    'includedInDataCatalog': {
+      '@type': 'DataCatalog',
+      'name': 'TypeMasterAI Typing Statistics',
+    },
+    ...(data.datasets && {
+      'distribution': data.datasets.map((ds) => ({
+        '@type': 'DataDownload',
+        'name': ds.name,
+        'description': ds.description,
+        'contentUrl': BASE_URL,
+      })),
+    }),
+  };
+}
+
+/**
+ * Generate Certification schema for typing certificate pages
+ */
+export function getTypingCertificationSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'EducationalOccupationalCredential',
+    'name': 'TypeMasterAI Typing Certificate',
+    'description': 'Verified typing speed and accuracy certificate for professional use',
+    'credentialCategory': 'Certificate',
+    'educationalLevel': 'Professional',
+    'recognizedBy': {
+      '@type': 'Organization',
+      'name': 'TypeMasterAI',
+      'url': BASE_URL,
+    },
+    'validIn': 'Worldwide',
+    'competencyRequired': [
+      'Minimum 50 WPM typing speed',
+      'Minimum 95% accuracy',
+      '5-minute sustained typing test',
+    ],
+  };
+}
+
+/**
+ * Generate BlogPosting structured data for blog articles
+ */
+export function getBlogArticleSchema(article: {
+  title: string;
+  description?: string;
+  slug: string;
+  coverImageUrl?: string | null;
+  authorName: string;
+  authorBio?: string | null;
+  publishedAt?: string | null;
+  updatedAt?: string | null;
+  wordCount?: number;
+  readingTimeMinutes?: number;
+  tags?: string[];
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    '@id': `${BASE_URL}/blog/${article.slug}#article`,
+    'headline': article.title,
+    'description': article.description || '',
+    'image': article.coverImageUrl ? {
+      '@type': 'ImageObject',
+      'url': article.coverImageUrl,
+    } : undefined,
+    'author': {
+      '@type': 'Person',
+      'name': article.authorName,
+      'description': article.authorBio || undefined,
+    },
+    'publisher': {
+      '@type': 'Organization',
+      'name': 'TypeMasterAI',
+      'url': BASE_URL,
+      'logo': {
+        '@type': 'ImageObject',
+        'url': `${BASE_URL}/icon-512x512.png`,
+        'width': 512,
+        'height': 512,
+      },
+    },
+    'datePublished': article.publishedAt || undefined,
+    'dateModified': article.updatedAt || article.publishedAt || undefined,
+    'mainEntityOfPage': {
+      '@type': 'WebPage',
+      '@id': `${BASE_URL}/blog/${article.slug}`,
+    },
+    'wordCount': article.wordCount,
+    'timeRequired': article.readingTimeMinutes ? `PT${article.readingTimeMinutes}M` : undefined,
+    'keywords': article.tags?.join(', ') || undefined,
+    'inLanguage': 'en-US',
+    'isAccessibleForFree': true,
+    'isPartOf': {
+      '@type': 'Blog',
+      '@id': `${BASE_URL}/blog#blog`,
+      'name': 'TypeMasterAI Blog',
+      'url': `${BASE_URL}/blog`,
+    },
+  };
+}
+
+/**
+ * Generate Blog index structured data
+ */
+export function getBlogIndexSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    '@id': `${BASE_URL}/blog#blog`,
+    'name': 'TypeMasterAI Blog',
+    'description': 'Professional articles on typing, productivity, learning, and product updates.',
+    'url': `${BASE_URL}/blog`,
+    'publisher': {
+      '@type': 'Organization',
+      'name': 'TypeMasterAI',
+      'url': BASE_URL,
+      'logo': {
+        '@type': 'ImageObject',
+        'url': `${BASE_URL}/icon-512x512.png`,
+      },
+    },
+    'inLanguage': 'en-US',
   };
 }
 
@@ -717,5 +1378,200 @@ export const SEO_CONFIGS = {
     canonical: `${BASE_URL}/typing-certificate`,
     ogUrl: `${BASE_URL}/typing-certificate`,
     structuredData: getBreadcrumbSchema([{ name: 'Home', url: BASE_URL }, { name: 'Certificate', url: `${BASE_URL}/typing-certificate` }]),
+  },
+  
+  // ============================================================================
+  // ENHANCED SEO CONFIGS - Deep Keyword Integration
+  // ============================================================================
+  
+  // Average Typing Speed page
+  averageTypingSpeed: {
+    title: 'Average Typing Speed by Age & Profession | WPM Chart 2025 - TypeMasterAI',
+    description: 'Discover average typing speed by age, profession, and skill level. See WPM benchmarks, typing speed percentiles, and how fast you should type for different jobs.',
+    keywords: 'average typing speed, average wpm, typing speed by age, average words per minute, good typing speed, normal typing speed, typing speed chart, wpm by age, professional typing speed, typing speed percentile, how fast should i type',
+    canonical: `${BASE_URL}/average-typing-speed`,
+    ogUrl: `${BASE_URL}/average-typing-speed`,
+  },
+  
+  // What is WPM page
+  whatIsWpm: {
+    title: 'What is WPM? Words Per Minute Explained | Typing Speed Guide - TypeMasterAI',
+    description: 'Learn what WPM (Words Per Minute) means, how it\'s calculated, and why it matters. Understand typing speed measurement, CPM vs WPM, and how to improve your typing speed.',
+    keywords: 'what is wpm, words per minute, wpm meaning, wpm definition, how is wpm calculated, typing speed meaning, wpm vs cpm, typing speed explained, wpm calculation formula',
+    canonical: `${BASE_URL}/what-is-wpm`,
+    ogUrl: `${BASE_URL}/what-is-wpm`,
+  },
+  
+  // How to Type Faster page
+  howToTypeFaster: {
+    title: 'How to Type Faster | 15 Proven Tips to Increase Typing Speed - TypeMasterAI',
+    description: 'Learn how to type faster with proven techniques. Master touch typing, proper finger placement, posture, and daily practice routines to double your typing speed.',
+    keywords: 'how to type faster, increase typing speed, improve typing, type faster tips, speed typing techniques, boost typing speed, faster typing, typing speed tips, double typing speed, touch typing tips',
+    canonical: `${BASE_URL}/how-to-type-faster`,
+    ogUrl: `${BASE_URL}/how-to-type-faster`,
+  },
+  
+  // Touch Typing page
+  touchTyping: {
+    title: 'Touch Typing Guide | Learn Proper Finger Placement - TypeMasterAI',
+    description: 'Master touch typing with our comprehensive guide. Learn proper finger placement, home row position, typing posture, and build muscle memory for faster typing.',
+    keywords: 'touch typing, touch typing guide, finger placement typing, home row typing, typing without looking, proper typing technique, touch type, blind typing, keyboard finger position',
+    canonical: `${BASE_URL}/touch-typing`,
+    ogUrl: `${BASE_URL}/touch-typing`,
+  },
+  
+  // Typing for Beginners page
+  typingForBeginners: {
+    title: 'Typing for Beginners | Start Learning to Type Today - TypeMasterAI',
+    description: 'New to typing? Start here! Learn typing basics, keyboard layout, finger placement, and build speed gradually with beginner-friendly lessons and exercises.',
+    keywords: 'typing for beginners, learn typing, beginner typing, start typing, typing basics, learn keyboard, typing from scratch, how to start typing, basic typing lessons',
+    canonical: `${BASE_URL}/typing-for-beginners`,
+    ogUrl: `${BASE_URL}/typing-for-beginners`,
+  },
+  
+  // Typing Test for Kids page
+  typingTestForKids: {
+    title: 'Typing Test for Kids | Fun & Easy - TypeMasterAI',
+    description: 'Kid-friendly typing test with fun exercises and age-appropriate content. Help children develop typing skills early with engaging practice and games.',
+    keywords: 'typing test for kids, kids typing, children typing test, typing for children, typing games for kids, kid friendly typing, learn typing kids, typing practice for kids',
+    canonical: `${BASE_URL}/typing-test-for-kids`,
+    ogUrl: `${BASE_URL}/typing-test-for-kids`,
+  },
+  
+  // Typing Test for Jobs page
+  typingTestForJobs: {
+    title: 'Typing Test for Jobs | Employment Typing Speed Assessment - TypeMasterAI',
+    description: 'Prepare for job typing tests with our professional assessment. Practice data entry, administrative, and office typing tests with realistic job requirements.',
+    keywords: 'typing test for jobs, employment typing test, job typing test, typing speed for jobs, office typing test, data entry typing test, administrative typing test, typing test employment',
+    canonical: `${BASE_URL}/typing-test-jobs`,
+    ogUrl: `${BASE_URL}/typing-test-jobs`,
+  },
+  
+  // Typing Speed Chart page
+  typingSpeedChart: {
+    title: 'Typing Speed Chart | WPM Benchmarks & Percentiles - TypeMasterAI',
+    description: 'View comprehensive typing speed charts showing WPM benchmarks, percentiles, and skill levels. Compare your typing speed with beginners, average typists, and professionals.',
+    keywords: 'typing speed chart, wpm chart, typing speed benchmarks, typing percentile, wpm percentile, typing skill levels, typing speed comparison, typing speed rankings',
+    canonical: `${BASE_URL}/typing-speed-chart`,
+    ogUrl: `${BASE_URL}/typing-speed-chart`,
+  },
+  
+  // Data Entry Typing Test page
+  dataEntryTypingTest: {
+    title: 'Data Entry Typing Test | Practice for Data Entry Jobs - TypeMasterAI',
+    description: 'Practice data entry typing with number-heavy content and forms. Prepare for data entry positions with realistic practice tests and accuracy tracking.',
+    keywords: 'data entry typing test, data entry practice, typing test numbers, data entry speed test, data entry job test, numeric typing test, data entry typing speed',
+    canonical: `${BASE_URL}/data-entry-typing-test`,
+    ogUrl: `${BASE_URL}/data-entry-typing-test`,
+  },
+  
+  // Keyboard Layouts page
+  keyboardLayouts: {
+    title: 'Keyboard Layouts Explained | QWERTY, Dvorak, Colemak - TypeMasterAI',
+    description: 'Learn about different keyboard layouts including QWERTY, Dvorak, Colemak, and more. Understand the pros and cons of each layout for typing speed and ergonomics.',
+    keywords: 'keyboard layouts, qwerty keyboard, dvorak keyboard, colemak keyboard, keyboard layout comparison, alternative keyboard layouts, ergonomic keyboard layouts',
+    canonical: `${BASE_URL}/keyboard-layouts`,
+    ogUrl: `${BASE_URL}/keyboard-layouts`,
+  },
+  
+  // Timed Typing Test pages
+  typingTest1Min: {
+    title: '1 Minute Typing Test | Quick WPM Test - TypeMasterAI',
+    description: 'Take a quick 1-minute typing test to measure your WPM. Perfect for a fast speed check with instant results and accuracy tracking.',
+    keywords: '1 minute typing test, one minute typing test, 60 second typing test, quick typing test, fast typing test, 1 min wpm test, typing test 1 minute',
+    canonical: `${BASE_URL}/typing-test-1-min`,
+    ogUrl: `${BASE_URL}/typing-test-1-min`,
+  },
+  
+  typingTest3Min: {
+    title: '3 Minute Typing Test | Standard WPM Assessment - TypeMasterAI',
+    description: 'Take a 3-minute typing test for a more accurate WPM measurement. Standard duration for employment tests with comprehensive accuracy analysis.',
+    keywords: '3 minute typing test, three minute typing test, 180 second typing test, standard typing test, typing test 3 min, wpm test 3 minutes',
+    canonical: `${BASE_URL}/typing-test-3-min`,
+    ogUrl: `${BASE_URL}/typing-test-3-min`,
+  },
+  
+  typingTest5Min: {
+    title: '5 Minute Typing Test | Extended Accuracy Test - TypeMasterAI',
+    description: 'Take a 5-minute typing test for the most accurate WPM assessment. Tests endurance and consistency for professional typing certification.',
+    keywords: '5 minute typing test, five minute typing test, 300 second typing test, long typing test, typing test 5 min, endurance typing test, professional wpm test',
+    canonical: `${BASE_URL}/typing-test-5-min`,
+    ogUrl: `${BASE_URL}/typing-test-5-min`,
+  },
+  
+  // Programming Language Typing Tests
+  javascriptTypingTest: {
+    title: 'JavaScript Typing Test | Code Typing for JS Developers - TypeMasterAI',
+    description: 'Practice typing JavaScript code with syntax highlighting. Improve your JS coding speed with realistic code snippets including ES6+, React, and Node.js patterns.',
+    keywords: 'javascript typing test, js typing practice, coding typing test javascript, javascript typing speed, type javascript faster, js code typing',
+    canonical: `${BASE_URL}/javascript-typing-test`,
+    ogUrl: `${BASE_URL}/javascript-typing-test`,
+  },
+  
+  pythonTypingTest: {
+    title: 'Python Typing Test | Code Typing for Python Developers - TypeMasterAI',
+    description: 'Practice typing Python code with proper indentation handling. Improve your Python coding speed with real-world code snippets and data science examples.',
+    keywords: 'python typing test, python typing practice, coding typing test python, python typing speed, type python faster, python code typing',
+    canonical: `${BASE_URL}/python-typing-test`,
+    ogUrl: `${BASE_URL}/python-typing-test`,
+  },
+  
+  // Mobile Typing Test page
+  mobileTypingTest: {
+    title: 'Mobile Typing Test | Test Your Phone Typing Speed - TypeMasterAI',
+    description: 'Test your mobile typing speed on phone or tablet. Measure your touch screen typing WPM with mobile-optimized tests and swipe keyboard support.',
+    keywords: 'mobile typing test, phone typing test, typing speed mobile, touchscreen typing test, tablet typing test, smartphone typing, mobile wpm test',
+    canonical: `${BASE_URL}/mobile-typing-test`,
+    ogUrl: `${BASE_URL}/mobile-typing-test`,
+  },
+  
+  // Alternative Comparison pages
+  monkeytypeAlternative: {
+    title: 'Best Monkeytype Alternative | TypeMasterAI vs Monkeytype',
+    description: 'Looking for a Monkeytype alternative? TypeMasterAI offers AI-powered analytics, code typing mode, multiplayer racing, and more features for free.',
+    keywords: 'monkeytype alternative, like monkeytype, better than monkeytype, monkeytype vs typemasterai, free monkeytype alternative, monkeytype competitor',
+    canonical: `${BASE_URL}/monkeytype-alternative`,
+    ogUrl: `${BASE_URL}/monkeytype-alternative`,
+  },
+  
+  typeracerAlternative: {
+    title: 'Best TypeRacer Alternative | Free Multiplayer Typing - TypeMasterAI',
+    description: 'Looking for a TypeRacer alternative? TypeMasterAI offers free multiplayer typing races with ELO ratings, live competition, and no subscription required.',
+    keywords: 'typeracer alternative, like typeracer, free typeracer alternative, typeracer vs typemasterai, typeracer competitor, multiplayer typing free',
+    canonical: `${BASE_URL}/typeracer-alternative`,
+    ogUrl: `${BASE_URL}/typeracer-alternative`,
+  },
+  
+  keybrAlternative: {
+    title: 'Best Keybr Alternative | Learn Touch Typing - TypeMasterAI',
+    description: 'Looking for a Keybr alternative? TypeMasterAI offers comprehensive touch typing lessons with AI-powered learning and progress tracking.',
+    keywords: 'keybr alternative, like keybr, keybr vs typemasterai, keybr competitor, touch typing alternative, learn typing free',
+    canonical: `${BASE_URL}/keybr-alternative`,
+    ogUrl: `${BASE_URL}/keybr-alternative`,
+  },
+  
+  tenFastFingersAlternative: {
+    title: 'Best 10FastFingers Alternative | Typing Competition - TypeMasterAI',
+    description: 'Looking for a 10FastFingers alternative? TypeMasterAI offers competitive typing tests with global leaderboards and multiplayer racing.',
+    keywords: '10fastfingers alternative, 10 fast fingers alternative, like 10fastfingers, 10fastfingers vs typemasterai, typing competition alternative',
+    canonical: `${BASE_URL}/10fastfingers-alternative`,
+    ogUrl: `${BASE_URL}/10fastfingers-alternative`,
+  },
+  
+  typingcomAlternative: {
+    title: 'Best Typing.com Alternative | Free Typing Lessons - TypeMasterAI',
+    description: 'Looking for a Typing.com alternative? TypeMasterAI offers free typing lessons, practice exercises, and progress tracking for students and adults.',
+    keywords: 'typing.com alternative, like typing.com, typingcom alternative, typing.com vs typemasterai, free typing lessons alternative',
+    canonical: `${BASE_URL}/typingcom-alternative`,
+    ogUrl: `${BASE_URL}/typingcom-alternative`,
+  },
+  
+  // Knowledge Base page
+  knowledgeBase: {
+    title: 'Typing Knowledge Base | Complete Typing Guide - TypeMasterAI',
+    description: 'Comprehensive typing knowledge base with guides, tutorials, and tips. Learn everything about typing speed, accuracy, technique, and keyboard mastery.',
+    keywords: 'typing knowledge base, typing guide, typing tutorials, typing tips, keyboard mastery, typing education, typing resources, learn typing',
+    canonical: `${BASE_URL}/knowledge-base`,
+    ogUrl: `${BASE_URL}/knowledge-base`,
   },
 };

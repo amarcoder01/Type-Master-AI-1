@@ -28,6 +28,9 @@ import { createNotificationRoutes } from "./notification-routes";
 import { NotificationScheduler } from "./notification-scheduler";
 import { AchievementService } from "./achievement-service";
 import { AuthSecurityService } from "./auth-security-service";
+import { createBlogRoutes } from "./blog/blog-routes";
+import { createImageRoutes } from "./image-routes";
+import { requireRole } from "./rbac";
 import {
   initializeOAuthStrategies,
   rememberMeMiddleware,
@@ -214,6 +217,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     legacyHeaders: false,
   });
 
+  createBlogRoutes(app);
+  createImageRoutes(app);
+
   const chatLimiter = rateLimit({
     windowMs: 1 * 60 * 1000,
     max: 30,
@@ -367,7 +373,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     generateSharedResultsSitemap, 
     generateCertificatesSitemap, 
     generateSitemapIndex,
-    generateImagesSitemap 
+    generateImagesSitemap,
+    generateBlogSitemap
   } = await import('./sitemap-generator');
 
   const { getIndexNowKey, getIndexNowKeyFileContent, notifyBatchUrls, notifyNewCertificate, notifyLeaderboardUpdate } = await import('./indexnow-service');
@@ -439,6 +446,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.send(sitemap);
     } catch (error) {
       console.error('[Sitemap] Error generating images sitemap:', error);
+      res.status(500).send('Error generating sitemap');
+    }
+  });
+
+  app.get("/sitemap-blog.xml", async (_req, res) => {
+    try {
+      const sitemap = await generateBlogSitemap();
+      res.set('Content-Type', 'application/xml');
+      res.set('Cache-Control', 'public, max-age=3600');
+      res.send(sitemap);
+    } catch (error) {
+      console.error('[Sitemap] Error generating blog sitemap:', error);
       res.status(500).send('Error generating sitemap');
     }
   });
@@ -2267,13 +2286,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   };
 
   // Admin endpoint to detect corrupted paragraphs with mixed scripts
-  app.get("/api/admin/typing/validate-paragraphs", isAuthenticated, async (req, res) => {
+  app.get("/api/admin/typing/validate-paragraphs", isAuthenticated, requireRole(["admin", "super_admin"]), async (req, res) => {
     try {
-      // Check if user is admin
-      if (req.user?.email?.toLowerCase() !== "amar01pawar80@gmail.com") {
-        return res.status(403).json({ message: "Admin access required" });
-      }
-
       const language = req.query.language as string;
       const fix = req.query.fix === "true";
 

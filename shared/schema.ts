@@ -1950,3 +1950,157 @@ export const feedbackResponseSchema = z.object({
 export type SubmitFeedbackInput = z.infer<typeof submitFeedbackSchema>;
 export type UpdateFeedbackStatusInput = z.infer<typeof updateFeedbackStatusSchema>;
 export type FeedbackResponseInput = z.infer<typeof feedbackResponseSchema>;
+
+// Blog Categories with parent/child hierarchy
+export const blogCategories = pgTable("blog_categories", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 100 }).notNull(),
+  slug: varchar("slug", { length: 120 }).notNull().unique(),
+  description: text("description"),
+  parentId: integer("parent_id"),
+  color: varchar("color", { length: 20 }).default("#3b82f6"),
+  icon: varchar("icon", { length: 50 }),
+  sortOrder: integer("sort_order").default(0).notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+}, (table) => ({
+  slugIdx: index("blog_categories_slug_idx").on(table.slug),
+  parentIdIdx: index("blog_categories_parent_id_idx").on(table.parentId),
+}));
+
+export const blogPosts = pgTable("blog_posts", {
+  id: serial("id").primaryKey(),
+  slug: varchar("slug", { length: 200 }).notNull().unique(),
+  title: varchar("title", { length: 200 }).notNull(),
+  excerpt: text("excerpt"),
+  contentMd: text("content_md").notNull(),
+  coverImageUrl: text("cover_image_url"),
+  
+  // Author - can reference user or use custom name
+  authorId: varchar("author_id").references(() => users.id, { onDelete: "set null" }),
+  authorName: varchar("author_name", { length: 120 }).default("TypeMasterAI").notNull(),
+  authorBio: text("author_bio"),
+  authorAvatarUrl: text("author_avatar_url"),
+  
+  // SEO fields
+  metaTitle: varchar("meta_title", { length: 70 }),
+  metaDescription: varchar("meta_description", { length: 160 }),
+  
+  // Category
+  categoryId: integer("category_id").references(() => blogCategories.id, { onDelete: "set null" }),
+  
+  // Status and scheduling
+  status: varchar("status", { length: 20 }).notNull().default("draft"),
+  scheduledAt: timestamp("scheduled_at"),
+  publishedAt: timestamp("published_at"),
+  
+  // Analytics
+  viewCount: integer("view_count").default(0).notNull(),
+  
+  // Featured posts
+  isFeatured: boolean("is_featured").default(false).notNull(),
+  featuredOrder: integer("featured_order"),
+  
+  // Timestamps
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+}, (table) => ({
+  slugIdx: index("blog_posts_slug_idx").on(table.slug),
+  statusIdx: index("blog_posts_status_idx").on(table.status),
+  publishedAtIdx: index("blog_posts_published_at_idx").on(table.publishedAt),
+  scheduledAtIdx: index("blog_posts_scheduled_at_idx").on(table.scheduledAt),
+  categoryIdIdx: index("blog_posts_category_id_idx").on(table.categoryId),
+  featuredIdx: index("blog_posts_featured_idx").on(table.isFeatured, table.featuredOrder),
+  authorIdIdx: index("blog_posts_author_id_idx").on(table.authorId),
+}));
+
+export const blogTags = pgTable("blog_tags", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 80 }).notNull().unique(),
+  slug: varchar("slug", { length: 120 }).notNull().unique(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const blogPostTags = pgTable("blog_post_tags", {
+  id: serial("id").primaryKey(),
+  postId: integer("post_id").notNull().references(() => blogPosts.id, { onDelete: "cascade" }),
+  tagId: integer("tag_id").notNull().references(() => blogTags.id, { onDelete: "cascade" }),
+}, (table) => ({
+  postTagIdx: index("blog_post_tags_post_tag_idx").on(table.postId, table.tagId),
+}));
+
+// Blog Post Views for analytics tracking
+export const blogPostViews = pgTable("blog_post_views", {
+  id: serial("id").primaryKey(),
+  postId: integer("post_id").notNull().references(() => blogPosts.id, { onDelete: "cascade" }),
+  userId: varchar("user_id").references(() => users.id, { onDelete: "set null" }),
+  sessionId: varchar("session_id", { length: 64 }),
+  ipAddress: varchar("ip_address", { length: 45 }),
+  userAgent: text("user_agent"),
+  referrer: text("referrer"),
+  viewedAt: timestamp("viewed_at").notNull().defaultNow(),
+}, (table) => ({
+  postIdIdx: index("blog_post_views_post_id_idx").on(table.postId),
+  viewedAtIdx: index("blog_post_views_viewed_at_idx").on(table.viewedAt),
+  sessionPostIdx: index("blog_post_views_session_post_idx").on(table.sessionId, table.postId),
+}));
+
+// Insert schemas
+export const insertBlogCategorySchema = createInsertSchema(blogCategories, {
+  name: z.string().min(2).max(100),
+  slug: z.string().min(2).max(120).regex(/^[a-z0-9-]+$/),
+  description: z.string().max(500).optional().nullable(),
+  parentId: z.number().int().positive().optional().nullable(),
+  color: z.string().max(20).optional(),
+  icon: z.string().max(50).optional().nullable(),
+  sortOrder: z.number().int().min(0).optional(),
+  isActive: z.boolean().optional(),
+}).omit({ id: true, createdAt: true });
+
+export const insertBlogPostSchema = createInsertSchema(blogPosts, {
+  slug: z.string().min(3).max(200).regex(/^[a-z0-9-]+$/),
+  title: z.string().min(3).max(200),
+  excerpt: z.string().max(300).optional().nullable(),
+  contentMd: z.string().min(20),
+  coverImageUrl: z.string().url().optional().nullable(),
+  authorId: z.string().optional().nullable(),
+  authorName: z.string().min(2).max(120).default("TypeMasterAI").optional(),
+  authorBio: z.string().max(500).optional().nullable(),
+  authorAvatarUrl: z.string().url().optional().nullable(),
+  metaTitle: z.string().max(70).optional().nullable(),
+  metaDescription: z.string().max(160).optional().nullable(),
+  categoryId: z.number().int().positive().optional().nullable(),
+  status: z.enum(["draft", "review", "scheduled", "published"]).default("draft").optional(),
+  scheduledAt: z.date().optional().nullable(),
+  publishedAt: z.date().optional().nullable(),
+  isFeatured: z.boolean().optional(),
+  featuredOrder: z.number().int().min(0).optional().nullable(),
+}).omit({ id: true, createdAt: true, updatedAt: true, viewCount: true });
+
+export const insertBlogTagSchema = createInsertSchema(blogTags, {
+  name: z.string().min(2).max(80),
+  slug: z.string().min(2).max(120).regex(/^[a-z0-9-]+$/),
+}).omit({ id: true, createdAt: true });
+
+export const insertBlogPostTagSchema = createInsertSchema(blogPostTags).omit({ id: true });
+
+export const insertBlogPostViewSchema = createInsertSchema(blogPostViews, {
+  postId: z.number().int().positive(),
+  userId: z.string().optional().nullable(),
+  sessionId: z.string().max(64).optional().nullable(),
+  ipAddress: z.string().max(45).optional().nullable(),
+  userAgent: z.string().optional().nullable(),
+  referrer: z.string().optional().nullable(),
+}).omit({ id: true, viewedAt: true });
+
+// Types
+export type BlogCategory = typeof blogCategories.$inferSelect;
+export type InsertBlogCategory = z.infer<typeof insertBlogCategorySchema>;
+export type BlogPost = typeof blogPosts.$inferSelect;
+export type InsertBlogPost = z.infer<typeof insertBlogPostSchema>;
+export type BlogTag = typeof blogTags.$inferSelect;
+export type InsertBlogTag = z.infer<typeof insertBlogTagSchema>;
+export type BlogPostTag = typeof blogPostTags.$inferSelect;
+export type InsertBlogPostTag = z.infer<typeof insertBlogPostTagSchema>;
+export type BlogPostView = typeof blogPostViews.$inferSelect;
+export type InsertBlogPostView = z.infer<typeof insertBlogPostViewSchema>;

@@ -9,11 +9,12 @@ export interface SEORouteConfig {
   keywords: string;
   canonical: string;
   ogType?: string;
+  ogImage?: string;
   structuredDataType?: string;
   noindex?: boolean;
 }
 
-const BASE_URL = 'https://typemasterai.com';
+import { BASE_URL } from "./config";
 
 export const SEO_ROUTES: Record<string, SEORouteConfig> = {
   '/': {
@@ -227,6 +228,20 @@ export const SEO_ROUTES: Record<string, SEORouteConfig> = {
     canonical: `${BASE_URL}/accessibility`,
     ogType: 'website',
   },
+  '/blog': {
+    title: 'TypeMasterAI Blog | Guides, Tips, and Product Updates',
+    description: 'Professional articles on typing, productivity, learning, and product updates. Learn best practices and improve your skills.',
+    keywords: 'typing blog, productivity tips, typing guides, learning, updates',
+    canonical: `${BASE_URL}/blog`,
+    ogType: 'website',
+  },
+  '/blog/tags': {
+    title: 'Blog Tags | TypeMasterAI',
+    description: 'Browse blog tags and discover articles by topic.',
+    keywords: 'typing blog tags',
+    canonical: `${BASE_URL}/blog/tags`,
+    ogType: 'website',
+  },
   '/verify': {
     title: 'Certificate Verification | TypeMasterAI',
     description: 'Verify the authenticity of TypeMasterAI typing certificates. Enter a verification ID to confirm certificate validity and view achievement details.',
@@ -429,6 +444,13 @@ export const SEO_ROUTES: Record<string, SEORouteConfig> = {
     canonical: `${BASE_URL}/faq`,
     ogType: 'website',
   },
+  '/knowledge': {
+    title: 'Knowledge Base & Platform Mechanics | TypeMasterAI',
+    description: 'The authoritative source for TypeMasterAI platform mechanics, scoring algorithms, and terminology. Designed for users and AI agents.',
+    keywords: 'typing mechanics, wpm calculation, typemasterai documentation, platform guide, typing accuracy formula',
+    canonical: `${BASE_URL}/knowledge`,
+    ogType: 'article',
+  },
   '/admin/feedback': {
     title: 'Admin Feedback Dashboard | TypeMasterAI',
     description: 'Admin dashboard for managing user feedback.',
@@ -475,6 +497,31 @@ export function getSEOConfig(path: string): SEORouteConfig | null {
     };
   }
 
+  if (path.startsWith('/blog/')) {
+    const slug = path.replace('/blog/', '').trim();
+    if (!slug) return {
+      ...SEO_ROUTES['/blog'],
+      canonical: `${BASE_URL}/blog`,
+    };
+    if (slug.startsWith('tag/')) {
+      const tagSlug = slug.replace('tag/', '');
+      return {
+        title: `Tag: ${tagSlug} | TypeMasterAI Blog`,
+        description: `Articles tagged "${tagSlug}" on the TypeMasterAI Blog.`,
+        keywords: `typing blog, ${tagSlug}`,
+        canonical: `${BASE_URL}/blog/tag/${tagSlug}`,
+        ogType: 'website',
+      };
+    }
+    return {
+      title: `TypeMasterAI Blog`,
+      description: 'Read this article on the TypeMasterAI blog.',
+      keywords: 'typing blog, article',
+      canonical: `${BASE_URL}${path}`,
+      ogType: 'article',
+    };
+  }
+
   if (path.startsWith('/race/')) {
     return {
       title: 'Typing Race | TypeMasterAI',
@@ -490,4 +537,3 @@ export function getSEOConfig(path: string): SEORouteConfig | null {
 }
 
 export const BASE_URL_CONST = BASE_URL;
-

@@ -1,6 +1,6 @@
 import { Link } from 'wouter';
 import { Zap, Hand, Eye, Brain, Target, Clock, CheckCircle, ArrowRight, HelpCircle, ChevronDown, Keyboard } from 'lucide-react';
-import { useSEO } from '@/lib/seo';
+import { useSEO, SEO_CONFIGS, getBreadcrumbSchema, getFAQSchema } from '@/lib/seo';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Breadcrumbs } from '@/components/breadcrumbs';

@@ -6,7 +6,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { Request, Response, NextFunction } from 'express';
-import { getSEOConfig, BASE_URL_CONST } from './seo-routes';
+import { getSEOConfig } from './seo-routes';
+import { BASE_URL, SEO as SEO_CFG } from './config';
+import { storage } from './storage';
 
 // List of known crawler user agents
 const CRAWLER_USER_AGENTS = [
@@ -63,7 +65,7 @@ function generateMetaTags(config: ReturnType<typeof getSEOConfig>, path: string)
     return '';
   }
 
-  const ogImage = `${BASE_URL_CONST}/opengraph.jpg`;
+  const ogImage = (config as any)?.ogImage || SEO_CFG.defaultOgImage;
   const robotsContent = config.noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
   const hreflang = (() => {
     // Spanish localized page: include es/en/x-default
@@ -74,12 +76,12 @@ function generateMetaTags(config: ReturnType<typeof getSEOConfig>, path: string)
     }
     // English home route: advertise Spanish alternate
     if (path === '/') {
-      const esHref = `${BASE_URL_CONST}/es/typing-test`;
-      const enHref = `${BASE_URL_CONST}/`;
+      const esHref = `${BASE_URL}/es/typing-test`;
+      const enHref = `${BASE_URL}/`;
       return `\n    <link rel="alternate" hreflang="es" href="${esHref}" />\n    <link rel="alternate" hreflang="x-default" href="${enHref}" />`;
     }
     // Other pages: default x-default only
-    return `\n    <link rel=\"alternate\" hreflang=\"x-default\" href=\"${BASE_URL_CONST}/\" />`;
+    return `\n    <link rel=\"alternate\" hreflang=\"x-default\" href=\"${BASE_URL}/\" />`;
   })();
 
   return `
@@ -243,6 +245,27 @@ function generateStructuredDataScript(path: string, config: ReturnType<typeof ge
     });
   }
 
+  if (path.startsWith('/blog/')) {
+    const slug = path.replace('/blog/', '');
+    try {
+      const post = await storage.getBlogPostBySlug(slug);
+      if (!post || post.status !== 'published') return '';
+      return scriptTag({
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        'headline': post.title,
+        'description': post.excerpt || '',
+        'author': { '@type': 'Person', 'name': post.authorName || 'TypeMasterAI' },
+        'datePublished': post.publishedAt ? new Date(post.publishedAt as any).toISOString() : new Date(post.createdAt as any).toISOString(),
+        'dateModified': new Date(post.updatedAt as any).toISOString(),
+        'image': post.coverImageUrl ? [post.coverImageUrl] : [`${base}/opengraph.jpg`],
+        'mainEntityOfPage': `${base}/blog/${post.slug}`,
+      });
+    } catch {
+      return '';
+    }
+  }
+
   return scriptTag({
     '@context': 'https://schema.org',
     '@type': 'WebPage',
@@ -345,9 +368,28 @@ export function createSEOPrerender(distPath: string) {
         return res.status(404).send(notFoundHtml);
       }
 
+      // Override SEO config for blog detail pages with dynamic post data
+      let finalConfig = seoConfig;
+      if (req.path.startsWith('/blog/')) {
+        const slug = req.path.replace('/blog/', '');
+        try {
+          const post = await storage.getBlogPostBySlug(slug);
+          if (post && post.status === 'published') {
+            finalConfig = {
+              title: `${post.title} | TypeMasterAI Blog`,
+              description: post.excerpt || seoConfig.description,
+              keywords: 'typing blog, article',
+              canonical: `${BASE_URL}/blog/${post.slug}`,
+              ogType: 'article',
+              ogImage: post.coverImageUrl || SEO_CFG.defaultOgImage,
+            };
+          }
+        } catch {}
+      }
+
       // Generate and inject meta tags (and JSON-LD structured data)
-      const metaTags = generateMetaTags(seoConfig, req.path);
-      const structured = generateStructuredDataScript(req.path, seoConfig);
+      const metaTags = generateMetaTags(finalConfig, req.path);
+      const structured = generateStructuredDataScript(req.path, finalConfig);
       const html = injectMetaTags(htmlTemplate, metaTags + (structured ? `\n    ${structured}` : ''));
 
       res.set('Content-Type', 'text/html');
@@ -360,4 +402,3 @@ export function createSEOPrerender(distPath: string) {
     }
   };
 }
-
