@@ -2,21 +2,32 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5" />
     
     <!-- Primary SEO Meta Tags -->
     <title>Free Typing Test | TypeMasterAI - Check Your WPM & Typing Speed Online</title>
     <meta name="title" content="Free Typing Test | TypeMasterAI - Check Your WPM & Typing Speed Online" />
     <meta name="description" content="Test your typing speed in 60 seconds! Free online typing test with real-time WPM calculator, accuracy tracker, AI-powered analytics, multiplayer racing, code typing mode for developers, and 23+ languages. No signup required." />
-    <meta name="keywords" content="typing test, typing speed test, wpm test, words per minute test, free typing test, typing speed, online typing test, typing test wpm, 1 minute typing test, typing accuracy test, typing game, typing practice, monkeytype alternative, code typing test, multiplayer typing race" />
+    <meta name="keywords" content="typing test, typing speed test, wpm test, words per minute test, free typing test, typing speed, online typing test, typing test wpm, 1 minute typing test, typing accuracy test, typing game, typing practice, monkeytype alternative, code typing test, multiplayer typing race, keyboard test, typing practice online, touch typing, learn to type" />
     <meta name="author" content="TypeMasterAI" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="bingbot" content="index, follow" />
     <meta name="language" content="English" />
     <meta name="revisit-after" content="1 days" />
+    <meta name="rating" content="General" />
+    <meta name="distribution" content="Global" />
     <link rel="canonical" href="https://typemaster-ai.replit.app/" />
     
     <!-- Hreflang Tags for International SEO -->
     <link rel="alternate" hreflang="en" href="https://typemaster-ai.replit.app/" />
+    <link rel="alternate" hreflang="es" href="https://typemaster-ai.replit.app/?lang=es" />
+    <link rel="alternate" hreflang="fr" href="https://typemaster-ai.replit.app/?lang=fr" />
+    <link rel="alternate" hreflang="de" href="https://typemaster-ai.replit.app/?lang=de" />
+    <link rel="alternate" hreflang="pt" href="https://typemaster-ai.replit.app/?lang=pt" />
+    <link rel="alternate" hreflang="ja" href="https://typemaster-ai.replit.app/?lang=ja" />
+    <link rel="alternate" hreflang="ko" href="https://typemaster-ai.replit.app/?lang=ko" />
+    <link rel="alternate" hreflang="zh" href="https://typemaster-ai.replit.app/?lang=zh" />
     <link rel="alternate" hreflang="x-default" href="https://typemaster-ai.replit.app/" />
     
     <!-- Open Graph / Facebook -->
@@ -30,6 +41,7 @@
     <meta property="og:image:alt" content="TypeMasterAI - Free Online Typing Speed Test with AI Analytics" />
     <meta property="og:site_name" content="TypeMasterAI" />
     <meta property="og:locale" content="en_US" />
+    <meta property="fb:app_id" content="" />
     
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -42,33 +54,92 @@
     <meta name="twitter:creator" content="@TypeMasterAI" />
 
     <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#00ffff" />
+    <meta name="theme-color" content="#00ffff" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f5a623" media="(prefers-color-scheme: light)" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="TypeMasterAI" />
     <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="TypeMasterAI" />
+    <meta name="msapplication-TileColor" content="#0f172a" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json" />
     
     <!-- Icons - Updated with TypeMasterAI official logo -->
     <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/icon-72x72.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/icon-192x192.png" />
-    <link rel="apple-touch-icon" sizes="152x152" href="/icon-192x192.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/icon-152x152.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/icon-192x192.png" />
     <link rel="apple-touch-icon" sizes="167x167" href="/icon-192x192.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
-    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="mask-icon" href="/logo-icon.svg" color="#00ffff" />
+    
+    <!-- Critical Resource Hints for Core Web Vitals -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+    
+    <!-- Preload LCP Image for faster render -->
+    <link rel="preload" as="image" href="/opengraph.jpg" fetchpriority="low" />
     
     <!-- Importing fonts with font-display: swap for CLS optimization -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" as="style" fetchpriority="high">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet"></noscript>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" as="style" fetchpriority="high" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+    <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet" /></noscript>
     
-    <!-- Katex CSS for LaTeX math rendering -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn" crossorigin="anonymous">
+    <!-- Katex CSS for LaTeX math rendering - defer loading -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn" crossorigin="anonymous" /></noscript>
+    
+    <!-- Critical CSS for LCP optimization - prevents layout shift -->
+    <style>
+      /* Critical CSS for above-the-fold content */
+      :root {
+        --background: 220 15% 10%;
+        --foreground: 220 10% 90%;
+        --primary: 45 100% 50%;
+      }
+      html, body { margin: 0; padding: 0; }
+      body {
+        font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background-color: hsl(220 15% 10%);
+        color: hsl(220 10% 90%);
+        min-height: 100vh;
+      }
+      #root {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      /* Skeleton loader for LCP */
+      .skeleton-header {
+        height: 64px;
+        background: hsl(220 15% 13%);
+      }
+      .skeleton-hero {
+        padding: 2rem;
+        text-align: center;
+      }
+      .skeleton-title {
+        height: 48px;
+        max-width: 600px;
+        margin: 0 auto 1rem;
+        background: linear-gradient(90deg, hsl(220 15% 15%) 0%, hsl(220 15% 20%) 50%, hsl(220 15% 15%) 100%);
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+        border-radius: 8px;
+      }
+      @keyframes shimmer {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+      }
+    </style>
     
     <!-- JSON-LD Structured Data for SEO - Enhanced for 2025 -->
     <script type="application/ld+json">
@@ -420,7 +491,36 @@
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Skeleton loader for better perceived performance while JS loads -->
+      <div class="skeleton-header" aria-hidden="true"></div>
+      <div class="skeleton-hero" aria-hidden="true">
+        <div class="skeleton-title"></div>
+        <div class="skeleton-title" style="height: 24px; max-width: 400px; margin-top: 0.5rem;"></div>
+      </div>
+      <noscript>
+        <div style="text-align: center; padding: 2rem; color: #fff;">
+          <h1>TypeMasterAI - Free Typing Test</h1>
+          <p>Please enable JavaScript to use this typing test application.</p>
+          <p>Test your typing speed with our free online WPM calculator.</p>
+        </div>
+      </noscript>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then(function(registration) {
+              console.log('SW registered:', registration.scope);
+            })
+            .catch(function(error) {
+              console.log('SW registration failed:', error);
+            });
+        });
+      }
+    </script>
   </body>
 </html>

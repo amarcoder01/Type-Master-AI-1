@@ -6156,6 +6156,35 @@ export class DatabaseStorage implements IStorage {
       failedVerifications: logsResult[0]?.failed || 0,
     };
   }
+
+  // ============================================================================
+  // SITEMAP HELPERS
+  // ============================================================================
+
+  async getRecentSharedResults(limit: number = 1000): Promise<Array<{ shareToken: string; createdAt: Date | null }>> {
+    const results = await db
+      .select({
+        shareToken: sharedResults.shareToken,
+        createdAt: sharedResults.createdAt,
+      })
+      .from(sharedResults)
+      .orderBy(desc(sharedResults.createdAt))
+      .limit(limit);
+    return results;
+  }
+
+  async getRecentCertificates(limit: number = 500): Promise<Array<{ verificationId: string | null; createdAt: Date | null }>> {
+    const results = await db
+      .select({
+        verificationId: certificates.verificationId,
+        createdAt: certificates.createdAt,
+      })
+      .from(certificates)
+      .where(sql`${certificates.verificationId} IS NOT NULL`)
+      .orderBy(desc(certificates.createdAt))
+      .limit(limit);
+    return results;
+  }
 }
 
 export const storage = new DatabaseStorage();

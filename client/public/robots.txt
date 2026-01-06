@@ -1,85 +1,256 @@
-# Robots.txt for TypeMasterAI - Free Online Typing Test
-# https://typemaster-ai.replit.app
-# Last updated: 2025-12-09
+# TypeMasterAI - robots.txt
+# Last Updated: January 2026
 
-# Allow all search engines to crawl and index
+# Default rules for all crawlers
 User-agent: *
 Allow: /
 
-# Sitemaps
+# Sitemap location - primary sitemap index
 Sitemap: https://typemaster-ai.replit.app/sitemap.xml
 
-# Block specific paths that shouldn't be indexed
+# Individual sitemaps for better crawl distribution
+Sitemap: https://typemaster-ai.replit.app/sitemap-pages.xml
+Sitemap: https://typemaster-ai.replit.app/sitemap-shared.xml
+Sitemap: https://typemaster-ai.replit.app/sitemap-certificates.xml
+
+# Disallow API endpoints and private content
 Disallow: /api/
 Disallow: /*?*session=*
-Disallow: /*?*token=*
 Disallow: /race/
-Disallow: /*.json$
-
-# Block private user account pages
 Disallow: /login
 Disallow: /register
 Disallow: /forgot-password
 Disallow: /reset-password
 Disallow: /verify-email
+Disallow: /admin/
+Disallow: /settings
+Disallow: /notifications
 Disallow: /profile/edit
 
-# Block admin pages
-Disallow: /admin/
+# Allow important SEO pages
+Allow: /
+Allow: /code-mode
+Allow: /multiplayer
+Allow: /leaderboard
+Allow: /leaderboards
+Allow: /code-leaderboard
+Allow: /stress-leaderboard
+Allow: /analytics
+Allow: /profile
+Allow: /stress-test
+Allow: /dictation-mode
+Allow: /dictation-test
+Allow: /chat
+Allow: /learn
+Allow: /faq
+Allow: /about
+Allow: /contact
+Allow: /verify
+Allow: /verify/
 
-# Allow important resources for rendering
+# SEO landing pages - high priority
+Allow: /1-minute-typing-test
+Allow: /3-minute-typing-test
+Allow: /5-minute-typing-test
+Allow: /typing-practice
+Allow: /wpm-test
+Allow: /typing-games
+Allow: /keyboard-test
+Allow: /typing-certificate
+Allow: /monkeytype-alternative
+Allow: /typeracer-alternative
+Allow: /10fastfingers-alternative
+Allow: /typingcom-alternative
+
+# Shared results and certificates (dynamic content)
+Allow: /share/
+Allow: /result/
+
+# Legal pages
+Allow: /privacy-policy
+Allow: /terms-of-service
+Allow: /cookie-policy
+Allow: /ai-transparency
+Allow: /accessibility
+
+# IndexNow verification
+Allow: /typemasterai-indexnow-key-2026.txt
+
+# PWA and assets
 Allow: /manifest.json
-Allow: /*.js$
-Allow: /*.css$
-Allow: /*.png$
-Allow: /*.jpg$
-Allow: /*.svg$
-Allow: /*.woff2$
+Allow: /service-worker.js
+Allow: /opengraph.jpg
+Allow: /favicon.png
+Allow: /icon-*.png
+Allow: /logo-*.svg
+Allow: /logo-*.png
 
-# Allow social media crawlers for rich previews
+# ============================================================
+# AI Crawlers - Specific Rules
+# ============================================================
+
+# Google AI (Gemini/Bard)
+User-agent: Google-Extended
+Allow: /
+Crawl-delay: 5
+
+# OpenAI GPTBot
+User-agent: GPTBot
+Allow: /
+Crawl-delay: 10
+
+# OpenAI ChatGPT User
+User-agent: ChatGPT-User
+Allow: /
+Crawl-delay: 10
+
+# Anthropic Claude
+User-agent: anthropic-ai
+Allow: /
+Crawl-delay: 10
+
+User-agent: Claude-Web
+Allow: /
+Crawl-delay: 10
+
+# Microsoft Copilot/Bing Chat
+User-agent: Copilot
+Allow: /
+Crawl-delay: 10
+
+# Common Crawl
+User-agent: CCBot
+Allow: /
+Crawl-delay: 30
+
+# Perplexity AI
+User-agent: PerplexityBot
+Allow: /
+Crawl-delay: 15
+
+# Cohere AI
+User-agent: cohere-ai
+Allow: /
+Crawl-delay: 15
+
+# Meta AI
+User-agent: Meta-ExternalAgent
+Allow: /
+Crawl-delay: 10
+
+User-agent: FacebookBot
+Allow: /
+Crawl-delay: 10
+
+# Hugging Face
+User-agent: HuggingFaceBot
+Allow: /
+Crawl-delay: 15
+
+# Bytedance (TikTok/Douyin AI)
+User-agent: Bytespider
+Allow: /
+Crawl-delay: 20
+
+# Yandex
+User-agent: YandexBot
+Allow: /
+Crawl-delay: 5
+
+User-agent: YandexImages
+Allow: /
+Crawl-delay: 5
+
+# ============================================================
+# Traditional Search Engines
+# ============================================================
+
+# Google
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Googlebot-Image
+Allow: /
+Crawl-delay: 0
+
+User-agent: Googlebot-Video
+Allow: /
+Crawl-delay: 0
+
+# Bing
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+User-agent: msnbot
+Allow: /
+Crawl-delay: 1
+
+# DuckDuckGo
+User-agent: DuckDuckBot
+Allow: /
+Crawl-delay: 2
+
+# Baidu
+User-agent: Baiduspider
+Allow: /
+Crawl-delay: 5
+
+# ============================================================
+# Block Aggressive/Unwanted Bots
+# ============================================================
+
+# SEMrush bot - too aggressive
+User-agent: SemrushBot
+Disallow: /
+Crawl-delay: 60
+
+# Ahrefs bot - too aggressive
+User-agent: AhrefsBot
+Disallow: /
+Crawl-delay: 60
+
+# MJ12bot (Majestic)
+User-agent: MJ12bot
+Disallow: /
+
+# DotBot
+User-agent: DotBot
+Disallow: /
+
+# MegaIndex
+User-agent: MegaIndex.ru
+Disallow: /
+
+# ============================================================
+# Social Media Crawlers
+# ============================================================
+
+# Twitter/X
 User-agent: Twitterbot
 Allow: /
 
-User-agent: facebookexternalhit
-Allow: /
-
+# LinkedIn
 User-agent: LinkedInBot
 Allow: /
 
+# Pinterest
+User-agent: Pinterest
+Allow: /
+
+# Slack
 User-agent: Slackbot
 Allow: /
 
-User-agent: WhatsApp
+# Discord
+User-agent: Discordbot
 Allow: /
 
+# Telegram
 User-agent: TelegramBot
 Allow: /
 
-# Allow AI search engines for better AI search visibility
-User-agent: ChatGPT-User
+# WhatsApp
+User-agent: WhatsApp
 Allow: /
-
-User-agent: GPTBot
-Allow: /
-
-User-agent: Anthropic-AI
-Allow: /
-
-User-agent: PerplexityBot
-Allow: /
-
-User-agent: Google-Extended
-Allow: /
-
-# Crawl delay for aggressive bots (prevents server overload)
-User-agent: AhrefsBot
-Crawl-delay: 10
-
-User-agent: SemrushBot
-Crawl-delay: 10
-
-User-agent: MJ12bot
-Crawl-delay: 10
-
-User-agent: DotBot
-Crawl-delay: 10

@@ -781,51 +781,76 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       >
         <div className="container mx-auto px-4 py-8">
           {/* Footer Links Grid - SEO optimized internal linking */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-8 text-sm">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 mb-8 text-sm">
             {/* Typing Tests Column */}
             <div>
               <h3 className="font-semibold text-foreground mb-3 text-xs uppercase tracking-wider">Typing Tests</h3>
-              <nav className="space-y-2">
+              <nav className="space-y-2" aria-label="Typing tests">
                 <Link href="/" className="block text-muted-foreground hover:text-primary transition-colors">Free Typing Test</Link>
+                <Link href="/wpm-test" className="block text-muted-foreground hover:text-primary transition-colors">WPM Test</Link>
                 <Link href="/1-minute-typing-test" className="block text-muted-foreground hover:text-primary transition-colors">1 Minute Test</Link>
                 <Link href="/3-minute-typing-test" className="block text-muted-foreground hover:text-primary transition-colors">3 Minute Test</Link>
                 <Link href="/5-minute-typing-test" className="block text-muted-foreground hover:text-primary transition-colors">5 Minute Test</Link>
+                <Link href="/keyboard-test" className="block text-muted-foreground hover:text-primary transition-colors">Keyboard Test</Link>
+              </nav>
+            </div>
+            
+            {/* Practice Column */}
+            <div>
+              <h3 className="font-semibold text-foreground mb-3 text-xs uppercase tracking-wider">Practice</h3>
+              <nav className="space-y-2" aria-label="Practice modes">
+                <Link href="/typing-practice" className="block text-muted-foreground hover:text-primary transition-colors">Typing Practice</Link>
                 <Link href="/code-mode" className="block text-muted-foreground hover:text-primary transition-colors">Code Typing</Link>
-              </nav>
-            </div>
-            
-            {/* Features Column */}
-            <div>
-              <h3 className="font-semibold text-foreground mb-3 text-xs uppercase tracking-wider">Features</h3>
-              <nav className="space-y-2">
-                <Link href="/multiplayer" className="block text-muted-foreground hover:text-primary transition-colors">Multiplayer Race</Link>
-                <Link href="/stress-test" className="block text-muted-foreground hover:text-primary transition-colors">Stress Test</Link>
+                <Link href="/typing-games" className="block text-muted-foreground hover:text-primary transition-colors">Typing Games</Link>
                 <Link href="/dictation-mode" className="block text-muted-foreground hover:text-primary transition-colors">Dictation Mode</Link>
-                <Link href="/analytics" className="block text-muted-foreground hover:text-primary transition-colors">Analytics</Link>
-                <Link href="/leaderboard" className="block text-muted-foreground hover:text-primary transition-colors">Leaderboard</Link>
+                <Link href="/stress-test" className="block text-muted-foreground hover:text-primary transition-colors">Stress Test</Link>
               </nav>
             </div>
             
-            {/* Resources Column */}
+            {/* Compete Column */}
             <div>
-              <h3 className="font-semibold text-foreground mb-3 text-xs uppercase tracking-wider">Resources</h3>
-              <nav className="space-y-2">
+              <h3 className="font-semibold text-foreground mb-3 text-xs uppercase tracking-wider">Compete</h3>
+              <nav className="space-y-2" aria-label="Competition features">
+                <Link href="/multiplayer" className="block text-muted-foreground hover:text-primary transition-colors">Multiplayer Race</Link>
+                <Link href="/leaderboard" className="block text-muted-foreground hover:text-primary transition-colors">Leaderboard</Link>
+                <Link href="/code-leaderboard" className="block text-muted-foreground hover:text-primary transition-colors">Code Leaderboard</Link>
+                <Link href="/stress-leaderboard" className="block text-muted-foreground hover:text-primary transition-colors">Stress Leaderboard</Link>
+                <Link href="/typing-certificate" className="block text-muted-foreground hover:text-primary transition-colors">Typing Certificate</Link>
+              </nav>
+            </div>
+            
+            {/* Learn Column */}
+            <div>
+              <h3 className="font-semibold text-foreground mb-3 text-xs uppercase tracking-wider">Learn</h3>
+              <nav className="space-y-2" aria-label="Learning resources">
                 <Link href="/learn" className="block text-muted-foreground hover:text-primary transition-colors">Learn Touch Typing</Link>
                 <Link href="/faq" className="block text-muted-foreground hover:text-primary transition-colors">FAQ</Link>
                 <Link href="/chat" className="block text-muted-foreground hover:text-primary transition-colors">AI Typing Coach</Link>
+                <Link href="/analytics" className="block text-muted-foreground hover:text-primary transition-colors">Typing Analytics</Link>
                 <Link href="/verify" className="block text-muted-foreground hover:text-primary transition-colors">Verify Certificate</Link>
-                <Link href="/about" className="block text-muted-foreground hover:text-primary transition-colors">About Us</Link>
               </nav>
             </div>
             
             {/* Compare Column */}
             <div>
               <h3 className="font-semibold text-foreground mb-3 text-xs uppercase tracking-wider">Compare</h3>
-              <nav className="space-y-2">
-                <Link href="/monkeytype-alternative" className="block text-muted-foreground hover:text-primary transition-colors">Monkeytype Alternative</Link>
-                <Link href="/typeracer-alternative" className="block text-muted-foreground hover:text-primary transition-colors">Typeracer Alternative</Link>
-                <Link href="/10fastfingers-alternative" className="block text-muted-foreground hover:text-primary transition-colors">10FastFingers Alternative</Link>
-                <Link href="/typingcom-alternative" className="block text-muted-foreground hover:text-primary transition-colors">Typing.com Alternative</Link>
+              <nav className="space-y-2" aria-label="Alternative comparisons">
+                <Link href="/monkeytype-alternative" className="block text-muted-foreground hover:text-primary transition-colors">vs Monkeytype</Link>
+                <Link href="/typeracer-alternative" className="block text-muted-foreground hover:text-primary transition-colors">vs Typeracer</Link>
+                <Link href="/10fastfingers-alternative" className="block text-muted-foreground hover:text-primary transition-colors">vs 10FastFingers</Link>
+                <Link href="/typingcom-alternative" className="block text-muted-foreground hover:text-primary transition-colors">vs Typing.com</Link>
+              </nav>
+            </div>
+            
+            {/* Company Column */}
+            <div>
+              <h3 className="font-semibold text-foreground mb-3 text-xs uppercase tracking-wider">Company</h3>
+              <nav className="space-y-2" aria-label="Company information">
+                <Link href="/about" className="block text-muted-foreground hover:text-primary transition-colors">About Us</Link>
+                <Link href="/contact" className="block text-muted-foreground hover:text-primary transition-colors">Contact</Link>
+                <Link href="/privacy-policy" className="block text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link>
+                <Link href="/terms-of-service" className="block text-muted-foreground hover:text-primary transition-colors">Terms of Service</Link>
+                <Link href="/accessibility" className="block text-muted-foreground hover:text-primary transition-colors">Accessibility</Link>
               </nav>
             </div>
           </div>

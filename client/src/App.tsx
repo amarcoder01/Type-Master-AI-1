@@ -64,6 +64,13 @@ const AITransparency = lazy(() => import("@/pages/ai-transparency"));
 const AccessibilityStatement = lazy(() => import("@/pages/accessibility"));
 const FAQ = lazy(() => import("@/pages/faq"));
 
+// New SEO landing pages
+const TypingPractice = lazy(() => import("@/pages/typing-practice"));
+const WPMTest = lazy(() => import("@/pages/wpm-test"));
+const TypingGames = lazy(() => import("@/pages/typing-games"));
+const KeyboardTest = lazy(() => import("@/pages/keyboard-test"));
+const TypingCertificate = lazy(() => import("@/pages/typing-certificate"));
+
 // Loading component for Suspense fallback
 function PageLoader() {
   return (
@@ -99,6 +106,11 @@ function Router() {
                 <Route path="/typeracer-alternative" component={TyperacerAlternative} />
                 <Route path="/10fastfingers-alternative" component={TenFastFingersAlternative} />
                 <Route path="/typingcom-alternative" component={TypingComAlternative} />
+                <Route path="/typing-practice" component={TypingPractice} />
+                <Route path="/wpm-test" component={WPMTest} />
+                <Route path="/typing-games" component={TypingGames} />
+                <Route path="/keyboard-test" component={KeyboardTest} />
+                <Route path="/typing-certificate" component={TypingCertificate} />
                 <Route path="/profile" component={Profile} />
                 <Route path="/profile/edit" component={ProfileEdit} />
                 <Route path="/leaderboard" component={Leaderboard} />

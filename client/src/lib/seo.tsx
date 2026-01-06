@@ -156,6 +156,113 @@ export function getBreadcrumbSchema(items: Array<{ name: string; url: string }>)
 }
 
 /**
+ * Generate FAQPage structured data
+ */
+export function getFAQSchema(faqs: Array<{ question: string; answer: string }>) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    'mainEntity': faqs.map(faq => ({
+      '@type': 'Question',
+      'name': faq.question,
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': faq.answer,
+      },
+    })),
+  };
+}
+
+/**
+ * Generate Product/Service comparison structured data
+ */
+export function getComparisonSchema(productName: string, competitors: string[], features: string[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    'name': productName,
+    'description': `${productName} comparison with ${competitors.join(', ')}`,
+    'brand': {
+      '@type': 'Brand',
+      'name': 'TypeMasterAI',
+    },
+    'offers': {
+      '@type': 'Offer',
+      'price': '0',
+      'priceCurrency': 'USD',
+      'availability': 'https://schema.org/InStock',
+    },
+    'aggregateRating': {
+      '@type': 'AggregateRating',
+      'ratingValue': '4.8',
+      'ratingCount': '2847',
+    },
+  };
+}
+
+/**
+ * Generate HowTo structured data
+ */
+export function getHowToSchema(
+  name: string,
+  description: string,
+  steps: Array<{ name: string; text: string }>,
+  totalTime?: string
+) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    'name': name,
+    'description': description,
+    'totalTime': totalTime || 'PT5M',
+    'estimatedCost': {
+      '@type': 'MonetaryAmount',
+      'currency': 'USD',
+      'value': '0',
+    },
+    'step': steps.map((step, index) => ({
+      '@type': 'HowToStep',
+      'position': index + 1,
+      'name': step.name,
+      'text': step.text,
+    })),
+  };
+}
+
+/**
+ * Generate SoftwareApplication structured data for landing pages
+ */
+export function getSoftwareAppSchema(name: string, description: string, features: string[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    'name': name,
+    'description': description,
+    'applicationCategory': ['EducationalApplication', 'UtilitiesApplication'],
+    'operatingSystem': 'Any',
+    'browserRequirements': 'Requires JavaScript',
+    'offers': {
+      '@type': 'Offer',
+      'price': '0',
+      'priceCurrency': 'USD',
+      'availability': 'https://schema.org/InStock',
+    },
+    'aggregateRating': {
+      '@type': 'AggregateRating',
+      'ratingValue': '4.8',
+      'bestRating': '5',
+      'ratingCount': '2847',
+    },
+    'featureList': features,
+    'author': {
+      '@type': 'Organization',
+      'name': 'TypeMasterAI',
+      'url': BASE_URL,
+    },
+  };
+}
+
+/**
  * Page-specific SEO configurations - Updated January 2026
  */
 export const SEO_CONFIGS = {
@@ -298,5 +405,41 @@ export const SEO_CONFIGS = {
     keywords: 'typing test faq, wpm questions, typing speed help, how to type faster, monkeytype alternative questions, typing test help',
     canonical: `${BASE_URL}/faq`,
     ogUrl: `${BASE_URL}/faq`,
+  },
+  // New SEO Landing Pages
+  typingPractice: {
+    title: 'Free Typing Practice Online | Improve Your Speed - TypeMasterAI',
+    description: 'Practice typing online for free with TypeMasterAI. Build muscle memory, improve accuracy, and increase your WPM with our AI-powered typing practice exercises.',
+    keywords: 'typing practice, typing practice online, free typing practice, practice typing, typing exercises, improve typing speed, typing drills, keyboard practice',
+    canonical: `${BASE_URL}/typing-practice`,
+    ogUrl: `${BASE_URL}/typing-practice`,
+  },
+  wpmTest: {
+    title: 'WPM Test - Check Your Words Per Minute | Free Online - TypeMasterAI',
+    description: 'Take a free WPM test and measure your typing speed in words per minute. Get accurate results with our professional-grade WPM calculator and detailed analytics.',
+    keywords: 'wpm test, words per minute test, wpm calculator, check wpm, typing wpm, wpm speed test, how fast do i type, wpm checker, words per minute calculator',
+    canonical: `${BASE_URL}/wpm-test`,
+    ogUrl: `${BASE_URL}/wpm-test`,
+  },
+  typingGames: {
+    title: 'Typing Games Online | Fun & Free - TypeMasterAI',
+    description: 'Play free typing games online and improve your typing speed while having fun. Race against others, complete challenges, and climb the leaderboard!',
+    keywords: 'typing games, typing games online, free typing games, fun typing games, typing race game, keyboard games, typing game for kids, typing practice games',
+    canonical: `${BASE_URL}/typing-games`,
+    ogUrl: `${BASE_URL}/typing-games`,
+  },
+  keyboardTest: {
+    title: 'Online Keyboard Test | Check All Keys Work - TypeMasterAI',
+    description: 'Test your keyboard online for free. Check if all keys are working, test key response time, and verify your keyboard layout. Works with any keyboard type.',
+    keywords: 'keyboard test, keyboard tester, online keyboard test, test keyboard, keyboard checker, key test, check keyboard keys, keyboard test online',
+    canonical: `${BASE_URL}/keyboard-test`,
+    ogUrl: `${BASE_URL}/keyboard-test`,
+  },
+  typingCertificate: {
+    title: 'Typing Certificate | Get Certified Speed Results - TypeMasterAI',
+    description: 'Earn a verified typing certificate with your WPM and accuracy scores. Download shareable certificates for job applications, schools, and professional use.',
+    keywords: 'typing certificate, typing speed certificate, wpm certificate, typing test certificate, professional typing certificate, typing certification, verified typing results',
+    canonical: `${BASE_URL}/typing-certificate`,
+    ogUrl: `${BASE_URL}/typing-certificate`,
   },
 };

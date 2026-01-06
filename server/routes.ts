@@ -358,6 +358,91 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.status(401).json({ message: "Unauthorized" });
   }
 
+  // ============================================================================
+  // DYNAMIC SITEMAP ROUTES FOR SEO
+  // ============================================================================
+  
+  const { 
+    generateMainSitemap, 
+    generateSharedResultsSitemap, 
+    generateCertificatesSitemap, 
+    generateSitemapIndex,
+    generateImagesSitemap 
+  } = await import('./sitemap-generator');
+
+  const { getIndexNowKey, getIndexNowKeyFileContent } = await import('./indexnow-service');
+
+  // IndexNow key verification file
+  app.get(`/${getIndexNowKey()}.txt`, (_req, res) => {
+    res.set('Content-Type', 'text/plain');
+    res.send(getIndexNowKeyFileContent());
+  });
+
+  // Sitemap index - main entry point for search engines
+  app.get("/sitemap.xml", async (_req, res) => {
+    try {
+      const sitemap = generateSitemapIndex();
+      res.set('Content-Type', 'application/xml');
+      res.set('Cache-Control', 'public, max-age=3600'); // 1 hour cache
+      res.send(sitemap);
+    } catch (error) {
+      console.error('[Sitemap] Error generating sitemap index:', error);
+      res.status(500).send('Error generating sitemap');
+    }
+  });
+
+  // Main pages sitemap
+  app.get("/sitemap-pages.xml", async (_req, res) => {
+    try {
+      const sitemap = await generateMainSitemap();
+      res.set('Content-Type', 'application/xml');
+      res.set('Cache-Control', 'public, max-age=3600');
+      res.send(sitemap);
+    } catch (error) {
+      console.error('[Sitemap] Error generating pages sitemap:', error);
+      res.status(500).send('Error generating sitemap');
+    }
+  });
+
+  // Shared results sitemap
+  app.get("/sitemap-shared.xml", async (_req, res) => {
+    try {
+      const sitemap = await generateSharedResultsSitemap();
+      res.set('Content-Type', 'application/xml');
+      res.set('Cache-Control', 'public, max-age=3600');
+      res.send(sitemap);
+    } catch (error) {
+      console.error('[Sitemap] Error generating shared results sitemap:', error);
+      res.status(500).send('Error generating sitemap');
+    }
+  });
+
+  // Certificates sitemap
+  app.get("/sitemap-certificates.xml", async (_req, res) => {
+    try {
+      const sitemap = await generateCertificatesSitemap();
+      res.set('Content-Type', 'application/xml');
+      res.set('Cache-Control', 'public, max-age=3600');
+      res.send(sitemap);
+    } catch (error) {
+      console.error('[Sitemap] Error generating certificates sitemap:', error);
+      res.status(500).send('Error generating sitemap');
+    }
+  });
+
+  // Images sitemap
+  app.get("/sitemap-images.xml", async (_req, res) => {
+    try {
+      const sitemap = generateImagesSitemap();
+      res.set('Content-Type', 'application/xml');
+      res.set('Cache-Control', 'public, max-age=86400'); // 24 hour cache
+      res.send(sitemap);
+    } catch (error) {
+      console.error('[Sitemap] Error generating images sitemap:', error);
+      res.status(500).send('Error generating sitemap');
+    }
+  });
+
   app.get("/api/health", (_req, res) => {
     res.status(200).json({
       status: "ok",

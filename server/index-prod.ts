@@ -24,44 +24,68 @@ const CACHE_DURATIONS = {
   seo: 86400,
 };
 
+const BASE_URL = 'https://typemaster-ai.replit.app';
+
 /**
  * Middleware to add optimal cache headers based on file type
  * This improves page load performance and Core Web Vitals scores
  */
 function cacheHeadersMiddleware(req: Request, res: Response, next: NextFunction) {
   const url = req.url;
+  const cleanPath = url.split('?')[0]; // Remove query string for path matching
   
   // Immutable hashed assets (JS/CSS with hash in filename)
   if (url.match(/\.(js|css)$/) && url.includes('-')) {
     res.set('Cache-Control', `public, max-age=${CACHE_DURATIONS.immutable}, immutable`);
   }
   // Static assets (images, fonts, icons)
-  else if (url.match(/\.(png|jpg|jpeg|gif|webp|svg|ico|woff|woff2|ttf|eot)$/i)) {
+  else if (url.match(/\.(png|jpg|jpeg|gif|webp|avif|svg|ico|woff|woff2|ttf|eot)$/i)) {
     res.set('Cache-Control', `public, max-age=${CACHE_DURATIONS.static}`);
+    // Add content-type for images to improve performance
+    if (url.match(/\.(jpg|jpeg)$/i)) {
+      res.set('Content-Type', 'image/jpeg');
+    } else if (url.match(/\.webp$/i)) {
+      res.set('Content-Type', 'image/webp');
+    }
   }
   // Service worker - shorter cache for updates
   else if (url === '/service-worker.js') {
     res.set('Cache-Control', `public, max-age=${CACHE_DURATIONS.serviceWorker}`);
   }
-  // SEO files (sitemap, robots)
-  else if (url.match(/\.(xml|txt)$/) && (url.includes('sitemap') || url.includes('robots'))) {
+  // SEO files (sitemap, robots, IndexNow key)
+  else if (url.match(/\.(xml|txt)$/) && (url.includes('sitemap') || url.includes('robots') || url.includes('indexnow'))) {
     res.set('Cache-Control', `public, max-age=${CACHE_DURATIONS.seo}`);
   }
   // Manifest file - moderate cache
   else if (url === '/manifest.json') {
     res.set('Cache-Control', `public, max-age=${CACHE_DURATIONS.seo}`);
   }
-  // HTML - no cache to ensure fresh content
+  // HTML - no cache to ensure fresh content, but add SEO headers
   else if (url.match(/\.html$/) || url === '/' || !url.includes('.')) {
     res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.set('Pragma', 'no-cache');
     res.set('Expires', '0');
+    
+    // Add canonical Link header for SEO
+    res.set('Link', `<${BASE_URL}${cleanPath}>; rel="canonical"`);
+    
+    // Add X-Robots-Tag for proper indexing
+    res.set('X-Robots-Tag', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
   }
   
   // Add security headers for all responses
   res.set('X-Content-Type-Options', 'nosniff');
   res.set('X-Frame-Options', 'SAMEORIGIN');
   res.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  
+  // Add performance hints
+  res.set('X-DNS-Prefetch-Control', 'on');
+  
+  // Add preconnect hints via Link header for external resources
+  if (!url.includes('.')) {
+    res.append('Link', '<https://fonts.googleapis.com>; rel="preconnect"');
+    res.append('Link', '<https://fonts.gstatic.com>; rel="preconnect"; crossorigin');
+  }
   
   next();
 }

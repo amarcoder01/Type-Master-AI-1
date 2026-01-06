@@ -234,6 +234,42 @@ export const SEO_ROUTES: Record<string, SEORouteConfig> = {
     canonical: `${BASE_URL}/verify`,
     ogType: 'website',
   },
+  // New SEO Landing Pages
+  '/typing-practice': {
+    title: 'Free Typing Practice Online | Improve Your Speed - TypeMasterAI',
+    description: 'Practice typing online for free with TypeMasterAI. Build muscle memory, improve accuracy, and increase your WPM with our AI-powered typing practice exercises.',
+    keywords: 'typing practice, typing practice online, free typing practice, practice typing, typing exercises, improve typing speed, typing drills, keyboard practice',
+    canonical: `${BASE_URL}/typing-practice`,
+    ogType: 'website',
+  },
+  '/wpm-test': {
+    title: 'WPM Test - Check Your Words Per Minute | Free Online - TypeMasterAI',
+    description: 'Take a free WPM test and measure your typing speed in words per minute. Get accurate results with our professional-grade WPM calculator and detailed analytics.',
+    keywords: 'wpm test, words per minute test, wpm calculator, check wpm, typing wpm, wpm speed test, how fast do i type, wpm checker, words per minute calculator',
+    canonical: `${BASE_URL}/wpm-test`,
+    ogType: 'website',
+  },
+  '/typing-games': {
+    title: 'Typing Games Online | Fun & Free - TypeMasterAI',
+    description: 'Play free typing games online and improve your typing speed while having fun. Race against others, complete challenges, and climb the leaderboard!',
+    keywords: 'typing games, typing games online, free typing games, fun typing games, typing race game, keyboard games, typing game for kids, typing practice games',
+    canonical: `${BASE_URL}/typing-games`,
+    ogType: 'website',
+  },
+  '/keyboard-test': {
+    title: 'Online Keyboard Test | Check All Keys Work - TypeMasterAI',
+    description: 'Test your keyboard online for free. Check if all keys are working, test key response time, and verify your keyboard layout. Works with any keyboard type.',
+    keywords: 'keyboard test, keyboard tester, online keyboard test, test keyboard, keyboard checker, key test, check keyboard keys, keyboard test online',
+    canonical: `${BASE_URL}/keyboard-test`,
+    ogType: 'website',
+  },
+  '/typing-certificate': {
+    title: 'Typing Certificate | Get Certified Speed Results - TypeMasterAI',
+    description: 'Earn a verified typing certificate with your WPM and accuracy scores. Download shareable certificates for job applications, schools, and professional use.',
+    keywords: 'typing certificate, typing speed certificate, wpm certificate, typing test certificate, professional typing certificate, typing certification, verified typing results',
+    canonical: `${BASE_URL}/typing-certificate`,
+    ogType: 'website',
+  },
   // Noindex pages
   '/login': {
     title: 'Login | TypeMasterAI',
