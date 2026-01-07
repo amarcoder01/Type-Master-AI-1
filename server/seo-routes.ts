@@ -389,9 +389,23 @@ export const SEO_ROUTES: Record<string, SEORouteConfig> = {
   // International (Pilot)
   '/es/typing-test': {
     title: 'Prueba de Mecanografía Gratis | Test de Velocidad - TypeMasterAI',
-    description: 'Comprueba tu velocidad de escritura en español. Test de mecanografía de 1 minuto con certificado WPM gratis.',
-    keywords: 'prueba mecanografia, test velocidad escritura, typing test español, wpm español',
+    description: 'Comprueba tu velocidad de escritura en español con nuestra prueba de mecanografía gratuita de 1 minuto. Calcula tu WPM (palabras por minuto) y mejora tu precisión.',
+    keywords: 'prueba de mecanografía, test de velocidad, test de escritura, mecanografia online gratis, typing test español, wpm español',
     canonical: `${BASE_URL}/es/typing-test`,
+    ogType: 'website',
+  },
+  '/fr/typing-test': {
+    title: 'Test de Dactylo Gratuit | Test de Vitesse - TypeMasterAI',
+    description: 'Vérifiez votre vitesse de frappe en français avec notre test de dactylo gratuit d\'une minute. Calculez vos MPM (mots par minute) et améliorez votre précision.',
+    keywords: 'test de dactylo, test de vitesse, test d’écriture, dactylographie en ligne gratuit, typing test français, mpm français',
+    canonical: `${BASE_URL}/fr/typing-test`,
+    ogType: 'website',
+  },
+  '/de/typing-test': {
+    title: 'Kostenloser Schreibtest | Tippgeschwindigkeit - TypeMasterAI',
+    description: 'Überprüfen Sie Ihre Tippgeschwindigkeit auf Deutsch mit unserem kostenlosen 1-Minuten-Schreibtest. Berechnen Sie Ihre WpM (Wörter pro Minute) und verbessern Sie Ihre Genauigkeit.',
+    keywords: 'schreibtest, tippgeschwindigkeit test, schreibgeschwindigkeit, kostenloser schreibtest online, typing test deutsch, wpm deutsch',
+    canonical: `${BASE_URL}/de/typing-test`,
     ogType: 'website',
   },
   // Noindex pages

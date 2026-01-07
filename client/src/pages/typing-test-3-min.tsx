@@ -4,6 +4,7 @@ import { useSEO } from '@/lib/seo';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Breadcrumbs } from '@/components/breadcrumbs';
+import { AuthorBio } from '@/components/author-bio';
 
 export default function TypingTest3MinPage() {
   useSEO({
@@ -224,7 +225,7 @@ export default function TypingTest3MinPage() {
             </div>
 
             <h3 className="text-2xl font-bold text-white mt-8">Frequently Asked Questions</h3>
-            
+
             <h4 className="text-xl font-semibold text-cyan-400 mt-6">Is 3 minutes too long for a typing test?</h4>
             <p className="text-lg text-slate-300">
               No! 3 minutes is actually the sweet spot - long enough for accurate measurement but short enough to maintain focus. It's the standard used by employers and typing certification programs.
@@ -239,6 +240,8 @@ export default function TypingTest3MinPage() {
             <p className="text-lg text-slate-300">
               Accuracy first! A 3-minute test rewards consistency. It's better to type at 70 WPM with 98% accuracy than 90 WPM with 85% accuracy. Master accuracy first, then gradually increase speed.
             </p>
+
+            <AuthorBio />
 
             <div className="text-center mt-12">
               <Link href="/">
@@ -277,7 +280,7 @@ export default function TypingTest3MinPage() {
               </Card>
             </Link>
 
-            <Link href="/code-test">
+            <Link href="/code-mode">
               <Card className="bg-slate-800/50 border-slate-700 hover:border-cyan-500 transition-colors cursor-pointer" data-testid="card-code-test">
                 <CardHeader>
                   <CardTitle className="text-white">Code Typing Test</CardTitle>

@@ -138,7 +138,7 @@ function addStructuredData(data: object) {
 }
 
 // Base URL for canonical URLs and structured data
-const BASE_URL = 'https://typemasterai.com';
+import { BASE_URL } from './config';
 
 // ============================================================================
 // CENTRALIZED KEYWORD CONFIGURATION - Authority Typing Platform

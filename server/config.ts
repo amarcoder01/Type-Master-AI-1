@@ -11,4 +11,8 @@ export const CSRF_ENABLED = (process.env.CSRF_ENABLED ?? "true") !== "false";
 export const SEO = {
   siteName: "TypeMasterAI",
   defaultOgImage: `${BASE_URL}/opengraph.jpg`,
+  verification: {
+    googleSiteVerification: process.env.GOOGLE_SITE_VERIFICATION || "",
+    bingSiteVerification: process.env.BING_SITE_VERIFICATION || "",
+  },
 };

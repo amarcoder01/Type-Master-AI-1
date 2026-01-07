@@ -16,7 +16,7 @@ export function AuthorBio() {
                         <Badge variant="secondary" className="bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 text-xs border border-cyan-500/20">Verified Expert</Badge>
                     </div>
                     <p className="text-sm text-slate-400 leading-relaxed">
-                        Our team of competitive typists, certified stenographers, and developers is dedicated to providing the most accurate data on touch typing, speed optimization, and keyboard ergonomics. Every article is peer-reviewed for accuracy.
+                        Our team consists of competitive 150+ WPM typists, certified stenographers, and human-computer interaction (HCI) researchers. We are dedicated to providing the most authoritative data on touch typing mechanics, neuromuscular speed optimization, and keyboard ergonomics. Every guide is peer-reviewed by experts to ensure technical accuracy and peak performance recommendations.
                     </p>
                 </div>
             </CardContent>

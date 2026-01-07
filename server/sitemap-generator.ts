@@ -48,6 +48,8 @@ const STATIC_PAGES: SitemapUrl[] = [
   { loc: '/touch-typing', lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.9' },
   { loc: '/keybr-alternative', lastmod: new Date().toISOString().split('T')[0], changefreq: 'weekly', priority: '0.9' },
   { loc: '/es/typing-test', lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.8' },
+  { loc: '/fr/typing-test', lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.8' },
+  { loc: '/de/typing-test', lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.8' },
 
   // Pillar-Cluster Content Pages (Topical Authority)
   { loc: '/what-is-wpm', lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.9' },
@@ -155,15 +157,7 @@ function escapeXml(text: string): string {
  * Generate the main sitemap with static pages
  */
 export async function generateMainSitemap(): Promise<string> {
-  const today = new Date().toISOString().split('T')[0];
-
-  // Update lastmod for all static pages to today
-  const updatedPages = STATIC_PAGES.map(page => ({
-    ...page,
-    lastmod: today,
-  }));
-
-  const urlElements = updatedPages.map(generateUrlElement).join('\n');
+  const urlElements = STATIC_PAGES.map(generateUrlElement).join('\n');
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -306,6 +300,8 @@ export function generateImagesSitemap(): string {
     { page: '/', image: '/opengraph.jpg', title: 'TypeMasterAI - Free Online Typing Speed Test' },
     { page: '/', image: '/icon-512x512.png', title: 'TypeMasterAI Logo' },
     { page: '/', image: '/logo-horizontal.svg', title: 'TypeMasterAI Horizontal Logo' },
+    { page: '/', image: '/icon-192x192.png', title: 'TypeMasterAI App Icon' },
+    { page: '/', image: '/favicon.png', title: 'TypeMasterAI Favicon' },
   ];
 
   const urlElements = images.map(img => `  <url>

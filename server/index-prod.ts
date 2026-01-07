@@ -6,6 +6,8 @@ import express, { type Express, type Request, type Response, type NextFunction }
 
 import runApp from "./app";
 import { createSEOPrerender } from "./seo-prerender";
+import { BASE_URL } from "./config";
+import { precompressAssets, servePrecompressed } from "./precompress";
 
 /**
  * Cache durations for different asset types (in seconds)
@@ -24,7 +26,10 @@ const CACHE_DURATIONS = {
   seo: 86400,
 };
 
-const BASE_URL = 'https://typemasterai.com';
+/**
+ * BASE_URL imported from env-driven config
+ */
+// BASE_URL is centralized in server/config.ts
 
 /**
  * Middleware to add optimal cache headers based on file type
@@ -33,6 +38,17 @@ const BASE_URL = 'https://typemasterai.com';
 function cacheHeadersMiddleware(req: Request, res: Response, next: NextFunction) {
   const url = req.url;
   const cleanPath = url.split('?')[0]; // Remove query string for path matching
+  const privateHtmlPaths = new Set<string>([
+    '/login',
+    '/register',
+    '/forgot-password',
+    '/reset-password',
+    '/verify-email',
+    '/admin',
+    '/settings',
+    '/notifications',
+    '/profile/edit',
+  ]);
 
   // Immutable hashed assets (JS/CSS with hash in filename)
   if (url.match(/\.(js|css)$/) && url.includes('-')) {
@@ -70,7 +86,9 @@ function cacheHeadersMiddleware(req: Request, res: Response, next: NextFunction)
     res.set('Link', `<${BASE_URL}${cleanPath}>; rel="canonical"`);
 
     // Add X-Robots-Tag for proper indexing
-    res.set('X-Robots-Tag', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
+    const defaultRobots = 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
+    const isPrivate = privateHtmlPaths.has(cleanPath);
+    res.set('X-Robots-Tag', isPrivate ? 'noindex, nofollow' : defaultRobots);
 
     // Add Content-Language header based on URL locale
     const isSpanish = cleanPath.startsWith('/es/');
@@ -108,6 +126,9 @@ export async function serveStatic(app: Express, server: Server) {
 
   // Add cache headers middleware before static file serving
   app.use(cacheHeadersMiddleware);
+
+  await precompressAssets(distPath);
+  app.use(servePrecompressed(distPath));
 
   // SEO Pre-rendering middleware for search engine crawlers
   // This injects proper meta tags for bots that don't execute JavaScript

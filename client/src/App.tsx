@@ -77,6 +77,8 @@ const KeybrAlternative = lazy(() => import("@/pages/keybr-alternative"));
 const TypingTestJobs = lazy(() => import("@/pages/typing-test-jobs"));
 const TouchTyping = lazy(() => import("@/pages/touch-typing"));
 const SpanishTypingTest = lazy(() => import("@/pages/es/typing-test"));
+const FrenchTypingTest = lazy(() => import("@/pages/fr/typing-test"));
+const GermanTypingTest = lazy(() => import("@/pages/de/typing-test"));
 const BlogIndex = lazy(() => import("@/blog/index"));
 const BlogPostPage = lazy(() => import("@/blog/post"));
 const BlogAdmin = lazy(() => import("@/blog-admin/index"));
@@ -150,6 +152,8 @@ function Router() {
                 <Route path="/typing-test-jobs" component={TypingTestJobs} />
                 <Route path="/touch-typing" component={TouchTyping} />
                 <Route path="/es/typing-test" component={SpanishTypingTest} />
+                <Route path="/fr/typing-test" component={FrenchTypingTest} />
+                <Route path="/de/typing-test" component={GermanTypingTest} />
                 <Route path="/what-is-wpm" component={WhatIsWpm} />
                 <Route path="/how-to-type-faster" component={HowToTypeFaster} />
                 <Route path="/keyboard-layouts" component={KeyboardLayouts} />

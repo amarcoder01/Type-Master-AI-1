@@ -379,6 +379,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   const { getIndexNowKey, getIndexNowKeyFileContent, notifyBatchUrls, notifyNewCertificate, notifyLeaderboardUpdate } = await import('./indexnow-service');
 
+  app.post("/api/webvitals", async (req, res) => {
+    try {
+      const { name, value, id, url, ua, ts } = req.body || {};
+      if (typeof name !== 'string' || typeof value !== 'number') {
+        return res.status(200).json({ success: true });
+      }
+      console.log("[WebVitals]", JSON.stringify({ name, value, id, url, ua, ts }).slice(0, 500));
+      res.status(200).json({ success: true });
+    } catch {
+      res.status(200).json({ success: true });
+    }
+  });
   // IndexNow key verification file
   app.get(`/${getIndexNowKey()}.txt`, (_req, res) => {
     res.set('Content-Type', 'text/plain');
@@ -461,6 +473,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).send('Error generating sitemap');
     }
   });
+
+  const { handleOgImage } = await import('./og-image');
+  app.get("/og-image", handleOgImage);
 
   app.get("/api/health", (_req, res) => {
     res.status(200).json({

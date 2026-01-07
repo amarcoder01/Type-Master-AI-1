@@ -8,13 +8,14 @@ import rehypeKatex from "rehype-katex";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { 
-  AuthorCard, 
-  BlogCard, 
-  ShareButtons, 
-  TableOfContents, 
-  ReadingProgress 
+import {
+  AuthorCard,
+  BlogCard,
+  ShareButtons,
+  TableOfContents,
+  ReadingProgress
 } from "./components";
+import { AuthorBio } from "@/components/author-bio";
 import { ArrowLeft, Calendar, Clock, Eye, Copy, Check } from "lucide-react";
 
 interface BlogPost {
@@ -61,10 +62,10 @@ export default function BlogPostPage() {
         const data = await res.json();
         setPost(data.post || null);
         setRelated((data.related || []).slice(0, 4));
-        
+
         // Record view
         if (data.post) {
-          fetch(`/api/blog/post/${slug}/view`, { method: "POST" }).catch(() => {});
+          fetch(`/api/blog/post/${slug}/view`, { method: "POST" }).catch(() => { });
         }
       } catch (err) {
         if ((err as Error).name !== 'AbortError') {
@@ -74,7 +75,7 @@ export default function BlogPostPage() {
       }
       setLoading(false);
     };
-    
+
     if (slug) fetchPost();
     return () => controller.abort();
   }, [slug]);
@@ -148,7 +149,7 @@ export default function BlogPostPage() {
     pre: ({ children }: any) => {
       const codeElement = children?.props;
       const code = codeElement?.children || "";
-      
+
       return (
         <div className="relative group">
           <pre className="!mt-0">{children}</pre>
@@ -221,7 +222,7 @@ export default function BlogPostPage() {
   return (
     <>
       <ReadingProgress contentRef={contentRef} />
-      
+
       <article className="max-w-4xl mx-auto">
         {/* Back link */}
         <Link href="/blog">
@@ -236,7 +237,7 @@ export default function BlogPostPage() {
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-4">
             {post.title}
           </h1>
-          
+
           {post.excerpt && (
             <p className="text-xl text-muted-foreground leading-relaxed">
               {post.excerpt}
@@ -283,7 +284,7 @@ export default function BlogPostPage() {
         {/* Content with TOC */}
         <div className="lg:grid lg:grid-cols-[1fr_200px] lg:gap-8">
           {/* Main content */}
-          <section 
+          <section
             ref={contentRef}
             className="prose prose-lg dark:prose-invert max-w-none
               prose-headings:scroll-mt-20
@@ -295,8 +296,8 @@ export default function BlogPostPage() {
               prose-blockquote:border-l-primary
             "
           >
-            <ReactMarkdown 
-              remarkPlugins={[remarkGfm, remarkMath]} 
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm, remarkMath]}
               rehypePlugins={[rehypeKatex]}
               components={markdownComponents}
             >
@@ -314,7 +315,7 @@ export default function BlogPostPage() {
 
         {/* Author Card */}
         <div className="mt-12">
-          <AuthorCard 
+          <AuthorCard
             author={{
               name: post.authorName,
               bio: post.authorBio,
@@ -322,6 +323,11 @@ export default function BlogPostPage() {
             }}
             publishedAt={post.publishedAt}
           />
+        </div>
+
+        {/* Global Editorial Bio for E-E-A-T */}
+        <div className="mt-8">
+          <AuthorBio />
         </div>
 
         {/* Share again at bottom */}
