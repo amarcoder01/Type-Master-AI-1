@@ -1,7 +1,7 @@
 import React from 'react';
-import { 
-  ChevronRight, 
-  RotateCcw, 
+import {
+  ChevronRight,
+  RotateCcw,
   Lightbulb,
   Sparkles,
   Award,
@@ -55,7 +55,7 @@ export function DictationResults({
   onReplay,
 }: DictationResultsProps) {
   const grade = getAccuracyGrade(result.accuracy);
-  
+
   return (
     <div className="space-y-6">
       {/* Main stats */}
@@ -67,7 +67,7 @@ export function DictationResults({
             </div>
             <p className="text-lg text-muted-foreground">{grade.message}</p>
           </div>
-          
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <Tooltip>
               <TooltipTrigger asChild>
@@ -82,7 +82,7 @@ export function DictationResults({
                 <p>{result.correctWords}/{result.totalWords} words correct</p>
               </TooltipContent>
             </Tooltip>
-            
+
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="text-center p-3 bg-blue-500/10 rounded-lg cursor-help">
@@ -96,7 +96,7 @@ export function DictationResults({
                 <p>Words per minute</p>
               </TooltipContent>
             </Tooltip>
-            
+
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="text-center p-3 bg-orange-500/10 rounded-lg cursor-help">
@@ -110,7 +110,7 @@ export function DictationResults({
                 <p>Word errors (missing, extra, or incorrect)</p>
               </TooltipContent>
             </Tooltip>
-            
+
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="text-center p-3 bg-muted rounded-lg cursor-help">
@@ -125,7 +125,7 @@ export function DictationResults({
               </TooltipContent>
             </Tooltip>
           </div>
-          
+
           {/* Additional stats */}
           <div className="flex justify-center gap-4 text-sm text-muted-foreground">
             <span className="flex items-center gap-1">
@@ -141,15 +141,14 @@ export function DictationResults({
           </div>
         </CardContent>
       </Card>
-      
+
       {/* Coaching tip */}
       {coachingTip && (
-        <Card className={`border-l-4 ${
-          coachingTip.type === 'achievement' ? 'border-l-yellow-500 bg-yellow-500/5' :
-          coachingTip.type === 'encouragement' ? 'border-l-green-500 bg-green-500/5' :
-          coachingTip.type === 'improvement' ? 'border-l-blue-500 bg-blue-500/5' :
-          'border-l-orange-500 bg-orange-500/5'
-        }`}>
+        <Card className={`border-l-4 ${coachingTip.type === 'achievement' ? 'border-l-yellow-500 bg-yellow-500/5' :
+            coachingTip.type === 'encouragement' ? 'border-l-green-500 bg-green-500/5' :
+              coachingTip.type === 'improvement' ? 'border-l-blue-500 bg-blue-500/5' :
+                'border-l-orange-500 bg-orange-500/5'
+          }`}>
           <CardContent className="py-4">
             <div className="flex items-center gap-3">
               {COACHING_ICONS[coachingTip.type]}
@@ -158,18 +157,18 @@ export function DictationResults({
           </CardContent>
         </Card>
       )}
-      
+
       {/* Word-by-word breakdown */}
       <Card>
         <CardContent className="pt-6">
           <h3 className="text-sm font-medium mb-3">Word Comparison</h3>
-          
+
           {/* Original sentence */}
           <div className="mb-4">
             <p className="text-xs text-muted-foreground mb-1">Original:</p>
             <p className="font-mono text-sm bg-muted/50 p-3 rounded-lg">{sentence}</p>
           </div>
-          
+
           {/* Typed text with highlighting */}
           <div className="mb-4">
             <p className="text-xs text-muted-foreground mb-1">Your answer:</p>
@@ -177,23 +176,22 @@ export function DictationResults({
               {result.wordDiff.map((diff, idx) => (
                 <span
                   key={idx}
-                  className={`${
-                    diff.status === 'correct'
+                  className={`${diff.status === 'correct'
                       ? 'text-green-600 dark:text-green-400'
                       : diff.status === 'incorrect'
-                      ? 'text-red-600 dark:text-red-400 line-through'
-                      : diff.status === 'missing'
-                      ? 'text-yellow-600 dark:text-yellow-400 italic'
-                      : 'text-orange-600 dark:text-orange-400'
-                  }`}
+                        ? 'text-red-600 dark:text-red-400 line-through'
+                        : diff.status === 'missing'
+                          ? 'text-yellow-600 dark:text-yellow-400 italic'
+                          : 'text-orange-600 dark:text-orange-400'
+                    }`}
                   title={
                     diff.status === 'correct'
                       ? 'Correct'
                       : diff.status === 'incorrect'
-                      ? `Expected: ${diff.word}`
-                      : diff.status === 'missing'
-                      ? `Missing: ${diff.word}`
-                      : `Extra word`
+                        ? `Expected: ${diff.word}`
+                        : diff.status === 'missing'
+                          ? `Missing: ${diff.word}`
+                          : `Extra word`
                   }
                 >
                   {diff.status === 'missing' ? `[${diff.word}]` : diff.typedWord || diff.word}{' '}
@@ -201,7 +199,7 @@ export function DictationResults({
               ))}
             </div>
           </div>
-          
+
           {/* Legend */}
           <div className="flex flex-wrap gap-3 text-xs">
             <span className="flex items-center gap-1">
@@ -223,7 +221,7 @@ export function DictationResults({
           </div>
         </CardContent>
       </Card>
-      
+
       {/* Action buttons */}
       <Card className="bg-gradient-to-r from-muted/50 to-muted/30">
         <CardContent className="py-4">
@@ -245,15 +243,14 @@ export function DictationResults({
                 <p>Try this sentence again</p>
               </TooltipContent>
             </Tooltip>
-            
+
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
                   onClick={onNext}
                   size="lg"
-                  className={`h-12 px-8 font-semibold shadow-lg ${
-                    isLastSentence ? 'bg-primary hover:bg-primary/90' : 'shadow-primary/20'
-                  }`}
+                  className={`h-12 px-8 font-semibold shadow-lg ${isLastSentence ? 'bg-primary hover:bg-primary/90' : 'shadow-primary/20'
+                    }`}
                   data-testid="button-next"
                 >
                   {isLastSentence ? 'Finish Session' : 'Next Sentence'}

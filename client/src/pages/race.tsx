@@ -20,6 +20,7 @@ import { calculateWPM, calculateAccuracy } from "@/lib/typing-utils";
 import { RaceCertificate } from "@/components/RaceCertificate";
 import { getTypingPerformanceRating } from "@/lib/share-utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AuthPrompt } from "@/components/auth-prompt";
 
 // Error types for better error handling
 type ErrorType = "network" | "race_not_found" | "race_full" | "race_started" | "websocket" | "unknown";
@@ -2307,7 +2308,8 @@ export default function RacePage() {
       <TooltipProvider delayDuration={300}>
         <div className="min-h-screen bg-background">
           <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-4xl lg:max-w-6xl">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between sm:gap-4 mb-4 space-y-3 sm:space-y-0">
+            <AuthPrompt message="save your race results and climb the global ranks!" />
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between sm:gap-4 mb-4 space-y-3 sm:space-y-0 mt-6">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -2670,6 +2672,9 @@ export default function RacePage() {
 
         <div className="min-h-screen bg-background">
           <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-6xl lg:max-w-7xl">
+            <div className="mb-6">
+              <AuthPrompt message="save this race's results and increase your global rating!" />
+            </div>
             {/* Network status banner */}
             <NetworkStatusBanner
               isConnected={wsConnected}
@@ -2736,10 +2741,10 @@ export default function RacePage() {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div className={`flex items-center gap-2 px-2 sm:px-4 py-2 rounded-lg font-mono text-base sm:text-lg cursor-help ${timeRemaining <= 10
-                              ? 'bg-red-500/20 text-red-400 animate-pulse'
-                              : timeRemaining <= 30
-                                ? 'bg-yellow-500/20 text-yellow-400'
-                                : 'bg-primary/20 text-primary'
+                            ? 'bg-red-500/20 text-red-400 animate-pulse'
+                            : timeRemaining <= 30
+                              ? 'bg-yellow-500/20 text-yellow-400'
+                              : 'bg-primary/20 text-primary'
                             }`}>
                             <Timer className="h-5 w-5" />
                             <span data-testid="time-remaining">
@@ -2849,8 +2854,8 @@ export default function RacePage() {
 
               <div
                 className={`cursor-text transition-all duration-200 rounded-lg ${isFocused
-                    ? 'ring-2 ring-primary/50 ring-offset-2 ring-offset-background'
-                    : ''
+                  ? 'ring-2 ring-primary/50 ring-offset-2 ring-offset-background'
+                  : ''
                   }`}
                 onClick={() => hiddenInputRef.current?.focus()}
                 role="application"
@@ -3148,8 +3153,8 @@ export default function RacePage() {
                         <div
                           key={p.id}
                           className={`rounded-xl transition-all duration-200 hover:scale-[1.005] ${p.id === myParticipant?.id
-                              ? 'bg-gradient-to-r from-primary/20 to-primary/5 border border-primary/30'
-                              : 'bg-white/5 border border-white/10 hover:border-white/20'
+                            ? 'bg-gradient-to-r from-primary/20 to-primary/5 border border-primary/30'
+                            : 'bg-white/5 border border-white/10 hover:border-white/20'
                             }`}
                           data-testid={`result-${p.id}`}
                         >

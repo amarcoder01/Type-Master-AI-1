@@ -4,6 +4,7 @@ import { useSEO, SEO_CONFIGS, getHowToSchema } from '@/lib/seo';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Breadcrumbs } from '@/components/breadcrumbs';
+import { AuthPrompt } from '@/components/auth-prompt';
 
 export default function WPMTestPage() {
   useSEO({
@@ -50,6 +51,9 @@ export default function WPMTestPage() {
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
+          </div>
+          <div className="max-w-4xl mx-auto mt-8 px-4">
+            <AuthPrompt message="save your WPM results and track your typing speed!" />
           </div>
         </section>
 

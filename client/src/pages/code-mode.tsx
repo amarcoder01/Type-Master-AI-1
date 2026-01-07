@@ -43,7 +43,7 @@ const PROGRAMMING_LANGUAGES = {
   rust: { name: "Rust", prism: "rust", category: "Popular" },
   swift: { name: "Swift", prism: "swift", category: "Popular" },
   ruby: { name: "Ruby", prism: "ruby", category: "Popular" },
-  
+
   php: { name: "PHP", prism: "php", category: "Web Development" },
   html: { name: "HTML", prism: "markup", category: "Web Development" },
   css: { name: "CSS", prism: "css", category: "Web Development" },
@@ -52,26 +52,26 @@ const PROGRAMMING_LANGUAGES = {
   less: { name: "Less", prism: "less", category: "Web Development" },
   jsx: { name: "JSX", prism: "jsx", category: "Web Development" },
   tsx: { name: "TSX", prism: "tsx", category: "Web Development" },
-  
+
   kotlin: { name: "Kotlin", prism: "kotlin", category: "Mobile & JVM" },
   dart: { name: "Dart", prism: "dart", category: "Mobile & JVM" },
   scala: { name: "Scala", prism: "scala", category: "Mobile & JVM" },
   groovy: { name: "Groovy", prism: "groovy", category: "Mobile & JVM" },
   objectivec: { name: "Objective-C", prism: "objectivec", category: "Mobile & JVM" },
-  
+
   c: { name: "C", prism: "c", category: "Systems Programming" },
   zig: { name: "Zig", prism: "c", category: "Systems Programming" },
   vhdl: { name: "VHDL", prism: "vhdl", category: "Systems Programming" },
-  
+
   r: { name: "R", prism: "r", category: "Data Science" },
   julia: { name: "Julia", prism: "julia", category: "Data Science" },
   matlab: { name: "MATLAB", prism: "matlab", category: "Data Science" },
-  
+
   bash: { name: "Bash/Shell", prism: "bash", category: "Scripting" },
   powershell: { name: "PowerShell", prism: "powershell", category: "Scripting" },
   perl: { name: "Perl", prism: "perl", category: "Scripting" },
   lua: { name: "Lua", prism: "lua", category: "Scripting" },
-  
+
   elixir: { name: "Elixir", prism: "elixir", category: "Functional" },
   haskell: { name: "Haskell", prism: "haskell", category: "Functional" },
   clojure: { name: "Clojure", prism: "clojure", category: "Functional" },
@@ -81,15 +81,15 @@ const PROGRAMMING_LANGUAGES = {
   scheme: { name: "Scheme", prism: "scheme", category: "Functional" },
   racket: { name: "Racket", prism: "racket", category: "Functional" },
   lisp: { name: "Lisp", prism: "lisp", category: "Functional" },
-  
+
   sql: { name: "SQL", prism: "sql", category: "Database" },
-  
+
   json: { name: "JSON", prism: "json", category: "Data Formats" },
   yaml: { name: "YAML", prism: "yaml", category: "Data Formats" },
   toml: { name: "TOML", prism: "toml", category: "Data Formats" },
   xml: { name: "XML", prism: "markup", category: "Data Formats" },
   markdown: { name: "Markdown", prism: "markdown", category: "Data Formats" },
-  
+
   fortran: { name: "Fortran", prism: "fortran", category: "Other" },
   nim: { name: "Nim", prism: "nim", category: "Other" },
   crystal: { name: "Crystal", prism: "crystal", category: "Other" },
@@ -260,7 +260,7 @@ export default function CodeMode() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();
-  
+
   const [language, setLanguage] = useState("javascript");
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("easy");
   const [mode, setMode] = useState<"ai" | "custom">("ai");
@@ -334,7 +334,7 @@ export default function CodeMode() {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [infiniteMode, setInfiniteMode] = useState(false);
   const [showCustomAI, setShowCustomAI] = useState(false);
-  
+
   // Advanced settings
   const [caretStyle, setCaretStyle] = useState<"line" | "block" | "underline">("line");
   const [showLineNumbers, setShowLineNumbers] = useState(true);
@@ -342,14 +342,14 @@ export default function CodeMode() {
   const [smoothCaret, setSmoothCaret] = useState(true);
   const [focusMode, setFocusMode] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(() => keyboardSound.getSettings().enabled);
-  
+
   // Confirmation dialog state for setting changes during active typing
   const [showChangeConfirm, setShowChangeConfirm] = useState(false);
   const [changeTitle, setChangeTitle] = useState("");
   const [changeDescription, setChangeDescription] = useState("");
   const [changeConfirmLabel, setChangeConfirmLabel] = useState("Change & Reset");
   const pendingChangeRef = useRef<(() => void) | null>(null);
-  
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const codeDisplayRef = useRef<HTMLDivElement>(null);
@@ -440,14 +440,14 @@ export default function CodeMode() {
     const hasTyped = userInput.length > 0;
     const timerStarted = startTime !== null;
     const typingInProgress = isActive && !isFinished && !isFailed && (hasTyped || timerStarted);
-    
+
     if (typingInProgress) {
       pendingChangeRef.current = onConfirm;
       setChangeTitle(title);
       setChangeDescription(description);
       setChangeConfirmLabel(confirmLabel);
       setShowChangeConfirm(true);
-      
+
       toast({
         title: "⚠️ Test in Progress",
         description: "You have an active typing session. Confirm to reset and apply changes.",
@@ -482,35 +482,35 @@ export default function CodeMode() {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
-    
+
     abortControllerRef.current = new AbortController();
     const signal = abortControllerRef.current.signal;
-    
+
     setIsLoading(true);
     setErrorState({ type: null, message: '', canRetry: false });
-    
+
     // Set timeout for the request (30 seconds)
     const timeoutId = setTimeout(() => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
     }, 30000);
-    
+
     try {
       const promptParam = customPrompt ? `&customPrompt=${encodeURIComponent(customPrompt)}` : '';
       const response = await fetch(
         `/api/code/snippet?language=${encodeURIComponent(language)}&difficulty=${encodeURIComponent(difficulty)}&timeLimit=${timeLimit}&testMode=${testMode}&generate=true&forceNew=${forceNew}${promptParam}`,
         { signal, cache: 'no-store' }
       );
-      
+
       clearTimeout(timeoutId);
-      
+
       if (signal.aborted) return;
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         const status = response.status;
-        
+
         // Handle specific HTTP error codes
         if (status === 429) {
           throw { type: 'server', message: 'Too many requests. Please wait a moment before trying again.', canRetry: true };
@@ -524,65 +524,65 @@ export default function CodeMode() {
           throw { type: 'server', message: errorData.message || `Server error (${status})`, canRetry: true };
         }
       }
-      
+
       const data = await response.json();
-      
+
       if (signal.aborted) return;
-      
+
       // Validate response data
       if (!data.snippet || !data.snippet.content) {
         throw { type: 'generation', message: 'Received empty code. Please try again.', canRetry: true };
       }
-      
+
       // Success - clear error state and retry count
       // Normalize snippet to remove Windows line endings and trailing whitespace
       setCodeSnippet(normalizeCodeSnippet(data.snippet.content));
       setSnippetId(data.snippet.id);
       setErrorState({ type: null, message: '', canRetry: false });
       setRetryCount(0);
-      
+
       // Show success notification
 
-      
+
     } catch (error: any) {
       clearTimeout(timeoutId);
-      
+
       if (error.name === 'AbortError') {
         // Check if it was a timeout
         if (!signal.aborted) {
-          setErrorState({ 
-            type: 'timeout', 
-            message: 'Request timed out. The AI might be busy. Please try again.', 
-            canRetry: true 
+          setErrorState({
+            type: 'timeout',
+            message: 'Request timed out. The AI might be busy. Please try again.',
+            canRetry: true
           });
         }
         return;
       }
-      
+
       console.error("Error fetching code snippet:", error);
-      
+
       // Handle network errors
       if (error instanceof TypeError && error.message.includes('fetch')) {
-        setErrorState({ 
-          type: 'network', 
-          message: 'Network error. Please check your connection and try again.', 
-          canRetry: true 
+        setErrorState({
+          type: 'network',
+          message: 'Network error. Please check your connection and try again.',
+          canRetry: true
         });
       } else if (error.type) {
         // Custom error object
-        setErrorState({ 
-          type: error.type, 
-          message: error.message, 
-          canRetry: error.canRetry 
+        setErrorState({
+          type: error.type,
+          message: error.message,
+          canRetry: error.canRetry
         });
       } else {
-        setErrorState({ 
-          type: 'server', 
-          message: error.message || 'An unexpected error occurred.', 
-          canRetry: true 
+        setErrorState({
+          type: 'server',
+          message: error.message || 'An unexpected error occurred.',
+          canRetry: true
         });
       }
-      
+
       // Auto-retry logic for retryable errors
       if (!isRetry && retryCount < MAX_RETRIES && (error.canRetry !== false)) {
         setRetryCount(prev => prev + 1);
@@ -602,7 +602,7 @@ export default function CodeMode() {
       }
     }
   }, [language, difficulty, timeLimit, testMode, customPrompt, toast, retryCount]);
-  
+
   useEffect(() => {
     return () => {
       if (abortControllerRef.current) {
@@ -789,7 +789,7 @@ export default function CodeMode() {
     lastElapsedSecondRef.current = -1;
     rafId = requestAnimationFrame(tick);
     timerRafRef.current = rafId;
-    
+
     return () => {
       if (rafId) cancelAnimationFrame(rafId);
       if (timerRafRef.current != null) {
@@ -817,8 +817,8 @@ export default function CodeMode() {
           // This allows the test to complete and show accuracy results
           // Handle snippets with trailing whitespace by comparing trimmed lengths
           const trimmedSnippetLength = codeSnippet.trimEnd().length;
-          if (userInput.length >= codeSnippet.length || 
-              (userInput.length >= trimmedSnippetLength && trimmedSnippetLength > 0)) {
+          if (userInput.length >= codeSnippet.length ||
+            (userInput.length >= trimmedSnippetLength && trimmedSnippetLength > 0)) {
             finishTest();
           }
         }
@@ -846,10 +846,10 @@ export default function CodeMode() {
 
       try {
         const response = await fetch("/api/code/test-results", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(testData),
-        credentials: "include",
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(testData),
+          credentials: "include",
           signal: controller.signal,
         });
 
@@ -859,7 +859,7 @@ export default function CodeMode() {
           const errorData = await response.json().catch(() => ({}));
           throw new Error(errorData.message || "Failed to save test");
         }
-      return response.json();
+        return response.json();
       } catch (error: any) {
         clearTimeout(timeoutId);
         if (error.name === 'AbortError') {
@@ -887,12 +887,12 @@ export default function CodeMode() {
       cancelAnimationFrame(timerRafRef.current);
       timerRafRef.current = null;
     }
-    
+
     // Use precise milliseconds for accurate calculation
     const durationMs = (startTimeRef.current ?? startTime) ? Date.now() - (startTimeRef.current ?? (startTime as number)) : 0;
     const duration = Math.floor(durationMs / 1000);
     const minutes = durationMs / 60000; // Use milliseconds for precision
-    
+
     // Count correct and incorrect characters
     let correctChars = 0;
     let errorCount = 0;
@@ -903,17 +903,17 @@ export default function CodeMode() {
         errorCount++;
       }
     }
-    
+
     // Industry-standard formulas:
     // Raw WPM (Gross WPM) = (Total Characters / 5) / Minutes
     const finalRawWpm = minutes > 0 ? Math.round((userInput.length / 5) / minutes) : 0;
-    
+
     // Net WPM = (Correct Characters / 5) / Minutes
     const finalWpm = minutes > 0 ? Math.round((correctChars / 5) / minutes) : 0;
-    
+
     // Accuracy = (Correct Characters / Total Characters) × 100
     const finalAccuracy = userInput.length > 0 ? Math.round((correctChars / userInput.length) * 100) : 100;
-    
+
     // Calculate final consistency from WPM history
     // Uses Net WPM samples, skipping warm-up period for accuracy
     let finalConsistency = 100;
@@ -939,7 +939,7 @@ export default function CodeMode() {
         finalConsistency = Math.max(0, Math.min(100, Math.round(100 - (cv * 1.5))));
       }
     }
-    
+
     // Clamp WPM to realistic bounds (0-300 WPM)
     const clampedWpm = Math.max(0, Math.min(300, finalWpm));
     const clampedRawWpm = Math.max(0, Math.min(300, finalRawWpm));
@@ -973,7 +973,7 @@ export default function CodeMode() {
     setIsFinished(true);
     setIsActive(false);
     setCompletionDialogOpen(true);
-    
+
     // Celebration confetti (reduced for flagged results)
     confetti({
       particleCount: isFlagged ? 30 : 100,
@@ -1042,12 +1042,12 @@ export default function CodeMode() {
     if (!codeSnippet || codeSnippet.length === 0) {
       return;
     }
-    
+
     if (value.length > codeSnippet.length) {
       if (textareaRef.current) textareaRef.current.value = userInput;
       return;
     }
-    
+
     // Anti-cheat: Detect impossibly fast typing (bot detection)
     const now = Date.now();
     if (value.length > userInput.length) {
@@ -1081,7 +1081,7 @@ export default function CodeMode() {
       // Play keyboard sound when typing (uses global sound settings)
       keyboardSound.play();
     }
-    
+
     if (!isActive && value.length > 0) {
       setIsActive(true);
       startTimeRef.current = now;
@@ -1093,7 +1093,7 @@ export default function CodeMode() {
       lastElapsedSecondRef.current = -1;
       statsLastUpdateRef.current = 0;
     }
-    
+
     if (testMode === "master") {
       const hasErrors = value.split("").some((char, i) => char !== codeSnippet[i]);
       if (hasErrors) {
@@ -1103,7 +1103,7 @@ export default function CodeMode() {
     } else if (testMode === "expert" && value.length > userInput.length) {
       const lastChar = value[value.length - 1];
       const expectedChar = codeSnippet[value.length - 1];
-      
+
       if (lastChar !== expectedChar) {
         setIsFailed(true);
         setIsActive(false);
@@ -1119,7 +1119,7 @@ export default function CodeMode() {
         return;
       }
     }
-    
+
     setUserInput(value);
   };
 
@@ -1136,7 +1136,7 @@ export default function CodeMode() {
     // Tab key - either insert tab or get new snippet if finished/empty
     if (e.key === "Tab") {
       e.preventDefault();
-      
+
       // If test is finished or no input, Tab gets new snippet (AI mode) or resets (custom mode)
       if (isFinished || isFailed || (!isActive && userInput.length === 0)) {
         if (mode === "ai") {
@@ -1146,7 +1146,7 @@ export default function CodeMode() {
         }
         return;
       }
-      
+
       // Otherwise, insert tab character if expected
       const tabChar = codeSnippet[userInput.length];
       if (tabChar === "\t") {
@@ -1160,13 +1160,13 @@ export default function CodeMode() {
         }
       }
     }
-    
+
     // Escape to reset/restart
     if (e.key === "Escape") {
       resetTest(true); // Escape restarts current test (standard behavior)
     }
   };
-  
+
   const resetTest = useCallback((keepSnippet: boolean = false) => {
     // Close all dialogs
     setCompletionDialogOpen(false);
@@ -1198,10 +1198,10 @@ export default function CodeMode() {
     keystrokeTimesRef.current = [];
     suspiciousActivityCountRef.current = 0;
     tabHiddenTimeRef.current = null;
-    
+
     if (mode === "ai") {
       if (!keepSnippet) {
-      fetchCodeSnippet(true); // Force new snippet
+        fetchCodeSnippet(true); // Force new snippet
       } else {
         // Just refocus if extending/retrying same snippet
         toast({
@@ -1212,15 +1212,15 @@ export default function CodeMode() {
     } else if (mode === "custom") {
       // In custom mode, always use existing custom code - NEVER fetch from AI
       if (customCode) {
-      setCodeSnippet(normalizeCodeSnippet(customCode));
-      setSnippetId(null);
+        setCodeSnippet(normalizeCodeSnippet(customCode));
+        setSnippetId(null);
       }
       toast({
         title: "Test Reset",
         description: "Restarting with the same custom code.",
       });
     }
-    
+
     setTimeout(() => textareaRef.current?.focus(), 0);
   }, [mode, customCode, fetchCodeSnippet, toast]);
 
@@ -1230,7 +1230,7 @@ export default function CodeMode() {
   useEffect(() => { timeLimitRef.current = timeLimit; }, [timeLimit]);
   useEffect(() => { finishTestRef.current = finishTest; }, [finishTest]);
   useEffect(() => { if (startTime != null) startTimeRef.current = startTime; }, [startTime]);
-  
+
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       const typingInProgress = isActive && !isFinished && !isFailed && userInput.length > 0;
@@ -1240,20 +1240,20 @@ export default function CodeMode() {
         return e.returnValue;
       }
     };
-    
+
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [isActive, isFinished, isFailed, userInput.length]);
-  
+
   // Global keyboard shortcuts - respects test state
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement;
-      
+
       // Skip if typing in any input field (custom prompt, custom code, etc.)
-      if (target instanceof HTMLInputElement || 
-          target instanceof HTMLTextAreaElement ||
-          target.isContentEditable) {
+      if (target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement ||
+        target.isContentEditable) {
         // Only allow Escape to work in inputs
         if (e.key === "Escape") {
           e.preventDefault();
@@ -1262,10 +1262,10 @@ export default function CodeMode() {
         }
         return;
       }
-      
+
       // Only handle when not focused on typing textarea
       if (document.activeElement === textareaRef.current) return;
-      
+
       // Tab to get new snippet (AI mode) or reset test (custom mode) - only when test is not active or is finished
       if (e.key === "Tab" && (!isActive || isFinished || isFailed)) {
         e.preventDefault();
@@ -1275,26 +1275,26 @@ export default function CodeMode() {
           resetTest(true); // Keep the same custom code
         }
       }
-      
+
       // Escape to reset - always allowed
       if (e.key === "Escape") {
         e.preventDefault();
         resetTest();
       }
-      
+
       // Any printable key focuses and starts typing (only if test not finished)
       if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey && !isFinished && !isFailed) {
         textareaRef.current?.focus();
       }
     };
-    
+
     window.addEventListener('keydown', handleGlobalKeyDown);
     return () => window.removeEventListener('keydown', handleGlobalKeyDown);
   }, [fetchCodeSnippet, resetTest, isActive, isFinished, isFailed, mode, codeSnippet]);
 
   const handleModeSwitch = (newMode: "ai" | "custom") => {
     if (newMode === mode) return;
-    
+
     // Full state reset function for mode switching
     const performModeSwitch = () => {
       // Close any open dialogs first
@@ -1302,16 +1302,16 @@ export default function CodeMode() {
       setShareDialogOpen(false);
 
       // Reset mode and code
-        setMode(newMode);
-        setCodeSnippet("");
+      setMode(newMode);
+      setCodeSnippet("");
       setCustomCode(""); // Also clear custom code input
       setSnippetId(null);
 
       // Reset typing state
-        setUserInput("");
+      setUserInput("");
       setStartTime(null);
-        setIsActive(false);
-        setIsFinished(false);
+      setIsActive(false);
+      setIsFinished(false);
       setIsFailed(false);
 
       // Reset stats
@@ -1323,8 +1323,8 @@ export default function CodeMode() {
       setElapsedTime(0);
 
       // Reset error state
-        setErrorState({ type: null, message: '', canRetry: false });
-        setRetryCount(0);
+      setErrorState({ type: null, message: '', canRetry: false });
+      setRetryCount(0);
       setIsFileReading(false);
 
       // Reset test mode when switching to custom (use Normal for custom practice)
@@ -1338,14 +1338,14 @@ export default function CodeMode() {
       suspiciousActivityCountRef.current = 0;
 
       // Fetch new code if switching to AI mode
-        if (newMode === "ai") {
-          fetchCodeSnippet(true);
-        }
+      if (newMode === "ai") {
+        fetchCodeSnippet(true);
+      }
 
-        toast({
-          title: "Mode Changed",
-          description: `Switched to ${newMode === "ai" ? "AI Generated" : "Custom Code"} mode.`,
-        });
+      toast({
+        title: "Mode Changed",
+        description: `Switched to ${newMode === "ai" ? "AI Generated" : "Custom Code"} mode.`,
+      });
     };
 
     // Always show confirmation when switching modes to prevent accidental state loss
@@ -1365,7 +1365,7 @@ export default function CodeMode() {
   // Track if settings change is user-initiated (to avoid fetching on initial load)
   const settingsInitializedRef = useRef(false);
   const prevSettingsRef = useRef({ language, difficulty, testMode });
-  
+
   // Fetch new code when language, difficulty, or testMode changes (user-initiated)
   useEffect(() => {
     // Skip initial mount
@@ -1374,22 +1374,22 @@ export default function CodeMode() {
       prevSettingsRef.current = { language, difficulty, testMode };
       return;
     }
-    
+
     // Check if any relevant setting actually changed
     const prev = prevSettingsRef.current;
-    const settingsChanged = 
-      prev.language !== language || 
-      prev.difficulty !== difficulty || 
+    const settingsChanged =
+      prev.language !== language ||
+      prev.difficulty !== difficulty ||
       prev.testMode !== testMode;
-    
+
     if (settingsChanged && mode === "ai") {
       // Update previous settings
       prevSettingsRef.current = { language, difficulty, testMode };
-      
+
       // Reset error state
       setErrorState({ type: null, message: '', canRetry: false });
       setRetryCount(0);
-      
+
       // Reset test state and fetch new code with updated settings
       setUserInput("");
       setStartTime(null);
@@ -1410,36 +1410,36 @@ export default function CodeMode() {
       keystrokeTimesRef.current = [];
       suspiciousActivityCountRef.current = 0;
       tabHiddenTimeRef.current = null;
-      
+
       // Fetch new code with the updated settings
       fetchCodeSnippet(true);
     }
   }, [language, difficulty, testMode, mode, fetchCodeSnippet]);
 
-  
+
   // Fetch more content for continuous typing (works for both timed and unlimited modes)
   const fetchMoreContent = useCallback(async () => {
     // Prevent duplicate fetches
     if (isLoadingMore) return;
-    
+
     if (infiniteAbortRef.current) {
       infiniteAbortRef.current.abort();
     }
-    
+
     infiniteAbortRef.current = new AbortController();
     const signal = infiniteAbortRef.current.signal;
-    
+
     setIsLoadingMore(true);
-    
+
     try {
       const promptParam = customPrompt ? `&customPrompt=${encodeURIComponent(customPrompt)}` : '';
       const response = await fetch(
         `/api/code/snippet?language=${encodeURIComponent(language)}&difficulty=${encodeURIComponent(difficulty)}&timeLimit=0&testMode=${testMode}&generate=true&forceNew=true${promptParam}`,
         { signal, cache: 'no-store' }
       );
-      
+
       if (signal.aborted) return;
-      
+
       if (response.ok) {
         const data = await response.json();
         if (data.snippet?.content) {
@@ -1463,14 +1463,14 @@ export default function CodeMode() {
   useEffect(() => {
     // Only fetch more content for timed tests
     if (timeLimit === 0 || !isActive || isFinished || isLoadingMore) return;
-    
+
     const remainingChars = codeSnippet.length - userInput.length;
     // When 100 characters or less remaining, fetch more code for timed tests
     if (remainingChars <= 100 && codeSnippet.length > 0) {
       fetchMoreContent();
     }
   }, [userInput.length, codeSnippet.length, isActive, isFinished, isLoadingMore, fetchMoreContent, timeLimit]);
-  
+
   // Auto-scroll to keep current line visible
   useEffect(() => {
     if (!codeDisplayRef.current || !codeSnippet) return;
@@ -1478,7 +1478,7 @@ export default function CodeMode() {
     const now = performance.now();
     if (now - lastCodeScrollTsRef.current < 32) return; // ~30 FPS
     lastCodeScrollTsRef.current = now;
-    
+
     const caretEl = codeDisplayRef.current.querySelector('[data-caret="true"]');
     if (caretEl) {
       (caretEl as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
@@ -1505,7 +1505,7 @@ export default function CodeMode() {
       });
       return;
     }
-    
+
     const applyCode = () => {
       const normalized = normalizeCodeSnippet(customCode);
       setCodeSnippet(normalized);
@@ -1544,7 +1544,7 @@ export default function CodeMode() {
 
       setTimeout(() => textareaRef.current?.focus(), 0);
     };
-    
+
     if (isActive && !isFinished && userInput.length > 0) {
       confirmOrRun(
         "Load Custom Code?",
@@ -1827,7 +1827,7 @@ export default function CodeMode() {
   // Uses negative left offset to prevent overlapping with narrow characters like * and /
   const renderCaret = (style: "line" | "block" | "underline") => {
     const baseClass = smoothCaret ? "animate-caret-smooth" : "animate-caret-blink";
-    
+
     if (style === "block") {
       // Block caret: positioned behind the character with lower z-index
       return (
@@ -1847,27 +1847,27 @@ export default function CodeMode() {
 
   const highlightedCode = useMemo(() => {
     if (!codeSnippet) return null;
-    
+
     const lines = codeSnippet.split("\n");
     let charIndex = 0;
-    
+
     return lines.map((line, lineIndex) => {
       const isActiveLine = lineIndex + 1 === currentCursorLine;
-      
+
       // Calculate indentation level for guides
       const indentMatch = line.match(/^(\s*)/);
       const indentLevel = indentMatch ? Math.floor(indentMatch[1].length / 2) : 0;
-      
+
       const lineContent = line.split("").map((char, i) => {
         const currentCharIndex = charIndex + i;
         const isCurrent = currentCharIndex === userInput.length;
         const isTyped = currentCharIndex < userInput.length;
         const isCorrect = isTyped && userInput[currentCharIndex] === char;
         const isError = isTyped && !isCorrect;
-        
+
         // Enhanced character styling
         let charClassName = "transition-all duration-75 ";
-        
+
         if (isError) {
           // Error: red text with underline instead of background
           charClassName += "text-red-400 decoration-red-500 underline decoration-wavy decoration-2 ";
@@ -1881,7 +1881,7 @@ export default function CodeMode() {
           // Untyped: dimmed
           charClassName += focusMode ? "text-muted-foreground/20" : "text-muted-foreground/40 ";
         }
-        
+
         // Handle spaces with visible dots for untyped
         if (char === " " && !isTyped && !isCurrent) {
           return (
@@ -1890,7 +1890,7 @@ export default function CodeMode() {
             </span>
           );
         }
-        
+
         // Handle tabs
         if (char === "\t") {
           if (isCurrent && !isFinished && !isFailed) {
@@ -1907,11 +1907,11 @@ export default function CodeMode() {
             </span>
           );
         }
-        
+
         // Render character with caret if current position
         if (isCurrent && !isFinished && !isFailed) {
-        return (
-          <span key={currentCharIndex} className={charClassName}>
+          return (
+            <span key={currentCharIndex} className={charClassName}>
               {renderCaret(caretStyle)}
               <span className="relative z-10">{char}</span>
             </span>
@@ -1924,45 +1924,45 @@ export default function CodeMode() {
           </span>
         );
       });
-      
+
       // Check if cursor is at end of this line (at newline position)
       const newlineIndex = charIndex + line.length;
       const isCursorAtNewline = newlineIndex === userInput.length;
-      
+
       // Update charIndex for next line
       charIndex += line.length + 1;
-      
+
       return (
-        <div 
-          key={lineIndex} 
+        <div
+          key={lineIndex}
           className={`flex group transition-colors duration-150 ${isActiveLine && !focusMode ? "bg-primary/5 -mx-2 px-2 rounded" : ""
-          }`} 
+            }`}
           data-line={lineIndex + 1}
         >
           {/* Line number gutter */}
           {showLineNumbers && (
             <span className={`select-none w-10 text-right pr-3 text-xs font-mono transition-colors ${isActiveLine
-                ? "text-primary font-medium" 
-                : "text-muted-foreground/30 group-hover:text-muted-foreground/50"
-            }`}>
+              ? "text-primary font-medium"
+              : "text-muted-foreground/30 group-hover:text-muted-foreground/50"
+              }`}>
               {lineIndex + 1}
             </span>
           )}
-          
+
           {/* Indentation guides */}
           {showIndentGuides && (
             <span className="relative">
               {indentLevel > 0 && Array.from({ length: indentLevel }).map((_, idx) => (
-                <span 
+                <span
                   key={idx}
                   className={`absolute top-0 bottom-0 w-px ${isActiveLine ? "bg-primary/20" : "bg-muted-foreground/10"
-                  }`}
+                    }`}
                   style={{ left: `${idx * 16}px` }}
                 />
               ))}
             </span>
           )}
-          
+
           {/* Line content */}
           <span className="flex-1 whitespace-pre-wrap break-words">
             {lineContent}
@@ -1974,9 +1974,9 @@ export default function CodeMode() {
             {/* Newline indicator */}
             {lineIndex < lines.length - 1 && !focusMode && (
               <span className={`ml-1 text-xs ${newlineIndex < userInput.length
-                  ? "text-green-500/40" 
-                  : "text-muted-foreground/15"
-              }`}>↵</span>
+                ? "text-green-500/40"
+                : "text-muted-foreground/15"
+                }`}>↵</span>
             )}
           </span>
         </div>
@@ -2017,7 +2017,7 @@ Understanding your baseline code typing speed can help identify opportunities fo
 #SoftwareDevelopment #Productivity`;
     const url = window.location.origin + "/code-mode";
     const title = `I typed ${langName} code at ${wpm} WPM on TypeMasterAI!`;
-    
+
     // WhatsApp: use ASCII-safe multi-line template to avoid replacement characters and preserve formatting
     const waText = `*TypeMasterAI Code Result*\n\nLanguage: ${langName}\nSpeed: *${wpm} WPM*\nAccuracy: *${accuracy}%*\nCharacters: ${codeSnippet.length}\n\nTry it: ${url}`;
 
@@ -2030,7 +2030,7 @@ Understanding your baseline code typing speed can help identify opportunities fo
       reddit: `https://www.reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`,
       email: `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(facebookText + "\n\nTry it yourself: " + url)}`,
     };
-    
+
     if (platform === 'discord') {
       navigator.clipboard.writeText(`${twitterText}\n\n🔗 ${url}`);
       toast({
@@ -2039,7 +2039,7 @@ Understanding your baseline code typing speed can help identify opportunities fo
       });
       return;
     }
-    
+
     if (urls[platform]) {
       if (platform === 'email') {
         window.location.href = urls[platform];
@@ -2048,12 +2048,12 @@ Understanding your baseline code typing speed can help identify opportunities fo
       }
     }
   };
-  
+
   const handleNativeShare = async () => {
     const langName = PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name || language;
     const text = `🚀 Just coded ${langName} at ${wpm} WPM! ${codeSnippet.length} chars with ${accuracy}% accuracy 💻\n\nCan you beat it?`;
     const url = window.location.origin + "/code-mode";
-    
+
     if (navigator.share) {
       try {
         await navigator.share({
@@ -2081,10 +2081,10 @@ Understanding your baseline code typing speed can help identify opportunities fo
   const downloadCertificate = useCallback((format: "png" | "jpg" | "pdf" = "png") => {
     const certCanvas = document.querySelector('[data-testid="certificate-canvas"]') as HTMLCanvasElement;
     if (!certCanvas) {
-      toast({ 
-        title: "Certificate not ready", 
-        description: "Please wait a moment and try again.", 
-        variant: "destructive" 
+      toast({
+        title: "Certificate not ready",
+        description: "Please wait a moment and try again.",
+        variant: "destructive"
       });
       return;
     }
@@ -2240,16 +2240,16 @@ Understanding your baseline code typing speed can help identify opportunities fo
                 <SearchableSelect
                   value={language}
                   onValueChange={(val) => {
-                  if (val === language) return;
-                  confirmOrRun(
-                    "Change Language?",
-                    `Switching from ${PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name || language} to ${PROGRAMMING_LANGUAGES[val as keyof typeof PROGRAMMING_LANGUAGES]?.name || val} will reset your current test and load new code.`,
-                    () => {
-                      setLanguage(val);
-                      toast({
-                        title: "Language Changed",
-                        description: `Now using ${PROGRAMMING_LANGUAGES[val as keyof typeof PROGRAMMING_LANGUAGES]?.name || val}.`,
-                      });
+                    if (val === language) return;
+                    confirmOrRun(
+                      "Change Language?",
+                      `Switching from ${PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name || language} to ${PROGRAMMING_LANGUAGES[val as keyof typeof PROGRAMMING_LANGUAGES]?.name || val} will reset your current test and load new code.`,
+                      () => {
+                        setLanguage(val);
+                        toast({
+                          title: "Language Changed",
+                          description: `Now using ${PROGRAMMING_LANGUAGES[val as keyof typeof PROGRAMMING_LANGUAGES]?.name || val}.`,
+                        });
                         // useEffect will automatically fetch new code when language changes
                       }
                     );
@@ -2296,19 +2296,19 @@ Understanding your baseline code typing speed can help identify opportunities fo
                 <SearchableSelect
                   value={difficulty}
                   onValueChange={(val) => {
-                  if (val === difficulty) return;
-                  confirmOrRun(
-                    "Change Difficulty?",
-                    `Switching from ${difficulty} to ${val} difficulty will reset your current test and load new code with different complexity.`,
-                    () => {
+                    if (val === difficulty) return;
+                    confirmOrRun(
+                      "Change Difficulty?",
+                      `Switching from ${difficulty} to ${val} difficulty will reset your current test and load new code with different complexity.`,
+                      () => {
                         setDifficulty(val as "easy" | "medium" | "hard");
-                      toast({
-                        title: "Difficulty Changed",
-                        description: `Now using ${val} difficulty level.`,
-                      });
+                        toast({
+                          title: "Difficulty Changed",
+                          description: `Now using ${val} difficulty level.`,
+                        });
                         // useEffect will automatically fetch new code when difficulty changes
-                    }
-                  );
+                      }
+                    );
                   }}
                   options={DIFFICULTIES.map(({ value, label }) => ({ value, label }))}
                   placeholder="Difficulty"
@@ -2349,19 +2349,19 @@ Understanding your baseline code typing speed can help identify opportunities fo
                 <SearchableSelect
                   value={testMode}
                   onValueChange={(val) => {
-                  if (val === testMode) return;
-                  confirmOrRun(
-                    "Change Test Mode?",
-                    `Switching from ${testMode} to ${val} mode will reset your current test. Different modes have different error tolerance rules.`,
-                    () => {
+                    if (val === testMode) return;
+                    confirmOrRun(
+                      "Change Test Mode?",
+                      `Switching from ${testMode} to ${val} mode will reset your current test. Different modes have different error tolerance rules.`,
+                      () => {
                         setTestMode(val as "normal" | "expert" | "master");
-                      toast({
-                        title: "Test Mode Changed",
-                        description: `Now using ${val} mode.`,
-                      });
+                        toast({
+                          title: "Test Mode Changed",
+                          description: `Now using ${val} mode.`,
+                        });
                         // useEffect will automatically fetch new code when test mode changes
-                    }
-                  );
+                      }
+                    );
                   }}
                   options={TEST_MODES.map(({ value, label }) => ({ value, label }))}
                   placeholder="Mode"
@@ -2398,13 +2398,13 @@ Understanding your baseline code typing speed can help identify opportunities fo
                 <SearchableSelect
                   value={timeLimit.toString()}
                   onValueChange={(val) => {
-                  const newTimeLimit = parseInt(val);
-                  if (newTimeLimit === timeLimit) return;
-                  confirmOrRun(
-                    "Change Time Limit?",
-                    `Switching from ${timeLimit === 0 ? "No Limit" : `${timeLimit}s`} to ${newTimeLimit === 0 ? "No Limit" : `${newTimeLimit}s`} will reset your current test.`,
-                    () => {
-                      setTimeLimit(newTimeLimit);
+                    const newTimeLimit = parseInt(val);
+                    if (newTimeLimit === timeLimit) return;
+                    confirmOrRun(
+                      "Change Time Limit?",
+                      `Switching from ${timeLimit === 0 ? "No Limit" : `${timeLimit}s`} to ${newTimeLimit === 0 ? "No Limit" : `${newTimeLimit}s`} will reset your current test.`,
+                      () => {
+                        setTimeLimit(newTimeLimit);
                         // Reset test state (keep same code snippet for time changes)
                         setUserInput("");
                         setStartTime(null);
@@ -2417,12 +2417,12 @@ Understanding your baseline code typing speed can help identify opportunities fo
                         setAccuracy(100);
                         setErrors(0);
                         setElapsedTime(0);
-                      toast({
-                        title: "Time Limit Changed",
-                        description: `Now using ${newTimeLimit === 0 ? "No Limit" : `${newTimeLimit} seconds`}.`,
-                      });
-                    }
-                  );
+                        toast({
+                          title: "Time Limit Changed",
+                          description: `Now using ${newTimeLimit === 0 ? "No Limit" : `${newTimeLimit} seconds`}.`,
+                        });
+                      }
+                    );
                   }}
                   options={TIME_OPTIONS.map(({ value, label }) => ({ value: value.toString(), label }))}
                   placeholder="Time"
@@ -2458,14 +2458,14 @@ Understanding your baseline code typing speed can help identify opportunities fo
                         }
                       } else {
                         // Custom mode: reset test with same custom code
-                      if (isActive && !isFinished && userInput.length > 0) {
-                        confirmOrRun(
-                          "Reset Test?",
+                        if (isActive && !isFinished && userInput.length > 0) {
+                          confirmOrRun(
+                            "Reset Test?",
                             "This will restart the test with the same custom code.",
                             () => resetTest(true),
                             "Reset"
-                        );
-                      } else {
+                          );
+                        } else {
                           resetTest(true);
                         }
                       }
@@ -2504,9 +2504,9 @@ Understanding your baseline code typing speed can help identify opportunities fo
                         <p className="text-xs">Request specific code like "React hooks" or "sorting algorithm"</p>
                       </TooltipContent>
                     </Tooltip>
-                    
+
                     <span className="text-muted-foreground/30">|</span>
-                    
+
                     {/* Settings Popover */}
                     <Popover>
                       <PopoverTrigger asChild>
@@ -2526,7 +2526,7 @@ Understanding your baseline code typing speed can help identify opportunities fo
                             <Settings className="w-4 h-4" />
                             Typing Settings
                           </h4>
-                          
+
                           {/* Caret Style */}
                           <div className="space-y-2">
                             <div className="flex items-center gap-1">
@@ -2549,9 +2549,9 @@ Understanding your baseline code typing speed can help identify opportunities fo
                                     <button
                                       onClick={() => setCaretStyle(style)}
                                       className={`flex-1 py-1.5 px-2 text-xs rounded-md border transition-colors ${caretStyle === style
-                                          ? "bg-primary text-primary-foreground border-primary" 
-                                          : "bg-muted/50 border-border hover:bg-muted"
-                                      }`}
+                                        ? "bg-primary text-primary-foreground border-primary"
+                                        : "bg-muted/50 border-border hover:bg-muted"
+                                        }`}
                                       data-testid={`button-caret-${style}`}
                                     >
                                       {style.charAt(0).toUpperCase() + style.slice(1)}
@@ -2568,7 +2568,7 @@ Understanding your baseline code typing speed can help identify opportunities fo
                               ))}
                             </div>
                           </div>
-                          
+
                           {/* Toggles */}
                           <div className="space-y-3">
                             <Tooltip>
@@ -2578,9 +2578,9 @@ Understanding your baseline code typing speed can help identify opportunities fo
                                     <Eye className="w-3.5 h-3.5" />
                                     Smooth Caret
                                   </Label>
-                                  <Switch 
-                                    id="smooth-caret" 
-                                    checked={smoothCaret} 
+                                  <Switch
+                                    id="smooth-caret"
+                                    checked={smoothCaret}
                                     onCheckedChange={setSmoothCaret}
                                     data-testid="switch-smooth-caret"
                                   />
@@ -2590,7 +2590,7 @@ Understanding your baseline code typing speed can help identify opportunities fo
                                 <p className="text-xs">Smooth glowing animation instead of blinking</p>
                               </TooltipContent>
                             </Tooltip>
-                            
+
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <div className="flex items-center justify-between cursor-help">
@@ -2598,9 +2598,9 @@ Understanding your baseline code typing speed can help identify opportunities fo
                                     <Code className="w-3.5 h-3.5" />
                                     Line Numbers
                                   </Label>
-                                  <Switch 
-                                    id="line-numbers" 
-                                    checked={showLineNumbers} 
+                                  <Switch
+                                    id="line-numbers"
+                                    checked={showLineNumbers}
                                     onCheckedChange={setShowLineNumbers}
                                     data-testid="switch-line-numbers"
                                   />
@@ -2610,7 +2610,7 @@ Understanding your baseline code typing speed can help identify opportunities fo
                                 <p className="text-xs">Show line numbers in the code gutter</p>
                               </TooltipContent>
                             </Tooltip>
-                            
+
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <div className="flex items-center justify-between cursor-help">
@@ -2618,9 +2618,9 @@ Understanding your baseline code typing speed can help identify opportunities fo
                                     <Code className="w-3.5 h-3.5" />
                                     Indent Guides
                                   </Label>
-                                  <Switch 
-                                    id="indent-guides" 
-                                    checked={showIndentGuides} 
+                                  <Switch
+                                    id="indent-guides"
+                                    checked={showIndentGuides}
                                     onCheckedChange={setShowIndentGuides}
                                     data-testid="switch-indent-guides"
                                   />
@@ -2630,7 +2630,7 @@ Understanding your baseline code typing speed can help identify opportunities fo
                                 <p className="text-xs">Vertical lines showing indentation levels</p>
                               </TooltipContent>
                             </Tooltip>
-                            
+
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <div className="flex items-center justify-between cursor-help">
@@ -2638,9 +2638,9 @@ Understanding your baseline code typing speed can help identify opportunities fo
                                     {focusMode ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                                     Focus Mode
                                   </Label>
-                                  <Switch 
-                                    id="focus-mode" 
-                                    checked={focusMode} 
+                                  <Switch
+                                    id="focus-mode"
+                                    checked={focusMode}
                                     onCheckedChange={setFocusMode}
                                     data-testid="switch-focus-mode"
                                   />
@@ -2650,7 +2650,7 @@ Understanding your baseline code typing speed can help identify opportunities fo
                                 <p className="text-xs">Dim untyped code for better concentration</p>
                               </TooltipContent>
                             </Tooltip>
-                            
+
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <div className="flex items-center justify-between cursor-help">
@@ -2658,9 +2658,9 @@ Understanding your baseline code typing speed can help identify opportunities fo
                                     {soundEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
                                     Typing Sounds
                                   </Label>
-                                  <Switch 
-                                    id="sound-enabled" 
-                                    checked={soundEnabled} 
+                                  <Switch
+                                    id="sound-enabled"
+                                    checked={soundEnabled}
                                     onCheckedChange={(enabled) => {
                                       setSoundEnabled(enabled);
                                       keyboardSound.setEnabled(enabled);
@@ -2675,7 +2675,7 @@ Understanding your baseline code typing speed can help identify opportunities fo
                               </TooltipContent>
                             </Tooltip>
                           </div>
-                          
+
                           <p className="text-[10px] text-muted-foreground/60 text-center">
                             Sound type can be changed in global Settings
                           </p>
@@ -2808,24 +2808,24 @@ Understanding your baseline code typing speed can help identify opportunities fo
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
                     <FileCode className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-medium">Paste Your Code:</span>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button type="button" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Custom code help">
-                        <HelpCircle className="w-3 h-3" />
-                      </button>
-                    </TooltipTrigger>
+                    <span className="text-sm font-medium">Paste Your Code:</span>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button type="button" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Custom code help">
+                          <HelpCircle className="w-3 h-3" />
+                        </button>
+                      </TooltipTrigger>
                       <TooltipContent side="right" className="max-w-[280px]">
-                      <p className="font-medium mb-1">Custom Code Practice</p>
+                        <p className="font-medium mb-1">Custom Code Practice</p>
                         <p className="text-xs text-muted-foreground mb-2">Paste any code you want to practice typing. Works with any programming language.</p>
                         <div className="text-[10px] text-muted-foreground/70 space-y-0.5">
                           <p>• Min: {CUSTOM_CODE_LIMITS.MIN_LENGTH} characters</p>
                           <p>• Max: {(CUSTOM_CODE_LIMITS.MAX_LENGTH / 1000).toFixed(0)}KB / {CUSTOM_CODE_LIMITS.MAX_LINES} lines</p>
                           <p>• Supports file upload (.js, .py, .java, etc.)</p>
                         </div>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
 
                   <div className="flex items-center gap-2">
                     {/* File Upload Button */}
@@ -2877,8 +2877,8 @@ Understanding your baseline code typing speed can help identify opportunities fo
 
                 {/* Textarea with character count */}
                 <div className="relative">
-                <textarea
-                  value={customCode}
+                  <textarea
+                    value={customCode}
                     onChange={(e) => {
                       const newValue = e.target.value;
 
@@ -2916,17 +2916,17 @@ Understanding your baseline code typing speed can help identify opportunities fo
                         : 'focus:ring-primary'
                       }`}
                     placeholder="// Paste your code here...&#10;&#10;function example() {&#10;  console.log('Hello, World!');&#10;}&#10;&#10;// Or upload a code file using the button above"
-                  spellCheck={false}
+                    spellCheck={false}
                     autoComplete="off"
                     disabled={isFileReading}
                     autoCorrect="off"
                     autoCapitalize="off"
-                  data-testid="textarea-custom-code"
-                />
+                    data-testid="textarea-custom-code"
+                  />
 
                   {/* Character count and stats overlay */}
-                <Tooltip>
-                  <TooltipTrigger asChild>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
                       <div className="absolute bottom-2 right-6 flex items-center gap-2 text-[10px] sm:text-xs text-muted-foreground bg-background/80 backdrop-blur-sm px-2 py-1 rounded-md border border-border/30 cursor-help">
                         {customCode.length > 0 && (
                           <>
@@ -2986,13 +2986,13 @@ Understanding your baseline code typing speed can help identify opportunities fo
                         data-testid="button-apply-custom"
                       >
                         <Zap className="w-4 h-4" />
-                      Start Typing
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="right">
-                    <p className="text-xs">Load your code and begin the typing test</p>
-                  </TooltipContent>
-                </Tooltip>
+                        Start Typing
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                      <p className="text-xs">Load your code and begin the typing test</p>
+                    </TooltipContent>
+                  </Tooltip>
 
                   {customCode.length > 0 && (
                     <span className="text-xs text-muted-foreground">
@@ -3038,10 +3038,10 @@ Understanding your baseline code typing speed can help identify opportunities fo
                       {timeLimit > 0 ? "Time Left" : "Time"}
                     </div>
                     <div className={`text-lg sm:text-2xl font-mono font-bold ${timeLimit > 0 && (timeLimit - elapsedTime) <= 10
-                        ? "text-red-500 animate-pulse" 
-                        : "text-yellow-500"
-                    }`}>
-                      {timeLimit > 0 
+                      ? "text-red-500 animate-pulse"
+                      : "text-yellow-500"
+                      }`}>
+                      {timeLimit > 0
                         ? formatTime(Math.max(0, timeLimit - elapsedTime))
                         : formatTime(elapsedTime)
                       }
@@ -3052,14 +3052,14 @@ Understanding your baseline code typing speed can help identify opportunities fo
               <TooltipContent side="bottom" className="max-w-[220px]">
                 <p className="font-medium mb-1">Elapsed Time</p>
                 <p className="text-xs text-muted-foreground">
-                  {timeLimit > 0 
+                  {timeLimit > 0
                     ? "Countdown timer. Test ends when time runs out."
                     : "Total time spent typing. No time pressure."
                   }
                 </p>
               </TooltipContent>
             </Tooltip>
-            
+
             <Tooltip>
               <TooltipTrigger asChild>
                 <div tabIndex={0} role="group" aria-label="WPM statistic" className="focus:outline-none focus:ring-2 focus:ring-primary rounded-lg">
@@ -3077,7 +3077,7 @@ Understanding your baseline code typing speed can help identify opportunities fo
                 <p className="text-[10px] text-muted-foreground/70 mt-1">Formula: (characters / 5 - errors) × 60 / time</p>
               </TooltipContent>
             </Tooltip>
-            
+
             <Tooltip>
               <TooltipTrigger asChild>
                 <div tabIndex={0} role="group" aria-label="Raw WPM statistic" className="focus:outline-none focus:ring-2 focus:ring-primary rounded-lg">
@@ -3095,7 +3095,7 @@ Understanding your baseline code typing speed can help identify opportunities fo
                 <p className="text-[10px] text-muted-foreground/70 mt-1">Higher than WPM = errors slowing you down</p>
               </TooltipContent>
             </Tooltip>
-            
+
             <Tooltip>
               <TooltipTrigger asChild>
                 <div tabIndex={0} role="group" aria-label="Accuracy statistic" className="focus:outline-none focus:ring-2 focus:ring-primary rounded-lg">
@@ -3117,7 +3117,7 @@ Understanding your baseline code typing speed can help identify opportunities fo
                 </div>
               </TooltipContent>
             </Tooltip>
-            
+
             <Tooltip>
               <TooltipTrigger asChild>
                 <div tabIndex={0} role="group" aria-label="Consistency statistic" className="focus:outline-none focus:ring-2 focus:ring-primary rounded-lg">
@@ -3135,7 +3135,7 @@ Understanding your baseline code typing speed can help identify opportunities fo
                 <p className="text-[10px] text-muted-foreground/70 mt-1">Based on WPM standard deviation over time</p>
               </TooltipContent>
             </Tooltip>
-            
+
             <Tooltip>
               <TooltipTrigger asChild>
                 <div tabIndex={0} role="group" aria-label="Status indicator" className="focus:outline-none focus:ring-2 focus:ring-primary rounded-lg">
@@ -3151,9 +3151,9 @@ Understanding your baseline code typing speed can help identify opportunities fo
                 <p className="font-medium mb-1">Test Status</p>
                 <p className="text-xs text-muted-foreground">
                   {isFinished ? "Test completed successfully!" :
-                   isFailed ? "Test failed. Try again!" :
-                   isActive ? "Currently typing..." :
-                   "Ready to start. Click the code area to begin."}
+                    isFailed ? "Test failed. Try again!" :
+                      isActive ? "Currently typing..." :
+                        "Ready to start. Click the code area to begin."}
                 </p>
               </TooltipContent>
             </Tooltip>
@@ -3165,9 +3165,9 @@ Understanding your baseline code typing speed can help identify opportunities fo
             onClick={handleContainerClick}
             onPointerDown={handleContainerClick}
             className={`relative rounded-lg sm:rounded-xl min-h-[200px] sm:min-h-[300px] cursor-text transition-all duration-300 overflow-hidden ${isFocused
-                ? "ring-2 ring-primary/30 shadow-lg shadow-primary/5" 
-                : "ring-1 ring-border/30 hover:ring-border/50"
-            }`}
+              ? "ring-2 ring-primary/30 shadow-lg shadow-primary/5"
+              : "ring-1 ring-border/30 hover:ring-border/50"
+              }`}
             data-testid="typing-container"
             style={{
               background: 'linear-gradient(180deg, hsl(var(--card)/0.6) 0%, hsl(var(--card)/0.3) 100%)',
@@ -3181,7 +3181,7 @@ Understanding your baseline code typing speed can help identify opportunities fo
                   <TooltipTrigger asChild>
                     <div className="flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md bg-muted/50 cursor-help">
                       <Terminal className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-primary/70" />
-                </div>
+                    </div>
                   </TooltipTrigger>
                   <TooltipContent>
                     <p className="text-xs">Current Language</p>
@@ -3196,7 +3196,7 @@ Understanding your baseline code typing speed can help identify opportunities fo
                   )}
                 </span>
               </div>
-                <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2">
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
@@ -3218,8 +3218,8 @@ Understanding your baseline code typing speed can help identify opportunities fo
                   <div className="flex items-center gap-1.5 sm:gap-2">
                     <div className="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-green-500 animate-pulse" />
                     <span className="text-[10px] sm:text-xs text-green-500/80 font-mono">typing</span>
-                </div>
-              )}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -3234,9 +3234,9 @@ Understanding your baseline code typing speed can help identify opportunities fo
                   </div>
                   <div className="space-y-2.5">
                     {[3 / 4, 1 / 2, 5 / 6, 2 / 3, 4 / 5, 1 / 3, 3 / 5].map((w, i) => (
-                      <div 
+                      <div
                         key={i}
-                        className="h-5 bg-gradient-to-r from-muted/40 to-muted/20 rounded-md animate-pulse" 
+                        className="h-5 bg-gradient-to-r from-muted/40 to-muted/20 rounded-md animate-pulse"
                         style={{ width: `${w * 100}%`, animationDelay: `${i * 0.08}s` }}
                       />
                     ))}
@@ -3278,9 +3278,9 @@ Understanding your baseline code typing speed can help identify opportunities fo
                     aria-label="Code typing input"
                     style={isMobile ? { left: caretAnchor.left, top: caretAnchor.top, height: caretAnchor.height, width: 1, fontSize: 16 } : undefined}
                   />
-                  
+
                   {/* Displayed code with highlighting and line numbers */}
-                  <div 
+                  <div
                     className="font-mono text-[12px] sm:text-[15px] leading-[1.5] sm:leading-[1.65] select-none overflow-y-auto overflow-x-auto max-h-[280px] sm:max-h-[400px] scroll-smooth scrollbar-thin scrollbar-thumb-muted/30 scrollbar-track-transparent"
                     ref={codeDisplayRef}
                     role="textbox"
@@ -3300,7 +3300,7 @@ Understanding your baseline code typing speed can help identify opportunities fo
                         <span>{Math.round((userInput.length / codeSnippet.length) * 100)}%</span>
                       </div>
                       <div className="h-1 bg-muted/20 rounded-full overflow-hidden">
-                        <div 
+                        <div
                           className="h-full bg-gradient-to-r from-primary/80 to-primary rounded-full transition-all duration-150 ease-out"
                           style={{ width: `${Math.min((userInput.length / codeSnippet.length) * 100, 100)}%` }}
                         />
@@ -3310,7 +3310,7 @@ Understanding your baseline code typing speed can help identify opportunities fo
 
                   {/* Click to start overlay */}
                   {!isActive && !isFinished && userInput.length === 0 && !isFocused && (
-                    <div 
+                    <div
                       className="absolute inset-0 flex items-center justify-center bg-background/40 backdrop-blur-[2px] cursor-text transition-opacity duration-200"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -3330,47 +3330,47 @@ Understanding your baseline code typing speed can help identify opportunities fo
                   )}
                 </>
               ) : errorState.type ? (
-              <div className="flex flex-col items-center justify-center h-64 gap-4">
+                <div className="flex flex-col items-center justify-center h-64 gap-4">
                   <div className={`text-center p-4 rounded-lg ${errorState.type === 'network' ? 'bg-yellow-500/10 border border-yellow-500/30' :
-                  errorState.type === 'timeout' ? 'bg-orange-500/10 border border-orange-500/30' :
-                  'bg-red-500/10 border border-red-500/30'
-                }`}>
+                    errorState.type === 'timeout' ? 'bg-orange-500/10 border border-orange-500/30' :
+                      'bg-red-500/10 border border-red-500/30'
+                    }`}>
                     <div className={`text-lg font-medium mb-2 ${errorState.type === 'network' ? 'text-yellow-500' :
-                    errorState.type === 'timeout' ? 'text-orange-500' :
-                    'text-red-500'
-                  }`}>
-                    {errorState.type === 'network' ? '🌐 Network Error' :
-                     errorState.type === 'timeout' ? '⏱️ Request Timeout' :
-                     errorState.type === 'generation' ? '⚠️ Generation Failed' :
-                     '❌ Server Error'}
-                  </div>
-                  <p className="text-muted-foreground text-sm mb-3">{errorState.message}</p>
-                  {retryCount > 0 && retryCount < MAX_RETRIES && (
-                    <p className="text-xs text-muted-foreground mb-2">
-                      Auto-retrying... (Attempt {retryCount + 1}/{MAX_RETRIES})
-                    </p>
-                  )}
+                      errorState.type === 'timeout' ? 'text-orange-500' :
+                        'text-red-500'
+                      }`}>
+                      {errorState.type === 'network' ? '🌐 Network Error' :
+                        errorState.type === 'timeout' ? '⏱️ Request Timeout' :
+                          errorState.type === 'generation' ? '⚠️ Generation Failed' :
+                            '❌ Server Error'}
+                    </div>
+                    <p className="text-muted-foreground text-sm mb-3">{errorState.message}</p>
+                    {retryCount > 0 && retryCount < MAX_RETRIES && (
+                      <p className="text-xs text-muted-foreground mb-2">
+                        Auto-retrying... (Attempt {retryCount + 1}/{MAX_RETRIES})
+                      </p>
+                    )}
                     {errorState.canRetry && mode === "ai" && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setRetryCount(0);
-                        fetchCodeSnippet(true);
-                      }}
-                      disabled={isLoading}
-                      data-testid="button-retry"
-                    >
-                      <RotateCcw className="w-4 h-4 mr-2" />
-                      Try Again
-                    </Button>
-                  )}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setRetryCount(0);
+                          fetchCodeSnippet(true);
+                        }}
+                        disabled={isLoading}
+                        data-testid="button-retry"
+                      >
+                        <RotateCcw className="w-4 h-4 mr-2" />
+                        Try Again
+                      </Button>
+                    )}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    Or try a different language/difficulty above
+                  </div>
                 </div>
-                <div className="text-xs text-muted-foreground">
-                  Or try a different language/difficulty above
-                </div>
-              </div>
-            ) : mode === "custom" ? (
+              ) : mode === "custom" ? (
                 <div className="flex flex-col items-center justify-center h-64 gap-3 text-center px-4">
                   <FileCode className="w-12 h-12 text-muted-foreground/30" />
                   <div className="text-muted-foreground">
@@ -3379,21 +3379,21 @@ Understanding your baseline code typing speed can help identify opportunities fo
                   <p className="text-xs text-muted-foreground/60">
                     Supports any programming language
                   </p>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center h-64 gap-4">
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-64 gap-4">
                   <div className="text-muted-foreground">No code available</div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => fetchCodeSnippet(true)}
-                  disabled={isLoading}
-                >
-                  <RotateCcw className="w-4 h-4 mr-2" />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fetchCodeSnippet(true)}
+                    disabled={isLoading}
+                  >
+                    <RotateCcw className="w-4 h-4 mr-2" />
                     Generate Code
-                </Button>
-              </div>
-            )}
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -3489,18 +3489,18 @@ Understanding your baseline code typing speed can help identify opportunities fo
                     <div className="flex flex-col items-center p-3 sm:p-4 bg-background/50 rounded-lg sm:rounded-xl">
                       <div className="text-muted-foreground text-[10px] sm:text-sm mb-0.5 sm:mb-1 flex items-center gap-1.5 sm:gap-2">
                         <Zap className="w-3 sm:w-4 h-3 sm:h-4" /> WPM
-                    </div>
-                      <div className="text-3xl sm:text-5xl font-mono font-bold text-primary">{wpm}</div>
                       </div>
+                      <div className="text-3xl sm:text-5xl font-mono font-bold text-primary">{wpm}</div>
+                    </div>
                     <div className="flex flex-col items-center p-3 sm:p-4 bg-background/50 rounded-lg sm:rounded-xl">
                       <div className="text-muted-foreground text-[10px] sm:text-sm mb-0.5 sm:mb-1 flex items-center gap-1.5 sm:gap-2">
                         <Code className="w-3 sm:w-4 h-3 sm:h-4" /> Accuracy
-                    </div>
+                      </div>
                       <div className={`text-3xl sm:text-5xl font-mono font-bold ${accuracy >= 95 ? 'text-green-500' : accuracy >= 85 ? 'text-yellow-500' : 'text-red-500'}`}>
                         {accuracy}%
+                      </div>
                     </div>
-                    </div>
-              </div>
+                  </div>
 
                   {/* Secondary Stats */}
                   <div className="space-y-1.5 sm:space-y-2 mb-4 sm:mb-6">
@@ -3524,7 +3524,7 @@ Understanding your baseline code typing speed can help identify opportunities fo
                       <span>Time</span>
                       <span className="font-mono text-foreground">{formatTime(elapsedTime)}</span>
                     </div>
-              </div>
+                  </div>
 
                   {/* Celebratory Share Prompt */}
                   <motion.div
@@ -3562,11 +3562,11 @@ Understanding your baseline code typing speed can help identify opportunities fo
                   <div className="flex flex-col gap-2 sm:gap-3">
                     {user && (
                       <button
-                      onClick={() => {
-                        // Don't close completion dialog - just open share dialog on top
-                        setShareDialogTab("certificate");
-                        setCertificateOnlyMode(true);
-                        setShareDialogOpen(true);
+                        onClick={() => {
+                          // Don't close completion dialog - just open share dialog on top
+                          setShareDialogTab("certificate");
+                          setCertificateOnlyMode(true);
+                          setShareDialogOpen(true);
                         }}
                         className="w-full py-2 sm:py-3 bg-gradient-to-r from-purple-500 to-cyan-500 text-white text-xs sm:text-base font-bold rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5 sm:gap-2"
                         data-testid="button-get-certificate"
@@ -3585,8 +3585,8 @@ Understanding your baseline code typing speed can help identify opportunities fo
                             // In custom mode, reset with same code
                             resetTest(true);
                           }
-                      }}
-                      disabled={isLoading}
+                        }}
+                        disabled={isLoading}
                         className="flex-1 min-w-0 py-2.5 sm:py-3 bg-primary text-primary-foreground text-xs sm:text-base font-bold rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-1 sm:gap-2 disabled:opacity-50"
                         data-testid="button-new-snippet"
                       >
@@ -3594,17 +3594,17 @@ Understanding your baseline code typing speed can help identify opportunities fo
                         <span className="truncate">{mode === "ai" ? "New Code" : "Try Again"}</span>
                       </button>
                       <button
-                      onClick={() => {
-                        setCompletionDialogOpen(false);
+                        onClick={() => {
+                          setCompletionDialogOpen(false);
                           resetTest();
-                      }}
+                        }}
                         className="px-3 sm:px-6 py-2.5 sm:py-3 border border-border text-xs sm:text-base rounded-lg hover:bg-accent transition-colors flex items-center justify-center gap-1 sm:gap-2 shrink-0"
                         data-testid="button-try-again"
                       >
                         <RotateCcw className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
                         <span className="hidden xs:inline">Retry</span>
                       </button>
-              </div>
+                    </div>
                   </div>
 
                 </motion.div>
@@ -3658,13 +3658,13 @@ Understanding your baseline code typing speed can help identify opportunities fo
                 )}
               </DialogTitle>
               <DialogDescription className="text-xs sm:text-sm">
-                {certificateOnlyMode 
+                {certificateOnlyMode
                   ? `Download your official ${PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name} typing certificate!`
                   : `Share your ${PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name} typing achievement!`
                 }
               </DialogDescription>
             </DialogHeader>
-            
+
             <Tabs value={shareDialogTab} onValueChange={(v) => setShareDialogTab(v as typeof shareDialogTab)} className="w-full">
               {/* Hide tabs when in certificate-only mode (opened from Get Certificate button) */}
               {!certificateOnlyMode && (
@@ -3717,8 +3717,8 @@ Understanding your baseline code typing speed can help identify opportunities fo
                       </p>
                     </div>
                   </div>
-                <Tooltip>
-                  <TooltipTrigger asChild>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
                       <button
                         onClick={() => {
                           const rating = getCodePerformanceRating(wpm, accuracy);
@@ -3732,11 +3732,11 @@ Understanding your baseline code typing speed can help identify opportunities fo
                       >
                         <Copy className="w-3.5 h-3.5 text-muted-foreground" />
                       </button>
-                  </TooltipTrigger>
+                    </TooltipTrigger>
                     <TooltipContent>
                       <p className="text-xs">Copy Share Message</p>
-                  </TooltipContent>
-                </Tooltip>
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
 
                 {/* Quick Share Buttons */}
@@ -3745,8 +3745,8 @@ Understanding your baseline code typing speed can help identify opportunities fo
                     Click to Share
                   </p>
                   <div className="grid grid-cols-2 xs:grid-cols-3 gap-1.5 sm:gap-2">
-                <Tooltip>
-                  <TooltipTrigger asChild>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
                         <button
                           onClick={() => shareToSocial('twitter')}
                           className="flex items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#1DA1F2]/10 hover:bg-[#1DA1F2]/25 border border-[#1DA1F2]/20 transition-all group"
@@ -3755,13 +3755,13 @@ Understanding your baseline code typing speed can help identify opportunities fo
                           <Twitter className="w-4 h-4 text-[#1DA1F2] shrink-0" />
                           <span className="text-[10px] sm:text-xs font-medium truncate">X</span>
                         </button>
-                  </TooltipTrigger>
+                      </TooltipTrigger>
                       <TooltipContent>
                         <p className="text-xs">Share on X</p>
-                  </TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
+                      </TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
                         <button
                           onClick={() => shareToSocial('facebook')}
                           className="flex items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#1877F2]/10 hover:bg-[#1877F2]/25 border border-[#1877F2]/20 transition-all group"
@@ -3770,11 +3770,11 @@ Understanding your baseline code typing speed can help identify opportunities fo
                           <Facebook className="w-4 h-4 text-[#1877F2] shrink-0" />
                           <span className="text-[10px] sm:text-xs font-medium truncate">Facebook</span>
                         </button>
-                  </TooltipTrigger>
+                      </TooltipTrigger>
                       <TooltipContent>
                         <p className="text-xs">Share on Facebook</p>
-                  </TooltipContent>
-                </Tooltip>
+                      </TooltipContent>
+                    </Tooltip>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <button
@@ -3869,7 +3869,7 @@ Understanding your baseline code typing speed can help identify opportunities fo
                   username={user?.username}
                 />
               </TabsContent>
-              
+
               {/* Certificate Tab - Only for logged in users */}
               {user && (
                 <TabsContent value="certificate" className="space-y-3 sm:space-y-4">
@@ -4252,41 +4252,41 @@ Ready to earn yours? 🚀`);
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Challenge Link */}
                 <div className="space-y-2 sm:space-y-3">
                   <p className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wide text-center">
                     Share Challenge Link
                   </p>
                   <div className="flex items-center gap-2">
-                    <Input 
+                    <Input
                       value={shareUrl || `${window.location.origin}/code-mode?challenge=${wpm}`}
                       readOnly
                       className="flex-1 font-mono text-xs sm:text-sm min-w-0"
                     />
                     <Tooltip>
                       <TooltipTrigger asChild>
-                    <Button
+                        <Button
                           onClick={() => {
                             const url = shareUrl || `${window.location.origin}/code-mode?challenge=${wpm}`;
                             navigator.clipboard.writeText(url);
                             toast({ title: "Challenge Link Copied!", description: "Send it to your friends!" });
                           }}
-                      variant="outline"
-                      size="icon"
+                          variant="outline"
+                          size="icon"
                           className="shrink-0"
                           data-testid="button-copy-challenge-link"
-                    >
-                      <Copy className="w-4 h-4" />
-                    </Button>
+                        >
+                          <Copy className="w-4 h-4" />
+                        </Button>
                       </TooltipTrigger>
                       <TooltipContent>
                         <p className="text-xs">Copy Challenge Link</p>
                       </TooltipContent>
                     </Tooltip>
                   </div>
-                  </div>
-                  
+                </div>
+
                 {/* Challenge Message */}
                 <div className="relative">
                   <div className="absolute -top-2 left-3 px-2 bg-background text-[10px] sm:text-xs font-medium text-muted-foreground">
@@ -4300,9 +4300,9 @@ Ready to earn yours? 🚀`);
                     <p className="text-muted-foreground">Think you can code faster? Prove it! 💻⚡</p>
                     <p className="text-primary/80 text-[10px] sm:text-xs mt-2 sm:mt-3 break-all">👉 https://typemasterai.com/code-mode</p>
                   </div>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
                         onClick={() => {
                           const langName = PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name || language;
                           const text = `🔥 I challenge you to beat my score!\n\nI just typed ${langName} code at ${wpm} WPM with ${accuracy}% accuracy!\n\nThink you can code faster? Prove it! 💻⚡\n\n👉 https://typemasterai.com/code-mode`;
@@ -4311,21 +4311,21 @@ Ready to earn yours? 🚀`);
                         }}
                         className="absolute top-3 right-3 p-1.5 rounded-md bg-background/80 hover:bg-background border border-border/50 transition-colors"
                         data-testid="button-copy-challenge-message"
-                        >
+                      >
                         <Copy className="w-3.5 h-3.5 text-muted-foreground" />
-                        </button>
-                      </TooltipTrigger>
+                      </button>
+                    </TooltipTrigger>
                     <TooltipContent>
                       <p className="text-xs">Copy Challenge Message</p>
                     </TooltipContent>
-                    </Tooltip>
+                  </Tooltip>
                 </div>
 
                 {/* Quick Challenge Share */}
                 <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
                         onClick={() => {
                           const langName = PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name || language;
                           const text = `🔥 I challenge you! I just typed ${langName} code at ${wpm} WPM with ${accuracy}% accuracy on @TypeMasterAI! Can you beat me? 💻⚡`;
@@ -4334,18 +4334,18 @@ Ready to earn yours? 🚀`);
                         }}
                         className="flex items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#1DA1F2]/10 hover:bg-[#1DA1F2]/25 border border-[#1DA1F2]/20 transition-all"
                         data-testid="button-challenge-twitter"
-                        >
+                      >
                         <Twitter className="w-4 h-4 text-[#1DA1F2] shrink-0" />
                         <span className="text-[10px] sm:text-sm font-medium truncate">Challenge on X</span>
-                        </button>
-                      </TooltipTrigger>
+                      </button>
+                    </TooltipTrigger>
                     <TooltipContent>
                       <p className="text-xs">Challenge on X</p>
                     </TooltipContent>
-                    </Tooltip>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
                         onClick={() => {
                           const langName = PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name || language;
                           const text = `🔥 I challenge you! I just typed ${langName} code at ${wpm} WPM with ${accuracy}% accuracy! Can you beat me? 💻⚡ https://typemasterai.com/code-mode`;
@@ -4354,18 +4354,18 @@ Ready to earn yours? 🚀`);
                         }}
                         className="flex items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/25 border border-[#25D366]/20 transition-all"
                         data-testid="button-challenge-whatsapp"
-                        >
-                          <MessageCircle className="w-4 h-4 text-[#25D366] shrink-0" />
+                      >
+                        <MessageCircle className="w-4 h-4 text-[#25D366] shrink-0" />
                         <span className="text-[10px] sm:text-sm font-medium truncate">WhatsApp</span>
-                        </button>
-                      </TooltipTrigger>
+                      </button>
+                    </TooltipTrigger>
                     <TooltipContent>
                       <p className="text-xs">Challenge on WhatsApp</p>
                     </TooltipContent>
-                    </Tooltip>
-                  </div>
-                  
-                  {'share' in navigator && (
+                  </Tooltip>
+                </div>
+
+                {'share' in navigator && (
                   <button
                     onClick={() => {
                       const langName = PROGRAMMING_LANGUAGES[language as keyof typeof PROGRAMMING_LANGUAGES]?.name || language;
@@ -4377,11 +4377,11 @@ Ready to earn yours? 🚀`);
                     }}
                     className="w-full py-2.5 sm:py-3 bg-gradient-to-r from-orange-500/10 to-red-500/10 text-foreground text-xs sm:text-base font-medium rounded-lg sm:rounded-xl hover:from-orange-500/20 hover:to-red-500/20 transition-all flex items-center justify-center gap-2 border border-orange-500/20"
                     data-testid="button-challenge-native"
-                    >
-                      <Share2 className="w-4 h-4 shrink-0" />
+                  >
+                    <Share2 className="w-4 h-4 shrink-0" />
                     <span className="truncate">More Sharing Options</span>
                   </button>
-                  )}
+                )}
               </TabsContent>
             </Tabs>
           </DialogContent>
@@ -4450,7 +4450,7 @@ Ready to earn yours? 🚀`);
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-        <LLMExplanation 
+        <LLMExplanation
           title="Code Mode Mechanics"
           description="Understanding syntax highlighting and indentation logic"
           content={`

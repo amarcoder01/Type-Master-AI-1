@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { AuthorBio } from '@/components/author-bio';
+import { AuthPrompt } from "@/components/auth-prompt";
 
 export default function TypingTestJobsPage() {
     useSEO({
@@ -44,13 +45,14 @@ export default function TypingTestJobsPage() {
                     <p className="text-xl md:text-2xl text-slate-300 mb-8 max-w-3xl mx-auto">
                         Is your typing speed holding your career back? See the WPM benchmarks for top paying jobs and how to reach them.
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
                         <Link href="/5-minute-typing-test">
                             <Button size="lg" className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white text-lg px-8 py-6 shadow-lg shadow-cyan-500/20" data-testid="button-job-test-hero">
                                 Take Deployment Test
                             </Button>
                         </Link>
                     </div>
+                    <AuthPrompt message="save your career test results and build your professional profile!" />
                 </section>
 
                 {/* AI Answer Section */}

@@ -68,26 +68,20 @@ function generateMetaTags(config: ReturnType<typeof getSEOConfig>, path: string)
   const ogImage = (config as any)?.ogImage || `${BASE_URL}/og-image?title=${encodeURIComponent(config.title)}`;
   const robotsContent = config.noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
   const hreflang = (() => {
-    const supportedLangs: Record<string, string> = {
-      'es': '/es/typing-test',
-      'fr': '/fr/typing-test',
-      'de': '/de/typing-test',
-      'en': '/',
-    };
-
-    // If it's one of our multilingual typing test pages
-    if (path === '/' || Object.values(supportedLangs).includes(path)) {
-      return Object.entries(supportedLangs).map(([lang, p]) => {
-        let tags = `\n    <link rel="alternate" hreflang="${lang}" href="${BASE_URL}${p}" />`;
-        if (lang === 'en') {
-          tags += `\n    <link rel="alternate" hreflang="x-default" href="${BASE_URL}/" />`;
-        }
-        return tags;
-      }).join('');
+    // Spanish localized page: include es/en/x-default
+    if (path.startsWith('/es/')) {
+      const esHref = `${BASE_URL}${path}`;
+      const enHref = `${BASE_URL}/`;
+      return `\n    <link rel="alternate" hreflang="es" href="${esHref}" />\n    <link rel="alternate" hreflang="en" href="${enHref}" />\n    <link rel="alternate" hreflang="x-default" href="${enHref}" />`;
     }
-
-    // Default: only x-default pointing home
-    return `\n    <link rel="alternate" hreflang="x-default" href="${BASE_URL}/" />`;
+    // English home route: advertise Spanish alternate
+    if (path === '/') {
+      const esHref = `${BASE_URL}/es/typing-test`;
+      const enHref = `${BASE_URL}/`;
+      return `\n    <link rel="alternate" hreflang="es" href="${esHref}" />\n    <link rel="alternate" hreflang="x-default" href="${enHref}" />`;
+    }
+    // Other pages: default x-default only
+    return `\n    <link rel=\"alternate\" hreflang=\"x-default\" href=\"${BASE_URL}/\" />`;
   })();
 
   const verificationMeta = (() => {
@@ -145,7 +139,7 @@ function escapeHtml(text: string): string {
   return text.replace(/[&<>"']/g, (m) => map[m]);
 }
 
-async function generateStructuredDataScript(path: string, config: ReturnType<typeof getSEOConfig> | null): Promise<string> {
+function generateStructuredDataScript(path: string, config: ReturnType<typeof getSEOConfig> | null): string {
   if (!config) return '';
 
   const base = BASE_URL;
@@ -301,11 +295,11 @@ async function generateStructuredDataScript(path: string, config: ReturnType<typ
     },
     ...(breadcrumbItems.length
       ? [
-        {
-          '@type': 'BreadcrumbList',
-          itemListElement: breadcrumbItems,
-        },
-      ]
+          {
+            '@type': 'BreadcrumbList',
+            itemListElement: breadcrumbItems,
+          },
+        ]
       : []),
   ];
   return scriptTag({ '@context': 'https://schema.org', '@graph': graph });
@@ -330,7 +324,7 @@ function injectMetaTags(html: string, metaTags: string): string {
   html = html.replace(/<meta\s+name="keywords"[^>]*>/gi, '');
   html = html.replace(/<meta\s+name="robots"[^>]*>/gi, '');
   html = html.replace(/<link\s+rel="canonical"[^>]*>/gi, '');
-
+  
   // Remove existing OG tags
   html = html.replace(/<meta\s+property="og:type"[^>]*>/gi, '');
   html = html.replace(/<meta\s+property="og:url"[^>]*>/gi, '');
@@ -339,7 +333,7 @@ function injectMetaTags(html: string, metaTags: string): string {
   html = html.replace(/<meta\s+property="og:image"[^>]*>/gi, '');
   html = html.replace(/<meta\s+property="og:image:width"[^>]*>/gi, '');
   html = html.replace(/<meta\s+property="og:image:height"[^>]*>/gi, '');
-
+  
   // Remove existing Twitter tags
   html = html.replace(/<meta\s+name="twitter:card"[^>]*>/gi, '');
   html = html.replace(/<meta\s+name="twitter:url"[^>]*>/gi, '');
@@ -365,7 +359,7 @@ export function createSEOPrerender(distPath: string) {
 
   return async (req: Request, res: Response, next: NextFunction) => {
     const userAgent = req.headers['user-agent'] || '';
-
+    
     // Only process for crawlers
     if (!isCrawler(userAgent)) {
       return next();
@@ -394,7 +388,7 @@ export function createSEOPrerender(distPath: string) {
 
       // Get SEO config for this route
       const seoConfig = getSEOConfig(req.path);
-
+      
       if (!seoConfig) {
         // For crawlers, return a proper 404 with noindex to avoid soft-404 issues
         const notFoundHtml = `<!doctype html><html lang="en"><head><meta charset="utf-8" /><meta name="robots" content="noindex, nofollow" /><title>404 Not Found</title></head><body>Not Found</body></html>`;
@@ -420,12 +414,12 @@ export function createSEOPrerender(distPath: string) {
               ogImage: post.coverImageUrl || SEO_CFG.defaultOgImage,
             };
           }
-        } catch { }
+        } catch {}
       }
 
       // Generate and inject meta tags (and JSON-LD structured data)
       const metaTags = generateMetaTags(finalConfig, req.path);
-      const structured = await generateStructuredDataScript(req.path, finalConfig);
+      const structured = generateStructuredDataScript(req.path, finalConfig);
       const html = injectMetaTags(htmlTemplate, metaTags + (structured ? `\n    ${structured}` : ''));
 
       res.set('Content-Type', 'text/html');

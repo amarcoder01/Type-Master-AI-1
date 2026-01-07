@@ -7,6 +7,7 @@ import { PLATFORM_STATS, formatNumber } from '@shared/platform-stats';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { RelatedFeatures, QuickLinksFooter } from '@/components/related-features';
+import { AuthPrompt } from '@/components/auth-prompt';
 
 // FAQ data matching the structured data in index.html
 const FAQ_ITEMS = [
@@ -55,21 +56,26 @@ export default function Home() {
       {/* Hero Section with H1 for SEO */}
       <header className="flex flex-col items-center gap-3 sm:gap-4 mb-8 sm:mb-12 px-4 sm:px-0">
         <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight text-center bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/40">
-          Free Online Typing Test
+          Master the Flow
         </h1>
         <p className="text-muted-foreground text-base sm:text-lg max-w-2xl text-center">
-          Test your typing speed in seconds with our free WPM calculator. Track your accuracy, compete with others, and improve your typing skills with AI-powered analytics.
+          Test your typing speed, track your progress, and compete with others in a distraction-free environment.
         </p>
       </header>
 
       {/* Main Typing Test Component */}
       <TypingTest />
 
-      {/* SEO Content Section - Below the Fold */}
-      <section className="mt-16 sm:mt-24 space-y-16 sm:space-y-24">
+      {/* Login prompt for guests */}
+      <div className="max-w-4xl mx-auto px-4">
+        <AuthPrompt />
+      </div>
+
+      {/* Extended SEO Content & Features Sections */}
+      <section className="hidden mt-16 sm:mt-24 space-y-16 sm:space-y-24">
 
         {/* AI Answer / TL;DR Section */}
-        <div className="max-w-4xl mx-auto px-4">
+        <div className="hidden max-w-4xl mx-auto px-4">
           <div className="bg-card/30 border border-primary/20 rounded-xl p-6 shadow-lg shadow-primary/5">
             <div className="flex items-center gap-2 mb-4">
               <Zap className="w-6 h-6 text-primary" />
@@ -92,7 +98,7 @@ export default function Home() {
         </div>
 
         {/* Statistics / Social Proof */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 max-w-4xl mx-auto px-4">
+        <div className="hidden grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 max-w-4xl mx-auto px-4">
           <div className="text-center p-4 sm:p-6 bg-card/30 rounded-xl border border-border/50">
             <div className="text-2xl sm:text-3xl font-bold text-primary font-mono mb-1">
               {formatNumber(PLATFORM_STATS.TOTAL_USERS)}
@@ -120,7 +126,7 @@ export default function Home() {
         </div>
 
         {/* Features Section */}
-        <div className="max-w-6xl mx-auto px-4">
+        <div className="hidden max-w-6xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12">
             Why Choose TypeMasterAI for Your Typing Test?
           </h2>
@@ -176,7 +182,7 @@ export default function Home() {
         </div>
 
         {/* How It Works */}
-        <div className="max-w-4xl mx-auto px-4">
+        <div className="hidden max-w-4xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12">
             How to Test Your Typing Speed
           </h2>
@@ -200,7 +206,7 @@ export default function Home() {
         </div>
 
         {/* Quick Links to Test Modes */}
-        <div className="max-w-4xl mx-auto px-4">
+        <div className="hidden max-w-4xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8">
             Choose Your Typing Test
           </h2>
@@ -237,7 +243,7 @@ export default function Home() {
         </div>
 
         {/* FAQ Section */}
-        <div className="max-w-3xl mx-auto px-4">
+        <div className="hidden max-w-3xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12">
             Frequently Asked Questions
           </h2>
@@ -270,21 +276,21 @@ export default function Home() {
         </div>
 
         {/* Related Features - Internal Linking */}
-        <div className="max-w-4xl mx-auto px-4">
-          <RelatedFeatures 
-            title="Explore More Features" 
-            features="specialized" 
+        <div className="hidden max-w-4xl mx-auto px-4">
+          <RelatedFeatures
+            title="Explore More Features"
+            features="specialized"
             columns={4}
           />
-          <RelatedFeatures 
-            title="Learning Resources" 
-            features="learning" 
+          <RelatedFeatures
+            title="Learning Resources"
+            features="learning"
             columns={4}
           />
         </div>
 
         {/* Final CTA */}
-        <div className="max-w-2xl mx-auto px-4 text-center pb-8">
+        <div className="hidden max-w-2xl mx-auto px-4 text-center pb-8">
           <h2 className="text-2xl sm:text-3xl font-bold mb-4">
             Ready to Improve Your Typing Speed?
           </h2>

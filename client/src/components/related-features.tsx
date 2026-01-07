@@ -1,8 +1,8 @@
 import { Link } from 'wouter';
 import { Card, CardContent } from '@/components/ui/card';
-import { 
-  Keyboard, Zap, Code, Users, BarChart2, Trophy, Target, 
-  GraduationCap, Briefcase, Gamepad2, Globe, BookOpen, 
+import {
+  Keyboard, Zap, Code, Users, BarChart2, Trophy, Target,
+  GraduationCap, Briefcase, Gamepad2, Globe, BookOpen,
   Award, Clock, Calculator, Gauge
 } from 'lucide-react';
 
@@ -104,8 +104,8 @@ export function RelatedFeatures({
   showDescriptions = true,
   className = '',
 }: RelatedFeaturesProps) {
-  const featureList = typeof features === 'string' 
-    ? FEATURE_GROUPS[features] 
+  const featureList = typeof features === 'string'
+    ? FEATURE_GROUPS[features]
     : features;
 
   const gridCols = {
@@ -182,7 +182,7 @@ export function QuickLinksFooter({ exclude = [] }: QuickLinksFooterProps) {
   ].filter(link => !exclude.includes(link.href));
 
   return (
-    <div className="flex flex-wrap justify-center gap-3 py-4 text-sm">
+    <div className="hidden flex flex-wrap justify-center gap-3 py-4 text-sm">
       {quickLinks.map((link, i) => (
         <span key={link.href}>
           <Link href={link.href}>

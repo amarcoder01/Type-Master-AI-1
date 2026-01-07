@@ -4,6 +4,7 @@ import { useSEO } from '@/lib/seo';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Breadcrumbs } from '@/components/breadcrumbs';
+import { AuthPrompt } from '@/components/auth-prompt';
 
 export default function TypingTest5MinPage() {
   useSEO({
@@ -78,6 +79,9 @@ export default function TypingTest5MinPage() {
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
+          </div>
+          <div className="max-w-4xl mx-auto mt-8 px-4">
+            <AuthPrompt message="save your endurance results and track your stamina!" />
           </div>
         </section>
 

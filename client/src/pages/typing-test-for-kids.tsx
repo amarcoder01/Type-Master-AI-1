@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { AuthorBio } from '@/components/author-bio';
 import TypingTest from '@/components/typing-test';
+import { AuthPrompt } from "@/components/auth-prompt";
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -105,9 +106,10 @@ export default function TypingTestForKidsPage() {
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
             Typing Test for <span className="text-primary">Kids</span>
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-6">
             Learn to type with fun! Practice typing, earn achievements, and become a keyboard pro.
           </p>
+          <AuthPrompt message="save your scores and trophies to see your progress!" />
         </header>
 
         {/* Fun Facts Box */}
@@ -119,8 +121,8 @@ export default function TypingTestForKidsPage() {
                 <h2 className="text-lg font-bold">Did You Know?</h2>
               </div>
               <p className="text-muted-foreground leading-relaxed">
-                Learning to type is like learning a superpower! Fast typists can write their homework 
-                <strong> 2-3 times faster</strong> than slow typists. With just <strong>15 minutes of practice daily</strong>, 
+                Learning to type is like learning a superpower! Fast typists can write their homework
+                <strong> 2-3 times faster</strong> than slow typists. With just <strong>15 minutes of practice daily</strong>,
                 you can become a typing champion in a few weeks!
               </p>
             </CardContent>
@@ -207,7 +209,7 @@ export default function TypingTestForKidsPage() {
               <h3 className="text-xl font-bold mb-4">For Parents & Teachers</h3>
               <div className="text-muted-foreground space-y-3">
                 <p>
-                  TypeMasterAI is safe and ad-free, making it perfect for classroom or home use. 
+                  TypeMasterAI is safe and ad-free, making it perfect for classroom or home use.
                   Create an account to track your child's progress over time.
                 </p>
                 <ul className="space-y-2">

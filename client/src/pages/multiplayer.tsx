@@ -12,6 +12,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Zap, Users, Lock, Trophy, Loader2, Info, WifiOff, AlertTriangle, CheckCircle2, Timer, FileText } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { AuthPrompt } from "@/components/auth-prompt";
 
 // Error codes for specific error handling
 type MultiplayerErrorCode = "NETWORK_ERROR" | "ROOM_FULL" | "ROOM_NOT_FOUND" | "ROOM_STARTED" | "INVALID_CODE" | "SERVER_ERROR";
@@ -26,11 +27,11 @@ function parseErrorResponse(response: Response, data: { message?: string; code?:
   if (!navigator.onLine) {
     return { code: "NETWORK_ERROR", message: "You appear to be offline. Please check your internet connection." };
   }
-  
+
   if (response.status === 404) {
     return { code: "ROOM_NOT_FOUND", message: data.message || "Room not found. Check the code and try again." };
   }
-  
+
   if (response.status === 409) {
     if (data.code === "RACE_FULL") {
       return { code: "ROOM_FULL", message: "This room is full. Try another room or create your own." };
@@ -39,11 +40,11 @@ function parseErrorResponse(response: Response, data: { message?: string; code?:
       return { code: "ROOM_STARTED", message: "This race has already started. Try joining another room." };
     }
   }
-  
+
   if (response.status >= 500) {
     return { code: "SERVER_ERROR", message: "Server is temporarily unavailable. Please try again in a moment." };
   }
-  
+
   return { code: "SERVER_ERROR", message: data.message || "Something went wrong. Please try again." };
 }
 
@@ -71,12 +72,12 @@ interface Participant {
 function getOrCreateGuestId(): string {
   const GUEST_ID_KEY = "multiplayer_guest_id";
   let guestId = localStorage.getItem(GUEST_ID_KEY);
-  
+
   if (!guestId) {
     guestId = Math.random().toString(36).substring(2, 8);
     localStorage.setItem(GUEST_ID_KEY, guestId);
   }
-  
+
   return guestId;
 }
 
@@ -126,7 +127,7 @@ export default function MultiplayerPage() {
       });
       return;
     }
-    
+
     setLoading(true);
     setLoadingAction("quickMatch");
     try {
@@ -134,7 +135,7 @@ export default function MultiplayerPage() {
       const response = await fetch("/api/races/quick-match", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           guestId,
           raceType: "timed",
           timeLimitSeconds: selectedDuration,
@@ -174,7 +175,7 @@ export default function MultiplayerPage() {
       });
       return;
     }
-    
+
     setLoading(true);
     setLoadingAction("createRoom");
     try {
@@ -182,9 +183,9 @@ export default function MultiplayerPage() {
       const response = await fetch("/api/races/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          isPrivate: true, 
-          maxPlayers, 
+        body: JSON.stringify({
+          isPrivate: true,
+          maxPlayers,
           guestId,
           timeLimitSeconds: selectedDuration,
           textSource,
@@ -219,14 +220,14 @@ export default function MultiplayerPage() {
 
   async function joinRoom(code?: string) {
     const codeToUse = code || roomCode;
-    
+
     if (!codeToUse.trim()) {
       toast.error("Please enter a room code", {
         icon: <AlertTriangle className="h-4 w-4" />,
       });
       return;
     }
-    
+
     // Validate room code format
     const cleanCode = codeToUse.trim().toUpperCase();
     if (cleanCode.length !== 6) {
@@ -236,7 +237,7 @@ export default function MultiplayerPage() {
       });
       return;
     }
-    
+
     if (!isOnline) {
       toast.error("You're offline. Please check your internet connection.", {
         icon: <WifiOff className="h-4 w-4" />,
@@ -305,7 +306,7 @@ export default function MultiplayerPage() {
               </AlertDescription>
             </Alert>
           )}
-          
+
           <div className="text-center mb-8 sm:mb-12">
             <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
               <Tooltip>
@@ -694,7 +695,7 @@ export default function MultiplayerPage() {
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent side="bottom">
-                      {roomCode.length !== 6 
+                      {roomCode.length !== 6
                         ? <p>Enter a complete 6-character room code</p>
                         : <p>Click to join the race room</p>
                       }
@@ -704,6 +705,9 @@ export default function MultiplayerPage() {
               </Card>
             </TabsContent>
           </Tabs>
+          <div className="max-w-4xl mx-auto mt-12 px-4">
+            <AuthPrompt message="save your race history and climb the multiplayer ranks!" />
+          </div>
         </div>
       </div>
     </TooltipProvider>

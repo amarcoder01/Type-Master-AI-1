@@ -4,6 +4,7 @@ import { useSEO, SEO_CONFIGS, getSoftwareAppSchema } from '@/lib/seo';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Breadcrumbs } from '@/components/breadcrumbs';
+import { AuthPrompt } from "@/components/auth-prompt";
 
 export default function TypingGamesPage() {
   useSEO({
@@ -31,7 +32,7 @@ export default function TypingGamesPage() {
           <p className="text-lg text-muted-foreground/80 mb-8">
             Race against others, complete challenges, and climb the leaderboard
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
             <Link href="/multiplayer">
               <Button size="lg" className="text-lg px-8 py-6">
                 <Gamepad2 className="mr-2 h-5 w-5" />
@@ -45,6 +46,7 @@ export default function TypingGamesPage() {
               </Button>
             </Link>
           </div>
+          <AuthPrompt message="save your game scores and climb the global ranks!" />
         </section>
 
         {/* Game Modes */}

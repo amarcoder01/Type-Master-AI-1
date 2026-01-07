@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { AuthorBio } from '@/components/author-bio';
 import TypingTest from '@/components/typing-test';
+import { AuthPrompt } from "@/components/auth-prompt";
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -92,9 +93,10 @@ export default function MobileTypingTestPage() {
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
             <span className="text-primary">Mobile</span> Typing Test
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-6">
             Test and improve your phone typing speed. Fully optimized for touchscreen devices.
           </p>
+          <AuthPrompt message="save your mobile typing results and track your thumb speed!" />
         </header>
 
         {/* AI Answer Box */}
@@ -106,8 +108,8 @@ export default function MobileTypingTestPage() {
                 <h2 className="text-lg font-bold">Quick Answer</h2>
               </div>
               <p className="text-muted-foreground leading-relaxed">
-                Average mobile typing speed is <strong>35-40 WPM</strong>, compared to 40-50 WPM on desktop. 
-                Good mobile typists reach <strong>50-60 WPM</strong>. To improve: use both thumbs, 
+                Average mobile typing speed is <strong>35-40 WPM</strong>, compared to 40-50 WPM on desktop.
+                Good mobile typists reach <strong>50-60 WPM</strong>. To improve: use both thumbs,
                 enable swipe typing, and practice regularly on your device.
               </p>
             </CardContent>

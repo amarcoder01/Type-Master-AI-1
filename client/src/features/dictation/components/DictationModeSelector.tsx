@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import { Separator } from '@/components/ui/separator';
+import { AuthPrompt } from '@/components/auth-prompt';
 import type { PracticeMode, StreakData } from '../types';
 import { PRACTICE_MODES } from '../types';
 
@@ -23,21 +24,21 @@ const MODE_ICONS: Record<PracticeMode, React.ReactNode> = {
 };
 
 const MODE_COLORS: Record<PracticeMode, { bg: string; text: string; border: string; glow: string }> = {
-  quick: { 
-    bg: 'bg-blue-500/10', 
-    text: 'text-blue-500', 
+  quick: {
+    bg: 'bg-blue-500/10',
+    text: 'text-blue-500',
     border: 'border-blue-500/30 hover:border-blue-500/60',
     glow: 'group-hover:shadow-blue-500/20'
   },
-  focus: { 
-    bg: 'bg-emerald-500/10', 
-    text: 'text-emerald-500', 
+  focus: {
+    bg: 'bg-emerald-500/10',
+    text: 'text-emerald-500',
     border: 'border-emerald-500/30 hover:border-emerald-500/60',
     glow: 'group-hover:shadow-emerald-500/20'
   },
-  challenge: { 
-    bg: 'bg-amber-500/10', 
-    text: 'text-amber-500', 
+  challenge: {
+    bg: 'bg-amber-500/10',
+    text: 'text-amber-500',
     border: 'border-amber-500/30 hover:border-amber-500/60',
     glow: 'group-hover:shadow-amber-500/20'
   },
@@ -241,7 +242,7 @@ export function DictationModeSelector({
                     ([mode, config]) => {
                       const colors = MODE_COLORS[mode];
                       const features = MODE_FEATURES[mode];
-                      
+
                       return (
                         <Tooltip key={mode}>
                           <TooltipTrigger asChild>
@@ -261,7 +262,7 @@ export function DictationModeSelector({
                                 >
                                   {MODE_ICONS[mode]}
                                 </div>
-                                
+
                                 {/* Title and description */}
                                 <h3 className={`text-lg sm:text-xl font-bold text-center mb-2 ${colors.text}`}>
                                   {config.name}
@@ -269,24 +270,23 @@ export function DictationModeSelector({
                                 <p className="text-sm text-muted-foreground text-center mb-4 min-h-[40px]">
                                   {config.description}
                                 </p>
-                                
+
                                 {/* Feature badges */}
                                 <div className="flex flex-col gap-2">
                                   {features.map((feature, idx) => (
-                                    <div 
+                                    <div
                                       key={idx}
-                                      className={`flex items-center justify-center gap-2 py-1.5 px-3 rounded-md text-xs font-medium ${
-                                        feature.enabled 
-                                          ? 'bg-foreground/5 text-foreground' 
+                                      className={`flex items-center justify-center gap-2 py-1.5 px-3 rounded-md text-xs font-medium ${feature.enabled
+                                          ? 'bg-foreground/5 text-foreground'
                                           : 'bg-muted/50 text-muted-foreground'
-                                      }`}
+                                        }`}
                                     >
                                       {feature.icon}
                                       <span>{feature.label}</span>
                                     </div>
                                   ))}
                                 </div>
-                                
+
                                 {/* Start button hint */}
                                 <div className="mt-4 flex items-center justify-center gap-1 text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
                                   <span>Click to start</span>
@@ -312,6 +312,9 @@ export function DictationModeSelector({
             </Card>
           </section>
 
+          {/* Auth prompt for non-logged in users */}
+          <AuthPrompt message="save your dictation results and track your listening improvement!" />
+
           {/* How It Works Section with numbered steps */}
           <section aria-label="How dictation mode works" className="mb-6">
             <Card className="bg-muted/20 border-muted/30">
@@ -320,7 +323,7 @@ export function DictationModeSelector({
                   <HelpCircle className="w-5 h-5 text-muted-foreground" />
                   <h2 className="font-semibold text-foreground">How It Works</h2>
                 </div>
-                
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {[
                     { step: 1, icon: <Headphones className="w-4 h-4" />, title: 'Listen', desc: 'Hear the sentence spoken aloud' },
@@ -342,9 +345,9 @@ export function DictationModeSelector({
                     </div>
                   ))}
                 </div>
-                
+
                 <Separator className="my-4 bg-border/50" />
-                
+
                 <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1.5">
                     <kbd className="px-1.5 py-0.5 bg-background rounded border text-[10px] font-mono">R</kbd>

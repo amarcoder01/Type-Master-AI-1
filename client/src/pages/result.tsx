@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Zap, Target, Clock, AlertCircle, TrendingUp, Share2, Copy, Twitter, MessageCircle, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useSEO } from '@/lib/seo';
+import { AuthPrompt } from "@/components/auth-prompt";
 
 interface SharedResult {
   id: number;
@@ -36,7 +37,7 @@ export default function Result() {
     ogUrl: canonicalUrl,
   });
   const { toast } = useToast();
-  
+
   const [result, setResult] = useState<SharedResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -65,7 +66,7 @@ export default function Result() {
               'Accept': 'application/json',
             },
           });
-          
+
           clearTimeout(timeoutId);
 
           if (!response.ok) {
@@ -92,22 +93,22 @@ export default function Result() {
             setIsLoading(false);
             return;
           }
-          
+
           const data = await response.json();
-          
+
           if (!data.result || typeof data.result !== 'object') {
             setError("Invalid response from server");
             setIsLoading(false);
             return;
           }
-          
+
           setResult(data.result);
           setIsLoading(false);
           return;
         } catch (err: any) {
           lastError = err;
           console.error(`Fetch attempt ${attempt + 1} failed:`, err);
-          
+
           if (err.name === 'AbortError') {
             if (attempt < maxRetries - 1) {
               await new Promise(resolve => setTimeout(resolve, 1000));
@@ -117,7 +118,7 @@ export default function Result() {
             setIsLoading(false);
             return;
           }
-          
+
           if (attempt < maxRetries - 1) {
             await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
             continue;
@@ -172,11 +173,11 @@ export default function Result() {
         document.body.appendChild(textArea);
         textArea.focus();
         textArea.select();
-        
+
         try {
           const successful = document.execCommand('copy');
           document.body.removeChild(textArea);
-          
+
           if (successful) {
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
@@ -191,10 +192,10 @@ export default function Result() {
       }
     } catch (err) {
       console.error('Copy failed:', err);
-      toast({ 
-        title: "Copy Failed", 
-        description: "Please manually copy the link", 
-        variant: "destructive" 
+      toast({
+        title: "Copy Failed",
+        description: "Please manually copy the link",
+        variant: "destructive"
       });
     }
   };
@@ -257,6 +258,9 @@ export default function Result() {
           {result.isAnonymous && (
             <p className="text-muted-foreground">Shared anonymously</p>
           )}
+          <div className="mt-4">
+            <AuthPrompt message="save your results permanently and build your typing profile!" />
+          </div>
         </div>
 
         <Card className="p-6 mb-6">

@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { AuthorBio } from '@/components/author-bio';
 import TypingTest from '@/components/typing-test';
+import { AuthPrompt } from "@/components/auth-prompt";
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -100,9 +101,10 @@ export default function DataEntryTypingTestPage() {
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
             <span className="text-primary">Data Entry</span> Typing Test
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-6">
             Prepare for employment typing tests with our job-focused practice. Get certified results that employers can verify.
           </p>
+          <AuthPrompt message="save your data entry results and track your speed for job applications!" />
         </header>
 
         {/* AI Answer Box */}
@@ -114,8 +116,8 @@ export default function DataEntryTypingTestPage() {
                 <h2 className="text-lg font-bold">Quick Answer</h2>
               </div>
               <p className="text-muted-foreground leading-relaxed">
-                Most data entry jobs require <strong>40-60 WPM</strong> with <strong>95%+ accuracy</strong>. 
-                Practice with 5-minute tests to build stamina. Focus on accuracy over speed—employers value 
+                Most data entry jobs require <strong>40-60 WPM</strong> with <strong>95%+ accuracy</strong>.
+                Practice with 5-minute tests to build stamina. Focus on accuracy over speed—employers value
                 reliable data entry. Get a <strong>typing certificate</strong> for your job applications.
               </p>
             </CardContent>
@@ -208,7 +210,7 @@ export default function DataEntryTypingTestPage() {
                 <div className="flex-1 text-center md:text-left">
                   <h3 className="text-xl font-bold mb-2">Get a Typing Certificate</h3>
                   <p className="text-muted-foreground mb-4">
-                    Complete a typing test and download a verified certificate. Each certificate includes a 
+                    Complete a typing test and download a verified certificate. Each certificate includes a
                     unique verification code that employers can validate online.
                   </p>
                   <Link href="/typing-certificate">

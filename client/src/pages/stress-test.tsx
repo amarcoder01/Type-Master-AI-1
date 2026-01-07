@@ -28,6 +28,7 @@ import { TormentsMatrix } from '@/components/TormentsMatrix';
 import { getStressPerformanceRating, buildStressShareText } from '@/lib/share-utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { LLMExplanation } from '@/components/ui/llm-explanation';
+import { AuthPrompt } from '@/components/auth-prompt';
 
 type Difficulty = 'beginner' | 'intermediate' | 'expert' | 'nightmare' | 'impossible';
 
@@ -1447,6 +1448,11 @@ export default function StressTest() {
                   </Card>
                 );
               })}
+            </div>
+
+            {/* Auth prompt for non-logged in users */}
+            <div className="max-w-4xl mx-auto mb-8">
+              <AuthPrompt message="save your stress test scores and compete on the chaos leaderboard!" />
             </div>
 
             {/* Effects Matrix Toggle */}

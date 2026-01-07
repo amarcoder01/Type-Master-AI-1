@@ -56,6 +56,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Mermaid, ChartRenderer } from "@/components/chat-visualizations";
+import { AuthPrompt } from "@/components/auth-prompt";
 
 interface Message {
   role: "user" | "assistant";
@@ -1412,6 +1413,7 @@ export default function Chat() {
                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-foreground" data-testid="text-welcome-heading">
                   How can I help you today?
                 </h1>
+                <AuthPrompt message="save your chat history and personalized typing tips!" />
 
                 {/* Suggestion Cards */}
                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 max-w-4xl mx-auto mt-4 sm:mt-6">

@@ -4,15 +4,16 @@ import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { useSEO } from '@/lib/seo';
+import { AuthPrompt } from "@/components/auth-prompt";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { 
-  WifiOff, 
-  User, 
-  Loader2, 
-  Trophy, 
-  Sparkles, 
+import {
+  WifiOff,
+  User,
+  Loader2,
+  Trophy,
+  Sparkles,
   ChevronRight,
   BarChart3,
   Users,
@@ -20,9 +21,9 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { 
-  ModeSelector, 
-  LeaderboardFilters, 
+import {
+  ModeSelector,
+  LeaderboardFilters,
   LeaderboardTable,
 } from "@/components/leaderboard";
 import {
@@ -47,10 +48,10 @@ function UnifiedLeaderboardContent() {
   });
   const [, setLocation] = useLocation();
   const searchParams = useSearchParams();
-  
+
   // Get initial mode from URL or default to 'global'
   const initialMode = (searchParams.get("mode") as LeaderboardMode) || "global";
-  
+
   // State management
   const [mode, setMode] = useState<LeaderboardMode>(initialMode);
   const [filters, setFilters] = useState<Record<string, string>>({});
@@ -88,10 +89,10 @@ function UnifiedLeaderboardContent() {
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
-    
+
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
-    
+
     return () => {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
@@ -114,13 +115,13 @@ function UnifiedLeaderboardContent() {
   const queryParams = buildLeaderboardQueryParams(mode, filters, { limit, offset });
 
   // Main leaderboard query
-  const { 
-    data: leaderboardData, 
-    isLoading, 
-    isFetching, 
-    isError, 
-    error, 
-    refetch 
+  const {
+    data: leaderboardData,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    refetch
   } = useQuery({
     queryKey: ["unified-leaderboard", mode, filters, offset, limit],
     queryFn: async ({ signal }) => {
@@ -128,12 +129,12 @@ function UnifiedLeaderboardContent() {
         `${config.endpoint}?${queryParams.toString()}`,
         { signal }
       );
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.message || "Failed to fetch leaderboard");
       }
-      
+
       return response.json();
     },
     placeholderData: keepPreviousData,
@@ -151,11 +152,11 @@ function UnifiedLeaderboardContent() {
           aroundMeParams.set(key, value);
         }
       });
-      
+
       const response = await fetch(
         `${config.aroundMeEndpoint}?${aroundMeParams.toString()}`
       );
-      
+
       if (!response.ok) return null;
       return response.json();
     },
@@ -165,11 +166,11 @@ function UnifiedLeaderboardContent() {
   });
 
   const entries = leaderboardData?.entries || [];
-  const pagination = leaderboardData?.pagination || { 
-    total: 0, 
-    limit, 
-    offset, 
-    hasMore: false 
+  const pagination = leaderboardData?.pagination || {
+    total: 0,
+    limit,
+    offset,
+    hasMore: false
   };
 
   const handleModeChange = (newMode: LeaderboardMode) => {
@@ -188,14 +189,14 @@ function UnifiedLeaderboardContent() {
 
   return (
     <TooltipProvider delayDuration={300}>
-      <div 
+      <div
         className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-0 py-6 sm:py-10"
         role="main"
         aria-label="Leaderboard page"
       >
         {/* Offline Warning */}
         {!isOnline && (
-          <div 
+          <div
             className="mb-4 p-3 bg-orange-500/10 border border-orange-500/30 rounded-lg flex items-center gap-2 text-orange-500"
             role="alert"
             aria-live="polite"
@@ -243,15 +244,15 @@ function UnifiedLeaderboardContent() {
               )}>
                 <ModeIcon className={cn("w-8 h-8 sm:w-10 sm:h-10", config.color)} aria-hidden="true" />
               </div>
-              <Sparkles 
+              <Sparkles
                 className={cn(
                   "absolute -top-1 -right-1 w-4 h-4 animate-pulse",
                   config.color
-                )} 
+                )}
                 aria-hidden="true"
               />
             </div>
-            
+
             {/* Title */}
             <div className="space-y-2">
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
@@ -259,6 +260,7 @@ function UnifiedLeaderboardContent() {
                   Leaderboards
                 </span>
               </h1>
+              <AuthPrompt message="save your high scores across all modes and climb the global ranks!" />
               <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
                 {config.description}
               </p>
@@ -268,9 +270,9 @@ function UnifiedLeaderboardContent() {
 
         {/* Mode Selector */}
         <nav className="mb-6" aria-label="Leaderboard mode selection">
-          <ModeSelector 
-            value={mode} 
-            onChange={handleModeChange} 
+          <ModeSelector
+            value={mode}
+            onChange={handleModeChange}
           />
         </nav>
 
@@ -278,10 +280,10 @@ function UnifiedLeaderboardContent() {
         <section className="mb-12" aria-label="Filters and user ranking">
           <div className="flex flex-col gap-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <LeaderboardFilters 
-                mode={mode} 
-                filters={filters} 
-                onFilterChange={handleFilterChange} 
+              <LeaderboardFilters
+                mode={mode}
+                filters={filters}
+                onFilterChange={handleFilterChange}
               />
 
               {/* User Rank Display */}
@@ -354,7 +356,7 @@ function UnifiedLeaderboardContent() {
                     Take a {config.shortLabel} test and compete with players worldwide!
                   </p>
                 </div>
-                
+
                 <a
                   href={getTestLink(mode)}
                   className={cn(
@@ -369,9 +371,9 @@ function UnifiedLeaderboardContent() {
                 >
                   <ModeIcon className="w-5 h-5" aria-hidden="true" />
                   <span>Start {config.shortLabel} Test</span>
-                  <ChevronRight 
-                    className="w-4 h-4 transition-transform group-hover:translate-x-1" 
-                    aria-hidden="true" 
+                  <ChevronRight
+                    className="w-4 h-4 transition-transform group-hover:translate-x-1"
+                    aria-hidden="true"
                   />
                 </a>
               </div>

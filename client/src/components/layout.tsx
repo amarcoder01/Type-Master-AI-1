@@ -90,7 +90,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="max-w-[1800px] mx-auto px-2 h-14 flex items-center justify-between">
           <Link href="/">
             <div className="flex items-center shrink-0 cursor-pointer group p-1.5 whitespace-nowrap">
-              <LogoHorizontal 
+              <LogoHorizontal
                 className="h-8 w-auto transition-transform group-hover:scale-105"
               />
             </div>
@@ -124,7 +124,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 </Tooltip>
               );
             })}
-            
+
             {location !== "/" && (
               <DropdownMenu>
                 <Tooltip>
@@ -144,101 +144,101 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     <p className="text-sm">Change color theme</p>
                   </TooltipContent>
                 </Tooltip>
-              <DropdownMenuContent align="center" className="w-56">
-                <DropdownMenuLabel>Choose Theme</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => setTheme("focus")}
-                  className="flex items-center gap-3 cursor-pointer"
-                  data-testid="theme-option-focus"
-                >
-                  <Zap className="w-4 h-4 text-blue-500" />
-                  <div className="w-3 h-3 rounded-full bg-gradient-to-br from-blue-500 to-blue-700" />
-                  <span className="flex-1 text-sm">Focus</span>
-                  {theme === "focus" && <span className="text-primary">✓</span>}
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => setTheme("light")}
-                  className="flex items-center gap-3 cursor-pointer"
-                  data-testid="theme-option-light"
-                >
-                  <Sun className="w-4 h-4 text-yellow-500" />
-                  <div className="w-3 h-3 rounded-full bg-gradient-to-br from-yellow-300 to-yellow-500" />
-                  <span className="flex-1 text-sm">Light</span>
-                  {theme === "light" && <span className="text-primary">✓</span>}
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => setTheme("ocean")}
-                  className="flex items-center gap-3 cursor-pointer"
-                  data-testid="theme-option-ocean"
-                >
-                  <Waves className="w-4 h-4 text-cyan-500" />
-                  <div className="w-3 h-3 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600" />
-                  <span className="flex-1 text-sm">Ocean</span>
-                  {theme === "ocean" && <span className="text-primary">✓</span>}
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => setTheme("forest")}
-                  className="flex items-center gap-3 cursor-pointer"
-                  data-testid="theme-option-forest"
-                >
-                  <Trees className="w-4 h-4 text-green-500" />
-                  <div className="w-3 h-3 rounded-full bg-gradient-to-br from-green-500 to-emerald-600" />
-                  <span className="flex-1 text-sm">Forest</span>
-                  {theme === "forest" && <span className="text-primary">✓</span>}
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => setTheme("dracula")}
-                  className="flex items-center gap-3 cursor-pointer"
-                  data-testid="theme-option-dracula"
-                >
-                  <Moon className="w-4 h-4 text-purple-400" />
-                  <div className="w-3 h-3 rounded-full bg-gradient-to-br from-purple-500 to-pink-500" />
-                  <span className="flex-1 text-sm">Dracula</span>
-                  {theme === "dracula" && <span className="text-primary">✓</span>}
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => setTheme("minimal")}
-                  className="flex items-center gap-3 cursor-pointer"
-                  data-testid="theme-option-minimal"
-                >
-                  <Minimize2 className="w-4 h-4 text-gray-400" />
-                  <div className="w-3 h-3 rounded-full bg-gradient-to-br from-gray-400 to-gray-600" />
-                  <span className="flex-1 text-sm">Minimal</span>
-                  {theme === "minimal" && <span className="text-primary">✓</span>}
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => setTheme("sunset")}
-                  className="flex items-center gap-3 cursor-pointer"
-                  data-testid="theme-option-sunset"
-                >
-                  <SunsetIcon className="w-4 h-4 text-orange-500" />
-                  <div className="w-3 h-3 rounded-full bg-gradient-to-br from-orange-500 to-pink-500" />
-                  <span className="flex-1 text-sm">Sunset</span>
-                  {theme === "sunset" && <span className="text-primary">✓</span>}
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => setTheme("retro")}
-                  className="flex items-center gap-3 cursor-pointer"
-                  data-testid="theme-option-retro"
-                >
-                  <Tv className="w-4 h-4 text-amber-500" />
-                  <div className="w-3 h-3 rounded-full bg-gradient-to-br from-orange-500 to-amber-600" />
-                  <span className="flex-1 text-sm">Retro</span>
-                  {theme === "retro" && <span className="text-primary">✓</span>}
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => setTheme("cyber")}
-                  className="flex items-center gap-3 cursor-pointer"
-                  data-testid="theme-option-cyber"
-                >
-                  <Cpu className="w-4 h-4 text-pink-500" />
-                  <div className="w-3 h-3 rounded-full bg-gradient-to-br from-purple-500 to-pink-500" />
-                  <span className="flex-1 text-sm">Cyber</span>
-                  {theme === "cyber" && <span className="text-primary">✓</span>}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                <DropdownMenuContent align="center" className="w-56">
+                  <DropdownMenuLabel>Choose Theme</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => setTheme("focus")}
+                    className="flex items-center gap-3 cursor-pointer"
+                    data-testid="theme-option-focus"
+                  >
+                    <Zap className="w-4 h-4 text-blue-500" />
+                    <div className="w-3 h-3 rounded-full bg-gradient-to-br from-blue-500 to-blue-700" />
+                    <span className="flex-1 text-sm">Focus</span>
+                    {theme === "focus" && <span className="text-primary">✓</span>}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => setTheme("light")}
+                    className="flex items-center gap-3 cursor-pointer"
+                    data-testid="theme-option-light"
+                  >
+                    <Sun className="w-4 h-4 text-yellow-500" />
+                    <div className="w-3 h-3 rounded-full bg-gradient-to-br from-yellow-300 to-yellow-500" />
+                    <span className="flex-1 text-sm">Light</span>
+                    {theme === "light" && <span className="text-primary">✓</span>}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => setTheme("ocean")}
+                    className="flex items-center gap-3 cursor-pointer"
+                    data-testid="theme-option-ocean"
+                  >
+                    <Waves className="w-4 h-4 text-cyan-500" />
+                    <div className="w-3 h-3 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600" />
+                    <span className="flex-1 text-sm">Ocean</span>
+                    {theme === "ocean" && <span className="text-primary">✓</span>}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => setTheme("forest")}
+                    className="flex items-center gap-3 cursor-pointer"
+                    data-testid="theme-option-forest"
+                  >
+                    <Trees className="w-4 h-4 text-green-500" />
+                    <div className="w-3 h-3 rounded-full bg-gradient-to-br from-green-500 to-emerald-600" />
+                    <span className="flex-1 text-sm">Forest</span>
+                    {theme === "forest" && <span className="text-primary">✓</span>}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => setTheme("dracula")}
+                    className="flex items-center gap-3 cursor-pointer"
+                    data-testid="theme-option-dracula"
+                  >
+                    <Moon className="w-4 h-4 text-purple-400" />
+                    <div className="w-3 h-3 rounded-full bg-gradient-to-br from-purple-500 to-pink-500" />
+                    <span className="flex-1 text-sm">Dracula</span>
+                    {theme === "dracula" && <span className="text-primary">✓</span>}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => setTheme("minimal")}
+                    className="flex items-center gap-3 cursor-pointer"
+                    data-testid="theme-option-minimal"
+                  >
+                    <Minimize2 className="w-4 h-4 text-gray-400" />
+                    <div className="w-3 h-3 rounded-full bg-gradient-to-br from-gray-400 to-gray-600" />
+                    <span className="flex-1 text-sm">Minimal</span>
+                    {theme === "minimal" && <span className="text-primary">✓</span>}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => setTheme("sunset")}
+                    className="flex items-center gap-3 cursor-pointer"
+                    data-testid="theme-option-sunset"
+                  >
+                    <SunsetIcon className="w-4 h-4 text-orange-500" />
+                    <div className="w-3 h-3 rounded-full bg-gradient-to-br from-orange-500 to-pink-500" />
+                    <span className="flex-1 text-sm">Sunset</span>
+                    {theme === "sunset" && <span className="text-primary">✓</span>}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => setTheme("retro")}
+                    className="flex items-center gap-3 cursor-pointer"
+                    data-testid="theme-option-retro"
+                  >
+                    <Tv className="w-4 h-4 text-amber-500" />
+                    <div className="w-3 h-3 rounded-full bg-gradient-to-br from-orange-500 to-amber-600" />
+                    <span className="flex-1 text-sm">Retro</span>
+                    {theme === "retro" && <span className="text-primary">✓</span>}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => setTheme("cyber")}
+                    className="flex items-center gap-3 cursor-pointer"
+                    data-testid="theme-option-cyber"
+                  >
+                    <Cpu className="w-4 h-4 text-pink-500" />
+                    <div className="w-3 h-3 rounded-full bg-gradient-to-br from-purple-500 to-pink-500" />
+                    <span className="flex-1 text-sm">Cyber</span>
+                    {theme === "cyber" && <span className="text-primary">✓</span>}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
           </nav>
 
@@ -282,7 +282,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                           Theme
                         </DropdownMenuSubTrigger>
                         <DropdownMenuSubContent>
-                          <DropdownMenuItem 
+                          <DropdownMenuItem
                             onClick={() => setTheme("focus")}
                             className={cn(theme === "focus" && "bg-accent")}
                             data-testid="theme-focus"
@@ -292,7 +292,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                             <span className="flex-1">Focus</span>
                             {theme === "focus" && <span className="ml-auto">✓</span>}
                           </DropdownMenuItem>
-                          <DropdownMenuItem 
+                          <DropdownMenuItem
                             onClick={() => setTheme("light")}
                             className={cn(theme === "light" && "bg-accent")}
                             data-testid="theme-light"
@@ -302,7 +302,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                             <span className="flex-1">Light</span>
                             {theme === "light" && <span className="ml-auto">✓</span>}
                           </DropdownMenuItem>
-                          <DropdownMenuItem 
+                          <DropdownMenuItem
                             onClick={() => setTheme("ocean")}
                             className={cn(theme === "ocean" && "bg-accent")}
                             data-testid="theme-ocean"
@@ -312,7 +312,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                             <span className="flex-1">Ocean</span>
                             {theme === "ocean" && <span className="ml-auto">✓</span>}
                           </DropdownMenuItem>
-                          <DropdownMenuItem 
+                          <DropdownMenuItem
                             onClick={() => setTheme("forest")}
                             className={cn(theme === "forest" && "bg-accent")}
                             data-testid="theme-forest"
@@ -322,7 +322,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                             <span className="flex-1">Forest</span>
                             {theme === "forest" && <span className="ml-auto">✓</span>}
                           </DropdownMenuItem>
-                          <DropdownMenuItem 
+                          <DropdownMenuItem
                             onClick={() => setTheme("dracula")}
                             className={cn(theme === "dracula" && "bg-accent")}
                             data-testid="theme-dracula"
@@ -332,7 +332,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                             <span className="flex-1">Dracula</span>
                             {theme === "dracula" && <span className="ml-auto">✓</span>}
                           </DropdownMenuItem>
-                          <DropdownMenuItem 
+                          <DropdownMenuItem
                             onClick={() => setTheme("minimal")}
                             className={cn(theme === "minimal" && "bg-accent")}
                             data-testid="theme-minimal"
@@ -342,7 +342,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                             <span className="flex-1">Minimal</span>
                             {theme === "minimal" && <span className="ml-auto">✓</span>}
                           </DropdownMenuItem>
-                          <DropdownMenuItem 
+                          <DropdownMenuItem
                             onClick={() => setTheme("sunset")}
                             className={cn(theme === "sunset" && "bg-accent")}
                             data-testid="theme-sunset"
@@ -352,7 +352,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                             <span className="flex-1">Sunset</span>
                             {theme === "sunset" && <span className="ml-auto">✓</span>}
                           </DropdownMenuItem>
-                          <DropdownMenuItem 
+                          <DropdownMenuItem
                             onClick={() => setTheme("retro")}
                             className={cn(theme === "retro" && "bg-accent")}
                             data-testid="theme-retro"
@@ -362,7 +362,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                             <span className="flex-1">Retro</span>
                             {theme === "retro" && <span className="ml-auto">✓</span>}
                           </DropdownMenuItem>
-                          <DropdownMenuItem 
+                          <DropdownMenuItem
                             onClick={() => setTheme("cyber")}
                             className={cn(theme === "cyber" && "bg-accent")}
                             data-testid="theme-cyber"
@@ -395,7 +395,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         </DropdownMenuItem>
                         {themeMenuExpanded && (
                           <div className="pl-4 space-y-0.5 py-1 border-l-2 border-muted ml-3">
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               onClick={() => setTheme("focus")}
                               className={cn("py-1.5 text-xs", theme === "focus" && "bg-accent")}
                               data-testid="theme-focus-mobile"
@@ -405,7 +405,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                               <span className="flex-1">Focus</span>
                               {theme === "focus" && <span className="ml-auto text-xs">✓</span>}
                             </DropdownMenuItem>
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               onClick={() => setTheme("light")}
                               className={cn("py-1.5 text-xs", theme === "light" && "bg-accent")}
                               data-testid="theme-light-mobile"
@@ -415,7 +415,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                               <span className="flex-1">Light</span>
                               {theme === "light" && <span className="ml-auto text-xs">✓</span>}
                             </DropdownMenuItem>
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               onClick={() => setTheme("ocean")}
                               className={cn("py-1.5 text-xs", theme === "ocean" && "bg-accent")}
                               data-testid="theme-ocean-mobile"
@@ -425,7 +425,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                               <span className="flex-1">Ocean</span>
                               {theme === "ocean" && <span className="ml-auto text-xs">✓</span>}
                             </DropdownMenuItem>
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               onClick={() => setTheme("forest")}
                               className={cn("py-1.5 text-xs", theme === "forest" && "bg-accent")}
                               data-testid="theme-forest-mobile"
@@ -435,7 +435,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                               <span className="flex-1">Forest</span>
                               {theme === "forest" && <span className="ml-auto text-xs">✓</span>}
                             </DropdownMenuItem>
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               onClick={() => setTheme("dracula")}
                               className={cn("py-1.5 text-xs", theme === "dracula" && "bg-accent")}
                               data-testid="theme-dracula-mobile"
@@ -445,7 +445,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                               <span className="flex-1">Dracula</span>
                               {theme === "dracula" && <span className="ml-auto text-xs">✓</span>}
                             </DropdownMenuItem>
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               onClick={() => setTheme("minimal")}
                               className={cn("py-1.5 text-xs", theme === "minimal" && "bg-accent")}
                               data-testid="theme-minimal-mobile"
@@ -455,7 +455,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                               <span className="flex-1">Minimal</span>
                               {theme === "minimal" && <span className="ml-auto text-xs">✓</span>}
                             </DropdownMenuItem>
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               onClick={() => setTheme("sunset")}
                               className={cn("py-1.5 text-xs", theme === "sunset" && "bg-accent")}
                               data-testid="theme-sunset-mobile"
@@ -465,7 +465,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                               <span className="flex-1">Sunset</span>
                               {theme === "sunset" && <span className="ml-auto text-xs">✓</span>}
                             </DropdownMenuItem>
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               onClick={() => setTheme("retro")}
                               className={cn("py-1.5 text-xs", theme === "retro" && "bg-accent")}
                               data-testid="theme-retro-mobile"
@@ -475,7 +475,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                               <span className="flex-1">Retro</span>
                               {theme === "retro" && <span className="ml-auto text-xs">✓</span>}
                             </DropdownMenuItem>
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               onClick={() => setTheme("cyber")}
                               className={cn("py-1.5 text-xs", theme === "cyber" && "bg-accent")}
                               data-testid="theme-cyber-mobile"
@@ -552,7 +552,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       );
                     })}
                   </div>
-                  
+
                   <div className="mt-4 pt-4 border-t">
                     <div className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                       Theme
@@ -731,7 +731,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       </button>
                     </div>
                   </div>
-                  
+
                   {!user && (
                     <div className="mt-4 pt-4 border-t space-y-2">
                       <Link href="/login">
@@ -746,11 +746,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       </Link>
                     </div>
                   )}
-                  
+
                   {user && (
                     <div className="mt-4 pt-4 border-t">
-                      <Button 
-                        variant="ghost" 
+                      <Button
+                        variant="ghost"
                         className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
                         onClick={() => {
                           handleLogout();
@@ -777,14 +777,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {children}
       </main>
 
-      <footer 
+      <footer
         className="border-t border-border/40 bg-card/20"
         role="contentinfo"
         aria-label="Site footer"
       >
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-4">
           {/* Footer Links Grid - SEO optimized internal linking */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-6 mb-8 text-sm">
+          <div className="hidden grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-6 text-sm">
             {/* Typing Tests Column */}
             <div>
               <h3 className="font-semibold text-foreground mb-3 text-xs uppercase tracking-wider">Typing Tests</h3>
@@ -797,7 +797,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <Link href="/keyboard-test" className="block text-muted-foreground hover:text-primary transition-colors">Keyboard Test</Link>
               </nav>
             </div>
-            
+
             {/* Practice Column */}
             <div>
               <h3 className="font-semibold text-foreground mb-3 text-xs uppercase tracking-wider">Practice</h3>
@@ -810,7 +810,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <Link href="/data-entry-typing-test" className="block text-muted-foreground hover:text-primary transition-colors">Data Entry Test</Link>
               </nav>
             </div>
-            
+
             {/* Compete Column */}
             <div>
               <h3 className="font-semibold text-foreground mb-3 text-xs uppercase tracking-wider">Compete</h3>
@@ -822,7 +822,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <Link href="/typing-certificate" className="block text-muted-foreground hover:text-primary transition-colors">Typing Certificate</Link>
               </nav>
             </div>
-            
+
             {/* Learn Column */}
             <div>
               <h3 className="font-semibold text-foreground mb-3 text-xs uppercase tracking-wider">Learn</h3>
@@ -837,7 +837,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <Link href="/typing-speed-chart" className="block text-muted-foreground hover:text-primary transition-colors">Typing Speed Chart</Link>
               </nav>
             </div>
-            
+
             {/* Help & FAQ Column */}
             <div>
               <h3 className="font-semibold text-foreground mb-3 text-xs uppercase tracking-wider">Help & FAQ</h3>
@@ -851,7 +851,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <Link href="/verify" className="block text-muted-foreground hover:text-primary transition-colors">Verify Certificate</Link>
               </nav>
             </div>
-            
+
             {/* Compare Column */}
             <div>
               <h3 className="font-semibold text-foreground mb-3 text-xs uppercase tracking-wider">Compare</h3>
@@ -862,7 +862,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <Link href="/typingcom-alternative" className="block text-muted-foreground hover:text-primary transition-colors">vs Typing.com</Link>
               </nav>
             </div>
-            
+
             {/* Company Column */}
             <div>
               <h3 className="font-semibold text-foreground mb-3 text-xs uppercase tracking-wider">Company</h3>
@@ -876,11 +876,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </nav>
             </div>
           </div>
-          
+
           {/* Bottom Bar */}
-          <div className="border-t border-border/40 pt-4">
+          <div className="pt-2">
             <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-xs text-muted-foreground">
               <Link href="/contact" className="hover:text-primary transition-colors" data-testid="link-footer-contact">Contact</Link>
+              <span className="text-muted-foreground/40">·</span>
+              <Link href="/about" className="hover:text-primary transition-colors" data-testid="link-footer-about">About</Link>
+              <span className="text-muted-foreground/40">·</span>
+              <Link href="/blog" className="hover:text-primary transition-colors" data-testid="link-footer-blog">Blog</Link>
+              <span className="text-muted-foreground/40">·</span>
+              <Link href="/faq" className="hover:text-primary transition-colors" data-testid="link-footer-faq">FAQ</Link>
+              <span className="text-muted-foreground/40">·</span>
+              <Link href="/learn" className="hover:text-primary transition-colors" data-testid="link-footer-learn">Learn</Link>
               <span className="text-muted-foreground/40">·</span>
               <Link href="/privacy-policy" className="hover:text-primary transition-colors" data-testid="link-footer-privacy">Privacy</Link>
               <span className="text-muted-foreground/40">·</span>
@@ -892,9 +900,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <span className="text-muted-foreground/40">·</span>
               <Link href="/accessibility" className="hover:text-primary transition-colors" data-testid="link-footer-accessibility">Accessibility</Link>
               <span className="text-muted-foreground/40">·</span>
+              <Link href="/verify" className="hover:text-primary transition-colors" data-testid="link-footer-verify">Verify Certificate</Link>
+              <span className="text-muted-foreground/40">·</span>
               <span>© {new Date().getFullYear()} TypeMasterAI</span>
               <span className="text-muted-foreground/40">·</span>
               <a href="mailto:support@typemasterai.com" className="hover:text-primary transition-colors" data-testid="link-footer-support-email">support@typemasterai.com</a>
+              <span className="text-muted-foreground/40">·</span>
+              <span>Registered in Solapur, India</span>
             </div>
           </div>
         </div>

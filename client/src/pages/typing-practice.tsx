@@ -4,6 +4,7 @@ import { useSEO, SEO_CONFIGS, getSoftwareAppSchema } from '@/lib/seo';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Breadcrumbs } from '@/components/breadcrumbs';
+import { AuthPrompt } from "@/components/auth-prompt";
 
 export default function TypingPracticePage() {
   useSEO({
@@ -19,7 +20,7 @@ export default function TypingPracticePage() {
     <div className="min-h-screen">
       <div className="container mx-auto px-4 pt-20 pb-16">
         <Breadcrumbs items={[{ label: 'Typing Practice', href: '/typing-practice' }]} />
-        
+
         {/* Hero Section */}
         <section className="max-w-4xl mx-auto text-center pt-8 pb-16">
           <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60 mb-6">
@@ -31,7 +32,7 @@ export default function TypingPracticePage() {
           <p className="text-lg text-muted-foreground/80 mb-8">
             AI-powered exercises, real-time feedback, and progress tracking - all completely free
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
             <Link href="/">
               <Button size="lg" className="text-lg px-8 py-6">
                 <Keyboard className="mr-2 h-5 w-5" />
@@ -45,6 +46,7 @@ export default function TypingPracticePage() {
               </Button>
             </Link>
           </div>
+          <AuthPrompt message="save your practice sessions and track your improvement!" />
         </section>
 
         {/* Practice Benefits */}
@@ -168,7 +170,7 @@ export default function TypingPracticePage() {
             <p>
               Effective typing practice requires consistency and proper technique. Here are the key principles for improving your typing speed:
             </p>
-            
+
             <h3>1. Start with Accuracy, Not Speed</h3>
             <p>
               When practicing typing, always prioritize accuracy over speed. It's much easier to speed up accurate typing than to correct sloppy habits. Aim for 95%+ accuracy before pushing for higher WPM.

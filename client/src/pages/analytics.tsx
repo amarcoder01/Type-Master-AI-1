@@ -15,6 +15,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/lib/auth-context";
 import { Link } from "wouter";
+import { AuthPrompt } from "@/components/auth-prompt";
 
 import { useIsMobile } from "@/hooks/use-mobile";
 // Simple date formatting utilities to avoid dependency issues
@@ -22,7 +23,7 @@ const format = (date: Date | string, formatStr: string): string => {
   const d = typeof date === 'string' ? new Date(date) : date;
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const pad = (n: number) => n.toString().padStart(2, '0');
-  
+
   if (formatStr === "MMM dd") {
     return `${months[d.getMonth()]} ${pad(d.getDate())}`;
   }
@@ -1860,6 +1861,7 @@ Make goals progressive and appropriate for ${skillLevel.level.toLowerCase()} lev
 
   return (
     <div className="container mx-auto px-4 sm:px-6 py-6 max-w-7xl space-y-4 sm:space-y-6">
+      <AuthPrompt message="save your progress and unlock deep typing insights!" />
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold" data-testid="heading-analytics">Progress Analytics</h1>

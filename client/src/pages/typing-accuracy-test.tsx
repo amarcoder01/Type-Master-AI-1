@@ -4,6 +4,7 @@ import { useSEO, getBreadcrumbSchema, getFAQSchema } from '@/lib/seo';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Breadcrumbs } from '@/components/breadcrumbs';
+import { AuthPrompt } from "@/components/auth-prompt";
 
 const PAGE_FAQS = [
   {
@@ -83,7 +84,7 @@ export default function TypingAccuracyTestPage() {
           <p className="text-lg text-slate-400 mb-8">
             Get detailed error analysis and personalized improvement tips
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
             <Link href="/">
               <Button size="lg" className="text-lg px-8 py-6 bg-green-600 hover:bg-green-700">
                 <Target className="mr-2 h-5 w-5" />
@@ -97,6 +98,7 @@ export default function TypingAccuracyTestPage() {
               </Button>
             </Link>
           </div>
+          <AuthPrompt message="save your accuracy results and track your precision over time!" />
         </section>
 
         {/* Accuracy Levels */}

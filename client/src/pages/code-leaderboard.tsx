@@ -7,6 +7,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { useSEO } from '@/lib/seo';
+import { AuthPrompt } from "@/components/auth-prompt";
 
 const PROGRAMMING_LANGUAGES = {
   all: "All Languages",
@@ -64,8 +65,11 @@ function CodeLeaderboardContent() {
         <p className="text-muted-foreground text-lg">
           Top developers ranked by code typing speed and accuracy
         </p>
-        <a 
-          href="/leaderboards?mode=code" 
+        <div className="mt-4">
+          <AuthPrompt message="save your code results and climb the developer ranks!" />
+        </div>
+        <a
+          href="/leaderboards?mode=code"
           className="text-xs text-primary hover:underline mt-2"
         >
           View all leaderboards →
@@ -105,8 +109,8 @@ function CodeLeaderboardContent() {
               <p className="text-sm text-muted-foreground mb-4">
                 {error instanceof Error ? error.message : "An unexpected error occurred"}
               </p>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => refetch()}
                 disabled={isFetching}
                 data-testid="retry-button"
@@ -135,15 +139,14 @@ function CodeLeaderboardContent() {
               {leaderboard.map((entry: any, index: number) => (
                 <div
                   key={`${entry.userId}-${index}`}
-                  className={`flex items-center gap-4 p-4 rounded-lg transition-colors ${
-                    index === 0
+                  className={`flex items-center gap-4 p-4 rounded-lg transition-colors ${index === 0
                       ? "bg-gradient-to-r from-yellow-500/10 to-yellow-600/10 border-2 border-yellow-500/30"
                       : index === 1
-                      ? "bg-gradient-to-r from-gray-400/10 to-gray-500/10 border-2 border-gray-400/30"
-                      : index === 2
-                      ? "bg-gradient-to-r from-orange-600/10 to-orange-700/10 border-2 border-orange-600/30"
-                      : "bg-muted/30 hover:bg-muted/50"
-                  }`}
+                        ? "bg-gradient-to-r from-gray-400/10 to-gray-500/10 border-2 border-gray-400/30"
+                        : index === 2
+                          ? "bg-gradient-to-r from-orange-600/10 to-orange-700/10 border-2 border-orange-600/30"
+                          : "bg-muted/30 hover:bg-muted/50"
+                    }`}
                   data-testid={`leaderboard-entry-${index}`}
                 >
                   <div className="flex-shrink-0 w-12 text-center">

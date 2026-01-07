@@ -20,6 +20,7 @@ import { ErrorBoundary } from "@/components/error-boundary";
 import { fetchLeaderboardWithRank } from "@/lib/leaderboard-api";
 import { useLeaderboardWebSocket } from "@/hooks/useLeaderboardWebSocket";
 import { cn } from "@/lib/utils";
+import { AuthPrompt } from "@/components/auth-prompt";
 
 type Timeframe = "all" | "daily" | "weekly" | "monthly";
 
@@ -659,6 +660,12 @@ function LeaderboardContent() {
           </Card>
         )}
 
+        {!userData?.user && (
+          <div className="mb-8">
+            <AuthPrompt message="save your results and climb the global leaderboard!" />
+          </div>
+        )}
+
         <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
           <CardContent className="p-0">
             {isError || errorState ? (
@@ -785,7 +792,7 @@ function LeaderboardContent() {
                             {rank <= 3 && MEDAL_TOOLTIPS[rank as 1 | 2 | 3] ? (
                               <Medal
                                 className={`w-6 h-6 ${rank === 1 ? 'text-yellow-400' :
-                                    rank === 2 ? 'text-slate-300' : 'text-amber-600'
+                                  rank === 2 ? 'text-slate-300' : 'text-amber-600'
                                   }`}
                               />
                             ) : (
@@ -844,8 +851,8 @@ function LeaderboardContent() {
                                   <div className="cursor-help">
                                     <Medal
                                       className={`w-6 h-6 ${rank === 1 ? 'text-yellow-400 drop-shadow-[0_0_6px_rgba(250,204,21,0.6)]' :
-                                          rank === 2 ? 'text-slate-300 drop-shadow-[0_0_6px_rgba(203,213,225,0.4)]' :
-                                            'text-amber-600 drop-shadow-[0_0_6px_rgba(217,119,6,0.4)]'
+                                        rank === 2 ? 'text-slate-300 drop-shadow-[0_0_6px_rgba(203,213,225,0.4)]' :
+                                          'text-amber-600 drop-shadow-[0_0_6px_rgba(217,119,6,0.4)]'
                                         }`}
                                       data-testid={`medal-rank-${rank}`}
                                     />
@@ -908,9 +915,9 @@ function LeaderboardContent() {
                               <TooltipTrigger asChild>
                                 <div className="flex flex-col items-center cursor-help" data-testid={`accuracy-${entry.userId}`}>
                                   <div className={`font-mono font-semibold text-base tabular-nums ${accuracy >= 98 ? 'text-green-400' :
-                                      accuracy >= 95 ? 'text-blue-400' :
-                                        accuracy >= 90 ? 'text-yellow-400' :
-                                          'text-red-400'
+                                    accuracy >= 95 ? 'text-blue-400' :
+                                      accuracy >= 90 ? 'text-yellow-400' :
+                                        'text-red-400'
                                     }`}>
                                     {accuracy.toFixed(1)}%
                                   </div>

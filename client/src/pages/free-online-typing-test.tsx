@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { RelatedFeatures, QuickLinksFooter } from '@/components/related-features';
+import { AuthPrompt } from '@/components/auth-prompt';
+import TypingTest from '@/components/typing-test';
 
 export default function FreeOnlineTypingTestPage() {
   useSEO({
@@ -72,38 +74,32 @@ export default function FreeOnlineTypingTestPage() {
         <Breadcrumbs items={[{ label: 'Free Online Typing Test', href: '/free-online-typing-test' }]} />
 
         {/* Hero Section */}
-        <section className="max-w-4xl mx-auto text-center pt-8 pb-16">
+        <section className="max-w-4xl mx-auto text-center pt-8 pb-8">
           <div className="inline-flex items-center justify-center p-2 bg-green-500/10 rounded-full mb-6 border border-green-500/30">
             <CheckCircle className="w-4 h-4 text-green-400 mr-2" />
             <span className="text-sm text-green-300">100% Free Forever</span>
           </div>
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-            Free Online <span className="text-cyan-400">Typing Test</span>
+            Master the Flow
           </h1>
           <p className="text-xl text-slate-300 mb-4 max-w-3xl mx-auto">
-            Test your typing speed in seconds. No signup, no downloads, no cost.
+            Test your typing speed, track your progress, and compete with others in a distraction-free environment.
           </p>
-          <p className="text-lg text-slate-400 mb-8">
+          <p className="text-lg text-slate-400 mb-8 font-medium">
             Join millions of users who have tested their WPM with TypeMasterAI
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/">
-              <Button size="lg" className="text-lg px-8 py-6 bg-cyan-600 hover:bg-cyan-700">
-                <Keyboard className="mr-2 h-5 w-5" />
-                Start Free Test Now
-              </Button>
-            </Link>
-            <Link href="/typing-practice">
-              <Button size="lg" variant="outline" className="text-lg px-8 py-6">
-                Practice Typing
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
-          </div>
         </section>
 
+        {/* Typing Test Area */}
+        <div className="max-w-6xl mx-auto mb-12">
+          <TypingTest />
+          <div className="max-w-4xl mx-auto px-4 mt-8">
+            <AuthPrompt />
+          </div>
+        </div>
+
         {/* Features Grid */}
-        <section className="max-w-5xl mx-auto py-16">
+        <section className="hidden max-w-5xl mx-auto py-16">
           <h2 className="text-3xl font-bold text-white text-center mb-12">
             Why Choose Our Free Typing Test?
           </h2>
@@ -123,7 +119,7 @@ export default function FreeOnlineTypingTestPage() {
         </section>
 
         {/* What You Get Section */}
-        <section className="max-w-4xl mx-auto py-16">
+        <section className="hidden max-w-4xl mx-auto py-16">
           <h2 className="text-3xl font-bold text-white text-center mb-8">
             What You Get With Every Free Test
           </h2>
@@ -178,13 +174,13 @@ export default function FreeOnlineTypingTestPage() {
         </section>
 
         {/* Related Features */}
-        <div className="max-w-5xl mx-auto">
+        <div className="hidden max-w-5xl mx-auto">
           <RelatedFeatures title="More Typing Tests" features="typingTests" columns={4} />
           <RelatedFeatures title="Learn & Improve" features="learning" columns={4} />
         </div>
 
         {/* CTA Section */}
-        <section className="max-w-3xl mx-auto text-center py-16">
+        <section className="hidden max-w-3xl mx-auto text-center py-16">
           <h2 className="text-3xl font-bold text-white mb-4">
             Ready to Test Your Typing Speed?
           </h2>
@@ -200,7 +196,7 @@ export default function FreeOnlineTypingTestPage() {
         </section>
 
         {/* Quick Links */}
-        <div className="max-w-4xl mx-auto border-t border-slate-700 mt-8">
+        <div className="hidden max-w-4xl mx-auto border-t border-slate-700 mt-8">
           <QuickLinksFooter exclude={['/free-online-typing-test']} />
         </div>
       </div>
