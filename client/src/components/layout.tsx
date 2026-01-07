@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth-context";
 import { useTheme } from "@/lib/theme-context";
 import { useState, useEffect, useCallback } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useAdminFlags } from "@/hooks/useAdminFlags";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -54,6 +55,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [themeMenuExpanded, setThemeMenuExpanded] = useState(false);
   const isMobile = useIsMobile();
+  const { isFeedbackAdmin, isBlogAdmin } = useAdminFlags();
 
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -263,12 +265,23 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    {user.email?.toLowerCase() === "amar01pawar80@gmail.com" && (
+                    {isFeedbackAdmin && (
                       <>
                         <Link href="/admin/feedback">
                           <DropdownMenuItem data-testid="button-admin-feedback">
                             <Shield className="w-4 h-4 mr-2" />
                             Admin Feedback
+                          </DropdownMenuItem>
+                        </Link>
+                        <DropdownMenuSeparator />
+                      </>
+                    )}
+                    {isBlogAdmin && (
+                      <>
+                        <Link href="/admin/blog">
+                          <DropdownMenuItem data-testid="button-admin-blog">
+                            <Shield className="w-4 h-4 mr-2" />
+                            Admin Blog
                           </DropdownMenuItem>
                         </Link>
                         <DropdownMenuSeparator />

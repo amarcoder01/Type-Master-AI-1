@@ -2,7 +2,7 @@ import type { Express, Request, Response, NextFunction } from "express";
 import { storage } from "../storage";
 import DOMPurify from "isomorphic-dompurify";
 import { insertBlogPostSchema, insertBlogCategorySchema } from "@shared/schema";
-import rateLimit from "express-rate-limit";
+import rateLimit, { ipKeyGenerator } from "express-rate-limit";
 import { extractDeviceInfo } from "../auth-security";
 import { fromError } from "zod-validation-error";
 import { requireRole } from "../rbac";
@@ -16,9 +16,7 @@ const viewLimiter = rateLimit({
   max: 10, // 10 views per minute per IP
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => {
-    return req.ip || req.headers['x-forwarded-for']?.toString() || 'unknown';
-  },
+  keyGenerator: (req) => ipKeyGenerator(req),
 });
 
 // ============================================================================

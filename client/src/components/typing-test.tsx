@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef, useCallback, useMemo, memo, useTransition, useDeferredValue, startTransition } from "react";
 import { generateText, calculateWPM, calculateAccuracy } from "@/lib/typing-utils";
 import { motion, AnimatePresence } from "framer-motion";
-import { RefreshCw, Zap, Target, Clock, Globe, BookOpen, Sparkles, Award, Share2, Twitter, Facebook, MessageCircle, Copy, Check, Link2, Linkedin, Mail, Send, AlertCircle, Loader2, HelpCircle, Timer, BarChart3, Eye, EyeOff, PenLine, Info } from "lucide-react";
+import { RefreshCw, Zap, Target, Clock, Globe, BookOpen, Sparkles, Award, Share2, Twitter, Facebook, MessageCircle, Copy, Check, Link2, Linkedin, Mail, Send, AlertCircle, Loader2, HelpCircle, Timer, BarChart3, Eye, EyeOff, PenLine, Info, WifiOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import confetti from "canvas-confetti";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
+import { useNetwork } from "@/lib/network-context";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { useCursorPosition } from "@/hooks/useCursorPosition";
@@ -203,6 +204,7 @@ interface TypingTestProps {
 
 export default function TypingTest({ initialLanguage = "en", initialMode = 60 }: TypingTestProps) {
   const { user } = useAuth();
+  const { isOnline, isServerReachable, isCheckingServer, checkConnection } = useNetwork();
   const { toast } = useToast();
   const { celebrateMultiple } = useAchievementCelebration();
 
@@ -1989,23 +1991,69 @@ Test yourself: `,
   return (
     <TooltipProvider delayDuration={300}>
       <div className="w-full max-w-5xl mx-auto flex flex-col gap-4 md:gap-8 px-2 sm:px-0">
-        {/* API Error Banner - only show when there's an error and not currently fetching */}
-        {((languagesError && !languagesFetching) || (modesError && !modesFetching)) && (
-          <div className="flex items-center justify-center gap-2 p-2 bg-destructive/10 border border-destructive/20 rounded-lg text-sm text-destructive">
-            <AlertCircle className="w-4 h-4" />
-            <span>Some options may be limited. </span>
-            <button
-              onClick={() => {
-                if (languagesError && !languagesFetching) refetchLanguages();
-                if (modesError && !modesFetching) refetchModes();
-              }}
-              className="underline hover:no-underline"
-              disabled={languagesFetching || modesFetching}
+        {/* Connection/Offline Banner - Enhanced UX using AnimatePresence */}
+        <AnimatePresence>
+          {((languagesError && !languagesFetching) || (modesError && !modesFetching) || !isOnline || !isServerReachable) && (
+            <motion.div
+              initial={{ height: 0, opacity: 0, marginBottom: 0 }}
+              animate={{ height: "auto", opacity: 1, marginBottom: 16 }}
+              exit={{ height: 0, opacity: 0, marginBottom: 0 }}
+              className="overflow-hidden"
             >
-              {languagesFetching || modesFetching ? 'Retrying...' : 'Retry'}
-            </button>
-          </div>
-        )}
+              <div className={cn(
+                "flex items-center justify-between gap-3 p-3 rounded-xl border glass-panel transition-all duration-300",
+                !isOnline
+                  ? "bg-destructive/10 border-destructive/30"
+                  : "bg-amber-500/10 border-amber-500/30"
+              )}>
+                <div className="flex items-center gap-3">
+                  <div className={cn(
+                    "flex items-center justify-center w-8 h-8 rounded-full shrink-0",
+                    !isOnline ? "bg-destructive/20" : "bg-amber-500/20"
+                  )}>
+                    {!isOnline ? (
+                      <WifiOff className="w-4 h-4 text-destructive" />
+                    ) : (
+                      <AlertCircle className={cn("w-4 h-4", !isOnline ? "text-destructive" : "text-amber-500")} />
+                    )}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className={cn(
+                      "text-sm font-semibold mb-0.5",
+                      !isOnline ? "text-destructive" : "text-amber-500"
+                    )}>
+                      {!isOnline ? "You're Offline" : "Connection Issue"}
+                    </span>
+                    <span className="text-xs text-muted-foreground/80 leading-relaxed max-w-[400px]">
+                      {!isOnline
+                        ? "Typing test is available with local practice content. AI features and cloud saving are disabled."
+                        : "Unable to load latest typing content. Using practice text instead."}
+                    </span>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    checkConnection(true);
+                    if (languagesError && !languagesFetching) refetchLanguages();
+                    if (modesError && !modesFetching) refetchModes();
+                  }}
+                  disabled={languagesFetching || modesFetching || isCheckingServer}
+                  className={cn(
+                    "flex items-center gap-2 rounded-full px-4 border-2 transition-all",
+                    !isOnline
+                      ? "border-destructive/20 hover:bg-destructive/10 text-destructive"
+                      : "border-amber-500/20 hover:bg-amber-500/10 text-amber-500"
+                  )}
+                >
+                  <RefreshCw className={cn("w-3.5 h-3.5", (languagesFetching || modesFetching || isCheckingServer) && "animate-spin")} />
+                  <span>{languagesFetching || modesFetching || isCheckingServer ? 'Retrying...' : 'Retry'}</span>
+                </Button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Language & Mode Selectors */}
         <div className="flex flex-col gap-3 md:gap-4 transition-opacity duration-300">

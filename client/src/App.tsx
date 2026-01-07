@@ -209,6 +209,7 @@ function Router() {
                 <Route path="/accessibility" component={AccessibilityStatement} />
                 <Route path="/admin/feedback" component={AdminFeedbackDashboard} />
                 <Route path="/admin/blog" component={BlogAdmin} />
+                <Route path="/admin/blog/:action/:id?" component={BlogAdmin} />
                 <Route component={NotFound} />
               </Switch>
             </Suspense>
