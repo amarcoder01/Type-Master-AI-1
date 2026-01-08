@@ -20,8 +20,17 @@ export function TableOfContents({ content, className = "" }: TableOfContentsProp
   useEffect(() => {
     const lines = content.split("\n");
     const items: TocItem[] = [];
+    let inCodeBlock = false;
     
-    lines.forEach((line, index) => {
+    lines.forEach((line) => {
+      // Track code blocks to avoid parsing headings inside them
+      if (line.startsWith("```")) {
+        inCodeBlock = !inCodeBlock;
+        return;
+      }
+      
+      if (inCodeBlock) return;
+      
       const match = line.match(/^(#{1,3})\s+(.+)$/);
       if (match) {
         const level = match[1].length;
@@ -44,7 +53,7 @@ export function TableOfContents({ content, className = "" }: TableOfContentsProp
         .map((h) => document.getElementById(h.id))
         .filter(Boolean) as HTMLElement[];
       
-      const scrollPosition = window.scrollY + 100;
+      const scrollPosition = window.scrollY + 120;
       
       for (let i = headingElements.length - 1; i >= 0; i--) {
         if (headingElements[i].offsetTop <= scrollPosition) {
@@ -58,7 +67,7 @@ export function TableOfContents({ content, className = "" }: TableOfContentsProp
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     
     return () => window.removeEventListener("scroll", handleScroll);
@@ -71,38 +80,53 @@ export function TableOfContents({ content, className = "" }: TableOfContentsProp
   const handleClick = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      const offset = 80;
+      const offset = 100;
       const top = element.offsetTop - offset;
       window.scrollTo({ top, behavior: "smooth" });
     }
   };
 
   return (
-    <nav className={cn("space-y-1", className)}>
-      <div className="text-sm font-semibold text-foreground mb-3">
-        On This Page
-      </div>
-      <ul className="space-y-1">
-        {headings.map((heading) => (
-          <li
-            key={heading.id}
-            style={{ paddingLeft: `${(heading.level - 1) * 12}px` }}
-          >
-            <button
-              onClick={() => handleClick(heading.id)}
-              className={cn(
-                "text-sm text-left w-full py-1 hover:text-primary transition-colors",
-                activeId === heading.id
-                  ? "text-primary font-medium"
-                  : "text-muted-foreground"
-              )}
+    <nav className={cn("relative", className)}>
+      {/* Progress line */}
+      <div className="absolute left-0 top-0 bottom-0 w-px bg-border" />
+      
+      <ul className="space-y-1 pl-4">
+        {headings.map((heading, idx) => {
+          const isActive = activeId === heading.id;
+          const indent = (heading.level - 1) * 12;
+          
+          return (
+            <li
+              key={`${heading.id}-${idx}`}
+              style={{ paddingLeft: `${indent}px` }}
+              className="relative"
             >
-              {heading.text}
-            </button>
-          </li>
-        ))}
+              {/* Active indicator line */}
+              {isActive && (
+                <div 
+                  className="absolute -left-4 top-0 bottom-0 w-0.5 bg-primary rounded-full"
+                  style={{ left: `-${indent + 16}px` }}
+                />
+              )}
+              
+              <button
+                onClick={() => handleClick(heading.id)}
+                className={cn(
+                  "text-sm text-left w-full py-1.5 rounded-md px-2 -ml-2 transition-all duration-200",
+                  "hover:bg-muted hover:text-foreground",
+                  isActive
+                    ? "text-primary font-medium bg-primary/5"
+                    : "text-muted-foreground",
+                  heading.level === 3 && "text-xs"
+                )}
+              >
+                <span className="line-clamp-2">{heading.text}</span>
+              </button>
+            </li>
+          );
+        })}
       </ul>
     </nav>
   );
 }
-

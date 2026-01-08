@@ -876,6 +876,9 @@ export interface IStorage {
   getBlogCategoryBySlug(slug: string): Promise<BlogCategory | undefined>;
   getAllBlogCategories(): Promise<BlogCategory[]>;
   
+  // Blog Tags
+  getTagsForBlogPost(postId: number): Promise<string[]>;
+  
   // Blog Post Views
   recordBlogPostView(view: InsertBlogPostView): Promise<void>;
   getBlogPostViewsCount(postId: number, since?: Date): Promise<number>;
@@ -6421,6 +6424,17 @@ export class DatabaseStorage implements IStorage {
       ORDER BY count DESC, bt.name ASC
     `);
     return res.rows as any[];
+  }
+
+  async getTagsForBlogPost(postId: number): Promise<string[]> {
+    const res = await db.execute(sql`
+      SELECT bt.slug
+      FROM blog_tags bt
+      INNER JOIN blog_post_tags bpt ON bpt.tag_id = bt.id
+      WHERE bpt.post_id = ${postId}
+      ORDER BY bt.name ASC
+    `);
+    return (res.rows as any[]).map(r => r.slug);
   }
 
   // ============================================================================

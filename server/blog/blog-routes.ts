@@ -2,6 +2,7 @@ import type { Express, Request, Response, NextFunction } from "express";
 import { storage } from "../storage";
 import DOMPurify from "isomorphic-dompurify";
 import { insertBlogPostSchema, insertBlogCategorySchema } from "@shared/schema";
+import { validateBlogContent, processBlogContent } from "@shared/blog-processor";
 import rateLimit, { ipKeyGenerator } from "express-rate-limit";
 import { extractDeviceInfo } from "../auth-security";
 import { fromError } from "zod-validation-error";
@@ -47,7 +48,7 @@ class BlogCacheManager {
     if (this.cache.size >= this.maxSize) {
       this.evictOldest();
     }
-    
+
     this.cache.set(key, {
       expiry: Date.now() + ttlMs,
       data,
@@ -58,18 +59,18 @@ class BlogCacheManager {
 
   get(key: string): any | null {
     const entry = this.cache.get(key);
-    
+
     if (!entry) {
       this.misses++;
       return null;
     }
-    
+
     if (Date.now() > entry.expiry) {
       this.cache.delete(key);
       this.misses++;
       return null;
     }
-    
+
     entry.hits++;
     this.hits++;
     return entry.data;
@@ -107,14 +108,14 @@ class BlogCacheManager {
   private evictOldest(): void {
     let oldest: string | null = null;
     let oldestTime = Infinity;
-    
+
     for (const [key, entry] of this.cache.entries()) {
       if (entry.createdAt < oldestTime) {
         oldestTime = entry.createdAt;
         oldest = key;
       }
     }
-    
+
     if (oldest) {
       this.cache.delete(oldest);
     }
@@ -124,14 +125,14 @@ class BlogCacheManager {
   cleanup(): number {
     const now = Date.now();
     let cleaned = 0;
-    
+
     for (const [key, entry] of this.cache.entries()) {
       if (now > entry.expiry) {
         this.cache.delete(key);
         cleaned++;
       }
     }
-    
+
     return cleaned;
   }
 }
@@ -183,12 +184,14 @@ export function createBlogRoutes(app: Express) {
       }
       if (afterRaw) {
         const posts = await storage.getPublishedBlogPostsCursor({ limit, after, tagSlugs });
-        const payload = { 
-          posts: posts.map(p => {
-            const wc = countWords(p.contentMd || "");
-            const rt = Math.max(1, Math.ceil(wc / 200));
-            return { ...p, wordCount: wc, readingTimeMinutes: rt };
-          }),
+        const postsWithTags = await Promise.all(posts.map(async p => {
+          const wc = countWords(p.contentMd || "");
+          const rt = Math.max(1, Math.ceil(wc / 200));
+          const postTags = await storage.getTagsForBlogPost(p.id);
+          return { ...p, wordCount: wc, readingTimeMinutes: rt, tags: postTags };
+        }));
+        const payload = {
+          posts: postsWithTags,
           pagination: { page, limit, total: null, totalPages: null },
           nextCursor: posts.length ? (posts[posts.length - 1].publishedAt || posts[posts.length - 1].createdAt) : null
         };
@@ -196,12 +199,15 @@ export function createBlogRoutes(app: Express) {
         return res.json(payload);
       }
       const data = await storage.getPublishedBlogPosts({ page, limit, tagSlugs });
-      const payload = { 
-        posts: data.posts.map(p => {
-          const wc = countWords(p.contentMd || "");
-          const rt = Math.max(1, Math.ceil(wc / 200));
-          return { ...p, wordCount: wc, readingTimeMinutes: rt };
-        }), 
+      const postsWithTags = await Promise.all(data.posts.map(async p => {
+        const { content } = processBlogContent(p.contentMd || "");
+        const wc = countWords(content);
+        const rt = Math.max(1, Math.ceil(wc / 200));
+        const postTags = await storage.getTagsForBlogPost(p.id);
+        return { ...p, contentMd: content, wordCount: wc, readingTimeMinutes: rt, tags: postTags };
+      }));
+      const payload = {
+        posts: postsWithTags,
         pagination: { page, limit, total: data.total, totalPages: Math.ceil(data.total / limit) },
         nextCursor: data.posts.length ? (data.posts[data.posts.length - 1].publishedAt || data.posts[data.posts.length - 1].createdAt) : null
       };
@@ -223,10 +229,14 @@ export function createBlogRoutes(app: Express) {
       if (!post || post.status !== "published") {
         return res.status(404).json({ message: "Not found" });
       }
-      const related = await storage.getRelatedBlogPosts(req.params.slug, 4);
-      const wordCount = countWords(post.contentMd || "");
+      const [related, tags] = await Promise.all([
+        storage.getRelatedBlogPosts(req.params.slug, 4),
+        storage.getTagsForBlogPost(post.id)
+      ]);
+      const { content } = processBlogContent(post.contentMd || "");
+      const wordCount = countWords(content);
       const readingTimeMinutes = Math.max(1, Math.ceil(wordCount / 200));
-      const payload = { post: { ...post, wordCount, readingTimeMinutes }, related };
+      const payload = { post: { ...post, contentMd: content, wordCount, readingTimeMinutes, tags }, related };
       setCache(cacheKey, payload, 60_000);
       res.json(payload);
     } catch {
@@ -323,8 +333,8 @@ ${entries}
       if (!parsed.success) {
         const errorDetails = fromError(parsed.error).toString();
         console.error('[Blog] Validation error on create:', errorDetails);
-        return res.status(400).json({ 
-          message: "Validation failed", 
+        return res.status(400).json({
+          message: "Validation failed",
           error: errorDetails,
           fields: parsed.error.errors.map(e => ({ field: e.path.join('.'), message: e.message }))
         });
@@ -335,17 +345,26 @@ ${entries}
         excerpt: parsed.data.excerpt ? DOMPurify.sanitize(parsed.data.excerpt) : null,
       };
       const tags = Array.isArray((req.body as any).tags) ? (req.body as any).tags : [];
-      
+
+      // Validation check for publishing
+      if (sanitized.status === "published") {
+        const { isValid, issues } = validateBlogContent(sanitized.contentMd, sanitized.metaDescription || sanitized.excerpt || undefined);
+        if (!isValid) {
+          const errors = issues.filter(i => i.type === "error").map(i => i.message).join("; ");
+          return res.status(400).json({ message: "Validation failed: " + errors, error: "validation_failed" });
+        }
+      }
+
       // Check for duplicate slug
       const existing = await storage.getBlogPostBySlug(sanitized.slug);
       if (existing) {
-        return res.status(409).json({ 
+        return res.status(409).json({
           message: "A post with this URL slug already exists",
           error: "duplicate_slug",
           field: "slug"
         });
       }
-      
+
       const created = await storage.createBlogPost({ ...sanitized, tags });
       cache.clear();
       const device = extractDeviceInfo(req);
@@ -378,13 +397,13 @@ ${entries}
       if (isNaN(id) || id <= 0) {
         return res.status(400).json({ message: "Invalid post ID", error: "invalid_id" });
       }
-      
+
       // Check post exists
       const existingPost = await storage.getBlogPostById(id);
       if (!existingPost) {
         return res.status(404).json({ message: "Post not found", error: "not_found" });
       }
-      
+
       const updates: any = {};
       if (typeof req.body.title === "string") {
         const title = req.body.title.trim();
@@ -434,13 +453,26 @@ ${entries}
       }
       if (typeof req.body.isFeatured === "boolean") updates.isFeatured = req.body.isFeatured;
       if (typeof req.body.featuredOrder === "number" || req.body.featuredOrder === null) updates.featuredOrder = req.body.featuredOrder;
-      
+
+      // Validation check if publishing
+      const finalStatus = updates.status || existingPost.status;
+      const finalContent = updates.contentMd || existingPost.contentMd;
+      const finalMeta = updates.metaDescription || existingPost.metaDescription || updates.excerpt || existingPost.excerpt;
+
+      if (finalStatus === "published") {
+        const { isValid, issues } = validateBlogContent(finalContent, finalMeta || undefined);
+        if (!isValid) {
+          const errors = issues.filter(i => i.type === "error").map(i => i.message).join("; ");
+          return res.status(400).json({ message: "Validation failed: " + errors, error: "validation_failed" });
+        }
+      }
+
       const tags = Array.isArray(req.body.tags) ? req.body.tags : undefined;
       const updated = await storage.updateBlogPost(id, { ...updates, tags });
       if (!updated) {
         return res.status(500).json({ message: "Failed to update post", error: "update_failed" });
       }
-      
+
       cache.clear();
       const device = extractDeviceInfo(req);
       await storage.createAuditLog({
@@ -499,11 +531,15 @@ ${entries}
       }
       const posts = await storage.getFeaturedBlogPosts(limit);
       const payload = {
-        posts: posts.map(p => ({
-          ...p,
-          wordCount: countWords(p.contentMd || ""),
-          readingTimeMinutes: Math.max(1, Math.ceil(countWords(p.contentMd || "") / blogConfig.wordsPerMinute)),
-        })),
+        posts: posts.map(p => {
+          const { content } = processBlogContent(p.contentMd || "");
+          return {
+            ...p,
+            contentMd: content,
+            wordCount: countWords(content),
+            readingTimeMinutes: Math.max(1, Math.ceil(countWords(content) / blogConfig.wordsPerMinute)),
+          };
+        }),
       };
       setCache(cacheKey, payload, blogConfig.cacheTtlMs);
       res.json(payload);
@@ -527,11 +563,15 @@ ${entries}
       }
       const posts = await storage.getPopularBlogPosts(limit, days);
       const payload = {
-        posts: posts.map(p => ({
-          ...p,
-          wordCount: countWords(p.contentMd || ""),
-          readingTimeMinutes: Math.max(1, Math.ceil(countWords(p.contentMd || "") / blogConfig.wordsPerMinute)),
-        })),
+        posts: posts.map(p => {
+          const { content } = processBlogContent(p.contentMd || "");
+          return {
+            ...p,
+            contentMd: content,
+            wordCount: countWords(content),
+            readingTimeMinutes: Math.max(1, Math.ceil(countWords(content) / blogConfig.wordsPerMinute)),
+          };
+        }),
       };
       setCache(cacheKey, payload, blogConfig.cacheTtlMs);
       res.json(payload);
@@ -585,10 +625,10 @@ ${entries}
       if (!post || post.status !== "published") {
         return res.status(404).json({ message: "Post not found" });
       }
-      
+
       const device = extractDeviceInfo(req);
       const sessionId = req.cookies?.sessionId || req.headers['x-session-id']?.toString() || null;
-      
+
       await storage.recordBlogPostView({
         postId: post.id,
         userId: (req.user as any)?.id || null,
@@ -597,10 +637,10 @@ ${entries}
         userAgent: device.userAgent,
         referrer: req.headers.referer || null,
       });
-      
+
       // Clear post cache to update view count
       cache.delete(`post:${req.params.slug}`);
-      
+
       res.json({ success: true });
     } catch {
       res.status(500).json({ message: "Failed to record view" });
@@ -651,7 +691,7 @@ ${entries}
       if (typeof req.body.sortOrder === "number") updates.sortOrder = req.body.sortOrder;
       if (typeof req.body.isActive === "boolean") updates.isActive = req.body.isActive;
       if (typeof req.body.parentId === "number" || req.body.parentId === null) updates.parentId = req.body.parentId;
-      
+
       const updated = await storage.updateBlogCategory(id, updates);
       if (!updated) return res.status(404).json({ message: "Category not found" });
       cache.delete("categories");
@@ -681,7 +721,7 @@ ${entries}
       const page = Math.max(1, parseInt(String(req.query.page || "1"), 10) || 1);
       const limit = Math.min(50, Math.max(1, parseInt(String(req.query.limit || "20"), 10) || 20));
       const status = typeof req.query.status === "string" ? req.query.status : undefined;
-      
+
       const data = await storage.getAllBlogPosts({ page, limit, status });
       const payload = {
         posts: data.posts.map(p => ({
@@ -720,12 +760,12 @@ ${entries}
       if (!Array.isArray(postIds) || postIds.length === 0) {
         return res.status(400).json({ message: "No posts selected" });
       }
-      
+
       const validActions = ["publish", "unpublish", "delete", "feature", "unfeature"];
       if (!validActions.includes(action)) {
         return res.status(400).json({ message: "Invalid action" });
       }
-      
+
       let updated = 0;
       for (const id of postIds) {
         try {
@@ -749,7 +789,7 @@ ${entries}
           // Continue with other posts
         }
       }
-      
+
       cache.clear();
       const device = extractDeviceInfo(req);
       await storage.createAuditLog({
@@ -763,7 +803,7 @@ ${entries}
         failureReason: null,
         metadata: { action, postIds, updated },
       });
-      
+
       res.json({ success: true, updated });
     } catch {
       res.status(500).json({ message: "Failed to perform bulk action" });
@@ -849,7 +889,7 @@ ${entries}
       if (isNaN(postId) || postId <= 0) {
         return res.status(400).json({ message: "Invalid post ID", error: "invalid_id" });
       }
-      
+
       const limit = Math.min(50, parseInt(String(req.query.limit || "20"), 10) || 20);
       const revisions = await storage.getBlogPostRevisions(postId, limit);
       res.json({ revisions });
@@ -865,12 +905,12 @@ ${entries}
       if (isNaN(postId) || postId <= 0) {
         return res.status(400).json({ message: "Invalid post ID", error: "invalid_id" });
       }
-      
+
       const revision = await storage.createBlogPostRevision(postId);
       if (!revision) {
         return res.status(404).json({ message: "Post not found" });
       }
-      
+
       res.json({ revision });
     } catch (err) {
       console.error('[Blog] Error creating revision:', err);
@@ -884,12 +924,12 @@ ${entries}
       if (isNaN(id) || id <= 0) {
         return res.status(400).json({ message: "Invalid revision ID", error: "invalid_id" });
       }
-      
+
       const revision = await storage.getBlogPostRevisionById(id);
       if (!revision) {
         return res.status(404).json({ message: "Revision not found" });
       }
-      
+
       res.json({ revision });
     } catch (err) {
       console.error('[Blog] Error fetching revision:', err);
@@ -903,12 +943,12 @@ ${entries}
       if (isNaN(id) || id <= 0) {
         return res.status(400).json({ message: "Invalid revision ID", error: "invalid_id" });
       }
-      
+
       const post = await storage.restoreBlogPostRevision(id);
       if (!post) {
         return res.status(404).json({ message: "Revision not found" });
       }
-      
+
       cache.clear();
       const device = extractDeviceInfo(req);
       await storage.createAuditLog({
@@ -922,7 +962,7 @@ ${entries}
         failureReason: null,
         metadata: { revisionId: id, postId: post.id },
       });
-      
+
       res.json({ post });
     } catch (err) {
       console.error('[Blog] Error restoring revision:', err);
@@ -974,10 +1014,10 @@ function escapeXml(text: string): string {
 
 function countWords(md: string): number {
   const text = md.replace(/```[\s\S]*?```/g, ' ')
-                 .replace(/`[^`]*`/g, ' ')
-                 .replace(/[#*_>\-\[\]\(\)!]/g, ' ')
-                 .replace(/\s+/g, ' ')
-                 .trim();
+    .replace(/`[^`]*`/g, ' ')
+    .replace(/[#*_>\-\[\]\(\)!]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
   if (!text) return 0;
   return text.split(' ').length;
 }
@@ -988,7 +1028,7 @@ let scheduledPublishingInterval: NodeJS.Timeout | null = null;
 export function startScheduledPublishing() {
   if (!blogConfig.enableScheduledPublishing) return;
   if (scheduledPublishingInterval) return;
-  
+
   scheduledPublishingInterval = setInterval(async () => {
     try {
       const published = await storage.publishScheduledPosts();
@@ -999,7 +1039,7 @@ export function startScheduledPublishing() {
       console.error('[Blog] Error publishing scheduled posts:', err);
     }
   }, blogConfig.scheduledCheckIntervalMs);
-  
+
   console.log('[Blog] Scheduled publishing started');
 }
 
@@ -1024,13 +1064,13 @@ export function getBlogCacheStats(): CacheStats {
 export async function warmupBlogCache(): Promise<void> {
   try {
     console.log('[BlogCache] Warming up cache...');
-    
+
     // Preload featured posts
     const featured = await storage.getFeaturedBlogPosts(5);
     if (featured.length > 0) {
       blogCache.set('featured:5', { posts: featured }, blogConfig.cacheTtlMs * 2);
     }
-    
+
     // Preload recent posts (first page)
     const recent = await storage.getPublishedBlogPosts({ page: 1, limit: 10 });
     blogCache.set('list:1:10:::', {
@@ -1042,15 +1082,15 @@ export async function warmupBlogCache(): Promise<void> {
       pagination: { page: 1, limit: 10, total: recent.total, totalPages: Math.ceil(recent.total / 10) },
       nextCursor: recent.posts.length ? (recent.posts[recent.posts.length - 1].publishedAt || recent.posts[recent.posts.length - 1].createdAt) : null
     }, blogConfig.cacheTtlMs * 2);
-    
+
     // Preload categories
     const categories = await storage.getAllBlogCategories();
     blogCache.set('categories', { categories }, blogConfig.cacheTtlMs * 5);
-    
+
     // Preload popular posts
     const popular = await storage.getPopularBlogPosts(5, blogConfig.popularPostsDays);
     blogCache.set(`popular:5:${blogConfig.popularPostsDays}`, { posts: popular }, blogConfig.cacheTtlMs * 2);
-    
+
     console.log('[BlogCache] Cache warmed up with featured, recent, categories, and popular posts');
   } catch (err) {
     console.error('[BlogCache] Error warming up cache:', err);

@@ -28,7 +28,7 @@
   --color-chart-3: hsl(var(--chart-3));
   --color-chart-4: hsl(var(--chart-4));
   --color-chart-5: hsl(var(--chart-5));
-  
+
   --font-sans: "DM Sans", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 
@@ -293,6 +293,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply font-sans antialiased bg-background text-foreground;
   }
@@ -300,8 +301,15 @@
 
 /* Custom Typing Animation - Legacy */
 @keyframes cursor-blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
 }
 
 .animate-cursor-blink {
@@ -310,9 +318,20 @@
 
 /* Smooth Caret Blink Animation - Monkeytype/VSCode style */
 @keyframes caret-blink-phase {
-  0%, 40% { opacity: 1; }
-  50%, 90% { opacity: 0; }
-  100% { opacity: 1; }
+
+  0%,
+  40% {
+    opacity: 1;
+  }
+
+  50%,
+  90% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 .animate-caret-blink {
@@ -322,11 +341,14 @@
 
 /* Smooth caret with glow effect */
 @keyframes caret-glow {
-  0%, 100% { 
+
+  0%,
+  100% {
     box-shadow: 0 0 8px hsl(var(--primary) / 0.6), 0 0 16px hsl(var(--primary) / 0.3);
     opacity: 1;
   }
-  50% { 
+
+  50% {
     box-shadow: 0 0 4px hsl(var(--primary) / 0.3);
     opacity: 0.4;
   }
@@ -339,11 +361,12 @@
 
 /* Character typing animation */
 @keyframes char-appear {
-  0% { 
+  0% {
     opacity: 0.5;
     transform: scale(0.95);
   }
-  100% { 
+
+  100% {
     opacity: 1;
     transform: scale(1);
   }
@@ -372,13 +395,12 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    hsl(var(--destructive)) 25%, 
-    transparent 50%, 
-    hsl(var(--destructive)) 75%, 
-    transparent 100%
-  );
+  background: linear-gradient(90deg,
+      transparent 0%,
+      hsl(var(--destructive)) 25%,
+      transparent 50%,
+      hsl(var(--destructive)) 75%,
+      transparent 100%);
   background-size: 8px 2px;
 }
 
@@ -390,6 +412,7 @@
 
 /* Reduced motion support for accessibility */
 @media (prefers-reduced-motion: reduce) {
+
   .animate-caret-blink,
   .animate-caret-smooth,
   [class*="animate-[caret-blink"] {
@@ -406,14 +429,27 @@
 
 /* Web Search Animation Effects */
 @keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 @keyframes progress-indeterminate {
-  0% { transform: translateX(-100%); }
-  50% { transform: translateX(0%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+
+  50% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .animate-shimmer {
@@ -425,6 +461,7 @@
    PRINT STYLES - Certificate Verification Page
    ============================================================================ */
 @media print {
+
   /* Hide non-essential elements */
   header,
   footer,
@@ -435,14 +472,14 @@
   [data-testid="button-verify"] {
     display: none !important;
   }
-  
+
   /* Reset backgrounds for printing */
   body,
   [data-testid="page-verify"] {
     background: white !important;
     color: black !important;
   }
-  
+
   /* Card styling for print */
   .card,
   [class*="Card"] {
@@ -452,13 +489,20 @@
     break-inside: avoid;
     page-break-inside: avoid;
   }
-  
+
   /* Text colors for print */
-  h1, h2, h3, h4, h5, h6,
-  p, span, div {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  span,
+  div {
     color: black !important;
   }
-  
+
   /* Badge styling for print */
   .badge,
   [class*="Badge"] {
@@ -466,32 +510,37 @@
     background: #f5f5f5 !important;
     color: #333 !important;
   }
-  
+
   /* Status colors - keep some color for verification status */
-  .text-green-500, .text-green-600 {
+  .text-green-500,
+  .text-green-600 {
     color: #16a34a !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
-  
-  .text-red-500, .text-red-600, .text-destructive {
+
+  .text-red-500,
+  .text-red-600,
+  .text-destructive {
     color: #dc2626 !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
-  
-  .text-yellow-500, .text-yellow-600 {
+
+  .text-yellow-500,
+  .text-yellow-600 {
     color: #ca8a04 !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
-  
-  .text-orange-500, .text-orange-600 {
+
+  .text-orange-500,
+  .text-orange-600 {
     color: #ea580c !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
-  
+
   /* Ensure icons print with color */
   svg.text-green-500,
   svg.text-red-500,
@@ -499,13 +548,13 @@
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
-  
+
   /* Print header/footer */
   @page {
     margin: 1cm;
     size: A4;
   }
-  
+
   /* Show verification URL for print */
   [data-testid="page-verify"]::after {
     content: "Verified at: typemasterai.com/verify";
@@ -528,7 +577,7 @@
   --book-line-height: 1.8;
   --book-font-size: 1.125rem;
   --book-max-width: 70ch;
-  
+
   font-size: var(--book-font-size);
   line-height: var(--book-line-height);
   max-width: var(--book-max-width);
@@ -543,7 +592,7 @@
   gap: 0.25rem;
 }
 
-.book-content-structure > * {
+.book-content-structure>* {
   transition: all 0.2s ease-out;
 }
 
@@ -586,6 +635,7 @@
     opacity: 0.6;
     transform: translateY(4px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -731,8 +781,15 @@
 
 /* Typing Cursor Animation */
 @keyframes cursor-blink-book {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
 }
 
 .book-content-block .cursor-indicator {
@@ -774,8 +831,13 @@
 
 /* Reading Progress Animations */
 @keyframes progress-fill {
-  from { width: 0%; }
-  to { width: var(--progress-value); }
+  from {
+    width: 0%;
+  }
+
+  to {
+    width: var(--progress-value);
+  }
 }
 
 .reading-progress-bar {
@@ -784,9 +846,17 @@
 
 /* Segment Dot Animation */
 @keyframes dot-complete {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.3); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.3);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 .segment-dot-complete {
@@ -801,12 +871,12 @@
     padding-left: 1rem;
     padding-right: 1rem;
   }
-  
+
   [data-block-type="DIALOGUE"] {
     margin-left: 0.75rem;
     padding-left: 0.5rem;
   }
-  
+
   [data-block-type="CHARACTER_ENTRY"] {
     margin-left: 1rem;
   }
@@ -814,12 +884,13 @@
 
 /* Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
+
   .book-content-block,
-  .book-content-structure > * {
+  .book-content-structure>* {
     transition: none !important;
     animation: none !important;
   }
-  
+
   .focus-mode .book-content-block[data-block-state="current"] {
     transform: none !important;
   }
@@ -831,16 +902,16 @@
     border-left-width: 3px;
     border-left-color: hsl(var(--primary));
   }
-  
+
   [data-block-type="SCENE_HEADER"]::before {
     width: 6px;
     background: hsl(var(--primary));
   }
-  
+
   .book-content-block .char-correct {
     color: hsl(120 100% 35%);
   }
-  
+
   .book-content-block .char-incorrect {
     color: hsl(0 100% 50%);
   }
@@ -910,16 +981,23 @@
 
 /* Animated gradient background */
 .arena-gradient {
-  background: linear-gradient(135deg, 
-    rgba(0, 245, 255, 0.05) 0%, 
-    rgba(181, 55, 255, 0.05) 50%, 
-    rgba(255, 107, 53, 0.05) 100%);
+  background: linear-gradient(135deg,
+      rgba(0, 245, 255, 0.05) 0%,
+      rgba(181, 55, 255, 0.05) 50%,
+      rgba(255, 107, 53, 0.05) 100%);
 }
 
 /* Pulse animation for neon elements */
 @keyframes neon-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
 }
 
 .neon-pulse {
@@ -928,11 +1006,11 @@
 
 /* Stress meter gradient */
 .stress-meter-gradient {
-  background: linear-gradient(to right, 
-    hsl(120, 100%, 40%) 0%, 
-    hsl(60, 100%, 50%) 33%, 
-    hsl(30, 100%, 50%) 66%, 
-    hsl(0, 100%, 50%) 100%);
+  background: linear-gradient(to right,
+      hsl(120, 100%, 40%) 0%,
+      hsl(60, 100%, 50%) 33%,
+      hsl(30, 100%, 50%) 66%,
+      hsl(0, 100%, 50%) 100%);
 }
 
 /* Arena HUD panel */
@@ -946,9 +1024,20 @@
 
 /* Countdown pulse */
 @keyframes countdown-pulse {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.1); opacity: 0.8; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .countdown-pulse {
@@ -957,9 +1046,17 @@
 
 /* Combo explosion effect */
 @keyframes combo-burst {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.3); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.3);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 .combo-burst {
@@ -968,15 +1065,20 @@
 
 /* Stats card shimmer effect */
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 .stats-shimmer {
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(255, 255, 255, 0.05) 50%, 
-    transparent 100%);
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      transparent 100%);
   background-size: 200% 100%;
   animation: shimmer 3s infinite;
 }
@@ -1005,13 +1107,28 @@
 
 /* Neon caret animations for stress test */
 @keyframes neon-caret-blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
+
+  0%,
+  50% {
+    opacity: 1;
+  }
+
+  51%,
+  100% {
+    opacity: 0;
+  }
 }
 
 @keyframes neon-caret-smooth {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
 }
 
 .neon-caret {
@@ -1068,6 +1185,7 @@
     background-color: rgba(255, 100, 100, 0.4);
     transform: scale(1.1);
   }
+
   100% {
     background-color: transparent;
     transform: scale(1);
@@ -1075,6 +1193,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .neon-pulse,
   .countdown-pulse,
   .combo-burst,
@@ -1082,7 +1201,7 @@
   .neon-caret {
     animation: none !important;
   }
-  
+
   .neon-caret {
     opacity: 1 !important;
   }
@@ -1090,77 +1209,78 @@
 
 /* Additional mobile improvements for racing features */
 @media (max-width: 640px) {
+
   /* Improved race progress cards */
   .race-progress-card {
     padding: 0.5rem !important;
     gap: 0.5rem !important;
   }
-  
+
   .race-progress-avatar {
     width: 2rem !important;
     height: 2rem !important;
   }
-  
+
   .race-progress-stats {
     font-size: 0.75rem !important;
     gap: 0.25rem !important;
   }
-  
+
   /* Better chat on mobile */
   .race-chat-compact {
     padding: 0.375rem !important;
   }
-  
+
   .race-chat-input {
     font-size: 0.625rem !important;
     height: 1.25rem !important;
   }
-  
+
   .race-chat-messages {
     height: 4rem !important;
   }
-  
+
   /* Mobile waiting room improvements */
   .race-waiting-header {
     flex-direction: column !important;
     align-items: flex-start !important;
     gap: 0.75rem !important;
   }
-  
+
   .race-waiting-participant {
     padding: 0.5rem !important;
     gap: 0.5rem !important;
   }
-  
+
   .race-waiting-avatar {
     width: 2rem !important;
     height: 2rem !important;
   }
-  
+
   .race-waiting-controls {
     flex-direction: column !important;
     gap: 0.5rem !important;
   }
-  
+
   /* Mobile results screen */
   .race-results-hero {
     padding: 1rem !important;
   }
-  
+
   .race-results-stats {
     grid-template-columns: 1fr 1fr !important;
     gap: 0.5rem !important;
   }
-  
+
   .race-results-tabs {
     grid-template-columns: 1fr 1fr !important;
     gap: 0.25rem !important;
   }
-  
+
   .race-results-leaderboard {
     padding: 0.5rem !important;
   }
-  
+
   .race-results-share {
     grid-template-columns: 1fr !important;
     gap: 0.5rem !important;
@@ -1168,21 +1288,22 @@
 }
 
 @media (max-width: 480px) {
+
   /* Extra small mobile improvements */
   .race-xs-typing-text {
     font-size: 0.875rem !important;
     line-height: 1.4 !important;
   }
-  
+
   .race-xs-progress-bar {
     height: 0.25rem !important;
   }
-  
+
   .race-xs-button {
     padding: 0.5rem 0.75rem !important;
     font-size: 0.875rem !important;
   }
-  
+
   .race-xs-stats-number {
     font-size: 1.25rem !important;
   }
@@ -1193,11 +1314,11 @@
   .race-landscape-typing {
     max-height: 120px !important;
   }
-  
+
   .race-landscape-progress {
     padding: 0.25rem !important;
   }
-  
+
   .race-landscape-chat {
     height: 3rem !important;
   }
@@ -1209,19 +1330,20 @@
     min-height: 2.5rem !important;
     min-width: 2.5rem !important;
   }
-  
+
   .race-touch-input {
     min-height: 2.5rem !important;
     font-size: 1rem !important;
   }
-  
+
   .race-touch-target {
     padding: 0.5rem !important;
   }
 }
 
 /* High DPI displays */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
   .race-high-dpi-text {
     -webkit-font-smoothing: antialiased !important;
     -moz-osx-font-smoothing: grayscale !important;
@@ -1240,61 +1362,62 @@
 /* ============================================================================ */
 /* Mobile-specific responsive improvements for racing features */
 @media (max-width: 640px) {
+
   /* Race page mobile adjustments */
   .race-mobile-container {
     padding-left: 0.75rem !important;
     padding-right: 0.75rem !important;
   }
-  
+
   .race-mobile-typing-area {
     font-size: 1rem !important;
     line-height: 1.6 !important;
     max-height: 180px !important;
     padding: 1rem !important;
   }
-  
+
   .race-mobile-progress-card {
     padding: 0.75rem !important;
   }
-  
+
   .race-mobile-timer {
     font-size: 1rem !important;
     padding: 0.5rem 0.75rem !important;
   }
-  
+
   .race-mobile-countdown {
     font-size: 2.5rem !important;
   }
-  
+
   .race-mobile-stats-grid {
     grid-template-columns: 1fr !important;
     gap: 0.5rem !important;
   }
-  
+
   .race-mobile-stats-card {
     padding: 0.75rem !important;
   }
-  
+
   .race-mobile-leaderboard-entry {
     padding: 0.75rem !important;
     flex-direction: column !important;
     align-items: flex-start !important;
   }
-  
+
   .race-mobile-share-grid {
     grid-template-columns: 1fr !important;
     gap: 0.5rem !important;
   }
-  
+
   .race-mobile-tabs {
     grid-template-columns: 1fr 1fr !important;
     gap: 0.25rem !important;
   }
-  
+
   .race-mobile-tab-text {
     display: none !important;
   }
-  
+
   .race-mobile-action-buttons {
     flex-direction: column !important;
     gap: 0.5rem !important;
@@ -1302,34 +1425,36 @@
 }
 
 @media (max-width: 480px) {
+
   /* Extra small mobile adjustments */
   .race-xs-typing-area {
     font-size: 0.875rem !important;
     line-height: 1.5 !important;
     padding: 0.75rem !important;
   }
-  
+
   .race-xs-timer {
     font-size: 0.875rem !important;
     padding: 0.375rem 0.5rem !important;
   }
-  
+
   .race-xs-countdown {
     font-size: 2rem !important;
   }
-  
+
   .race-xs-stats-number {
     font-size: 1.5rem !important;
   }
 }
 
 @media (min-width: 641px) and (max-width: 768px) {
+
   /* Tablet adjustments */
   .race-tablet-typing-area {
     font-size: 1.125rem !important;
     line-height: 1.7 !important;
   }
-  
+
   .race-tablet-stats-grid {
     grid-template-columns: repeat(2, 1fr) !important;
   }
@@ -1341,12 +1466,12 @@
     min-height: 2.75rem !important;
     padding: 0.75rem 1rem !important;
   }
-  
+
   .race-mobile-input {
     min-height: 2.75rem !important;
     font-size: 1rem !important;
   }
-  
+
   .race-mobile-avatar {
     width: 2.5rem !important;
     height: 2.5rem !important;
@@ -1374,8 +1499,8 @@
   --caret-transition-duration: 60ms;
   will-change: transform, height;
   contain: layout style;
-  transition: transform var(--caret-transition-duration) cubic-bezier(0.4, 0, 0.2, 1), 
-              height 0.08s ease-out;
+  transition: transform var(--caret-transition-duration) cubic-bezier(0.4, 0, 0.2, 1),
+    height 0.08s ease-out;
   /* Ensure caret is always visible */
   min-height: 2px;
   width: 2px !important;

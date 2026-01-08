@@ -42,7 +42,20 @@ import {
   Table,
   Undo,
   Redo,
+  Wand2,
+  Sparkles,
 } from "lucide-react";
+import { validateBlogContent, normalizeBlogContent, autoFormatContent, type ValidationIssue } from "@shared/blog-processor";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { SEOPreview } from "./SEOPreview";
 import { AdvancedPreview } from "./AdvancedPreview";
 import { cn } from "@/lib/utils";
@@ -140,18 +153,20 @@ export function BlogPostEditor({
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [saveError, setSaveError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"write" | "preview" | "seo">("write");
+  const [validationIssues, setValidationIssues] = useState<ValidationIssue[]>([]);
+  const [showValidationDialog, setShowValidationDialog] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  
+
   // Track original content for dirty checking
   const [savedHash, setSavedHash] = useState<string>(() => hashContent(initialPost || defaultPost));
   const currentHash = useMemo(() => hashContent(post), [post]);
   const isDirty = currentHash !== savedHash;
-  
+
   // Refs for managing async operations
   const saveInProgressRef = useRef(false);
   const pendingSaveRef = useRef<BlogPostInput | null>(null);
   const autosaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  
+
   // Undo/Redo stack
   const [undoStack, setUndoStack] = useState<string[]>([]);
   const [redoStack, setRedoStack] = useState<string[]>([]);
@@ -187,19 +202,19 @@ export function BlogPostEditor({
   // Debounced autosave (5 seconds after last change)
   useEffect(() => {
     if (!isDirty || post.status === "published") return;
-    
+
     // Clear existing timeout
     if (autosaveTimeoutRef.current) {
       clearTimeout(autosaveTimeoutRef.current);
     }
-    
+
     // Set new timeout for autosave
     autosaveTimeoutRef.current = setTimeout(() => {
       if (post.title && post.contentMd.length >= 20) {
         handleSave(post.status, true);
       }
     }, 5000);
-    
+
     return () => {
       if (autosaveTimeoutRef.current) {
         clearTimeout(autosaveTimeoutRef.current);
@@ -216,7 +231,7 @@ export function BlogPostEditor({
         return e.returnValue;
       }
     };
-    
+
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [isDirty]);
@@ -235,7 +250,7 @@ export function BlogPostEditor({
   }, []);
 
   const handleSave = useCallback(async (
-    status?: BlogPostInput["status"], 
+    status?: BlogPostInput["status"],
     isAutosave = false
   ): Promise<boolean> => {
     // Prevent concurrent saves
@@ -244,12 +259,25 @@ export function BlogPostEditor({
       pendingSaveRef.current = { ...post, status: status || post.status };
       return false;
     }
-    
+
     saveInProgressRef.current = true;
     setSaveStatus("saving");
     setSaveError(null);
-    
+
     const newStatus = status || post.status;
+
+    // Validation Check for Publishing
+    if (newStatus === "published") {
+      const { isValid, issues } = validateBlogContent(post.contentMd, post.metaDescription || post.excerpt || undefined);
+      if (!isValid) {
+        setValidationIssues(issues);
+        setShowValidationDialog(true);
+        saveInProgressRef.current = false;
+        setSaveStatus("idle");
+        return false;
+      }
+    }
+
     let updates = { ...post, status: newStatus };
 
     // Handle publishing logic
@@ -259,7 +287,7 @@ export function BlogPostEditor({
 
     try {
       const result = await onSave(updates);
-      
+
       if (result.success) {
         // Ensure tags are preserved as the API might return the post without tags
         const savedPost = result.post || updates;
@@ -267,25 +295,25 @@ export function BlogPostEditor({
         setSavedHash(hashContent({ ...savedPost, tags: savedPost.tags || updates.tags || [] }));
         setLastSaved(new Date());
         setSaveStatus("saved");
-        
+
         if (!isAutosave) {
           toast({
             title: newStatus === "published" ? "Published!" : "Saved",
-            description: newStatus === "published" 
-              ? "Your post is now live." 
+            description: newStatus === "published"
+              ? "Your post is now live."
               : "Your changes have been saved.",
           });
         }
-        
+
         saveInProgressRef.current = false;
-        
+
         // Check if there's a pending save
         if (pendingSaveRef.current) {
           const pending = pendingSaveRef.current;
           pendingSaveRef.current = null;
           await handleSave(pending.status, true);
         }
-        
+
         return true;
       } else {
         throw new Error(result.error || "Failed to save");
@@ -294,7 +322,7 @@ export function BlogPostEditor({
       const errorMessage = err instanceof Error ? err.message : "Failed to save post";
       setSaveStatus("error");
       setSaveError(errorMessage);
-      
+
       if (!isAutosave) {
         toast({
           variant: "destructive",
@@ -302,7 +330,7 @@ export function BlogPostEditor({
           description: errorMessage,
         });
       }
-      
+
       saveInProgressRef.current = false;
       return false;
     }
@@ -326,9 +354,9 @@ export function BlogPostEditor({
       selectedText +
       suffix +
       post.contentMd.substring(end);
-    
+
     update("contentMd", newText);
-    
+
     setTimeout(() => {
       textarea.focus();
       textarea.setSelectionRange(
@@ -373,6 +401,31 @@ export function BlogPostEditor({
       }
     }
   }, [insertMarkdown, handleSave, post.status]);
+
+  // Auto-fix handler (basic normalization)
+  const handleAutoFix = useCallback(() => {
+    const newContent = normalizeBlogContent(post.contentMd);
+    if (newContent !== post.contentMd) {
+      update("contentMd", newContent);
+      toast({ title: "Content normalized", description: "Headings, spacing, and structure have been fixed." });
+    } else {
+      toast({ title: "Already normalized", description: "No changes needed." });
+    }
+  }, [post.contentMd, update, toast]);
+
+  // Full auto-format handler (transforms plain text to professional structure)
+  const handleAutoFormat = useCallback(() => {
+    const newContent = autoFormatContent(post.contentMd, post.title);
+    if (newContent !== post.contentMd) {
+      update("contentMd", newContent);
+      toast({ 
+        title: "Content professionally formatted", 
+        description: "Your text has been transformed into a structured blog post with sections and improved readability." 
+      });
+    } else {
+      toast({ title: "Already formatted", description: "Content structure looks good." });
+    }
+  }, [post.contentMd, post.title, update, toast]);
 
   const handleUndo = useCallback(() => {
     if (undoStack.length > 0) {
@@ -433,12 +486,12 @@ export function BlogPostEditor({
       error: { icon: <AlertCircle className="h-3 w-3" />, text: "Save failed", className: "text-red-500" },
       unsaved: { icon: <div className="w-2 h-2 rounded-full bg-yellow-500" />, text: "Unsaved changes", className: "text-yellow-600" },
     };
-    
+
     const config = statusConfig[saveStatus];
     if (!config.text) return null;
-    
+
     return (
-      <button 
+      <button
         onClick={() => saveStatus === "error" || saveStatus === "unsaved" ? handleSave(post.status) : undefined}
         className={cn("flex items-center gap-1 text-xs", config.className, (saveStatus === "error" || saveStatus === "unsaved") && "cursor-pointer hover:underline")}
         title={saveError || undefined}
@@ -463,7 +516,7 @@ export function BlogPostEditor({
                 <span className="font-semibold text-sm truncate max-w-[200px] sm:max-w-md">
                   {post.title || "Untitled Post"}
                 </span>
-                <Badge 
+                <Badge
                   variant={post.status === "published" ? "default" : "secondary"}
                   className={cn(
                     post.status === "published" && "bg-green-500 hover:bg-green-600",
@@ -491,8 +544,8 @@ export function BlogPostEditor({
           </div>
 
           <div className="flex items-center gap-2">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => handleSave(post.status)}
               disabled={externalSaving || saveStatus === "saving"}
             >
@@ -505,7 +558,7 @@ export function BlogPostEditor({
             </Button>
 
             {post.status === "published" ? (
-              <Button 
+              <Button
                 variant="destructive"
                 onClick={() => handleSave("draft")}
                 disabled={externalSaving || saveStatus === "saving"}
@@ -513,7 +566,7 @@ export function BlogPostEditor({
                 Unpublish
               </Button>
             ) : (
-              <Button 
+              <Button
                 onClick={() => handleSave("published")}
                 disabled={externalSaving || saveStatus === "saving" || !post.title || !post.slug || post.contentMd.length < 20}
                 className="bg-green-600 hover:bg-green-700 text-white"
@@ -618,6 +671,13 @@ export function BlogPostEditor({
                     </Button>
                     <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => insertMarkdown("1. ")} title="Ordered List">
                       <ListOrdered className="h-4 w-4" />
+                    </Button>
+                    <Separator orientation="vertical" className="h-6 mx-1" />
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-purple-600 hover:text-purple-700 hover:bg-purple-50" onClick={handleAutoFix} title="Quick Fix (normalize headings & spacing)">
+                      <Wand2 className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-amber-600 hover:text-amber-700 hover:bg-amber-50" onClick={handleAutoFormat} title="Auto-Format (transform to professional structure)">
+                      <Sparkles className="h-4 w-4" />
                     </Button>
                   </div>
 
@@ -798,6 +858,33 @@ export function BlogPostEditor({
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium">Media</CardTitle>
+                <AlertDialog open={showValidationDialog} onOpenChange={setShowValidationDialog}>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Validation Failed</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Please fix the following issues before publishing:
+                        <ul className="list-disc pl-4 mt-2 space-y-1 max-h-[60vh] overflow-y-auto">
+                          {validationIssues.map((issue, i) => (
+                            <li key={i} className={issue.type === "error" ? "text-red-500 font-medium" : "text-amber-500"}>
+                              {issue.message}
+                            </li>
+                          ))}
+                        </ul>
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => {
+                        const fixable = validationIssues.some(i => i.fixable);
+                        if (fixable) handleAutoFormat();
+                        setShowValidationDialog(false);
+                      }}>
+                        {validationIssues.some(i => i.fixable) ? "Auto-Format & Close" : "OK"}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="space-y-2">
