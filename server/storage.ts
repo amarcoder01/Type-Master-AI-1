@@ -190,6 +190,8 @@ import {
   type InsertBlogPost,
   type BlogPostView,
   type InsertBlogPostView,
+  blogPostRevisions,
+  type BlogPostRevision,
 } from "@shared/schema";
 import { eq, desc, sql, and, notInArray, or, isNull, inArray } from "drizzle-orm";
 
@@ -878,6 +880,13 @@ export interface IStorage {
   recordBlogPostView(view: InsertBlogPostView): Promise<void>;
   getBlogPostViewsCount(postId: number, since?: Date): Promise<number>;
   getPopularBlogPosts(limit: number, days?: number): Promise<BlogPost[]>;
+  
+  // Blog Post Revisions
+  createBlogPostRevision(postId: number): Promise<BlogPostRevision | undefined>;
+  getBlogPostRevisions(postId: number, limit?: number): Promise<BlogPostRevision[]>;
+  getBlogPostRevisionById(id: number): Promise<BlogPostRevision | undefined>;
+  restoreBlogPostRevision(revisionId: number): Promise<BlogPost | undefined>;
+  deleteBlogPostRevisions(postId: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -6199,8 +6208,9 @@ export class DatabaseStorage implements IStorage {
 
   async createBlogPost(input: InsertBlogPost & { tags?: string[] }): Promise<BlogPost> {
     return await db.transaction(async (tx) => {
-      const [created] = await tx.insert(blogPosts).values(input).returning();
-      const tagSlugs = (input.tags || []).map(s => s.trim().toLowerCase()).filter(Boolean);
+      const { tags, ...postData } = input;
+      const [created] = await tx.insert(blogPosts).values(postData).returning();
+      const tagSlugs = (tags || []).map(s => s.trim().toLowerCase()).filter(Boolean);
       for (const slug of tagSlugs) {
         const existing = await tx.select().from(blogTags).where(eq(blogTags.slug, slug)).limit(1);
         let tagId: number;
@@ -6219,12 +6229,13 @@ export class DatabaseStorage implements IStorage {
 
   async updateBlogPost(id: number, input: Partial<InsertBlogPost> & { tags?: string[] }): Promise<BlogPost | undefined> {
     return await db.transaction(async (tx) => {
-      const updatedList = await tx.update(blogPosts).set(input).where(eq(blogPosts.id, id)).returning();
+      const { tags, ...updates } = input;
+      const updatedList = await tx.update(blogPosts).set(updates).where(eq(blogPosts.id, id)).returning();
       const updated = updatedList[0];
       if (!updated) return undefined;
-      if (input.tags) {
+      if (tags) {
         await tx.delete(blogPostTags).where(eq(blogPostTags.postId, id));
-        const tagSlugs = input.tags.map(s => s.trim().toLowerCase()).filter(Boolean);
+        const tagSlugs = tags.map(s => s.trim().toLowerCase()).filter(Boolean);
         for (const slug of tagSlugs) {
           const existing = await tx.select().from(blogTags).where(eq(blogTags.slug, slug)).limit(1);
           let tagId: number;
@@ -6276,7 +6287,7 @@ export class DatabaseStorage implements IStorage {
       FROM blog_posts bp
       INNER JOIN blog_post_tags bpt ON bpt.post_id = bp.id
       INNER JOIN blog_tags bt ON bt.id = bpt.tag_id
-      WHERE bp.status = 'published' AND bt.slug = ANY(${sql.array(tagSlugs)})
+      WHERE bp.status = 'published' AND bt.slug = ANY(${tagSlugs})
       GROUP BY bp.id
       ORDER BY COALESCE(bp.published_at, bp.created_at) DESC
       LIMIT ${limit} OFFSET ${offset}
@@ -6286,7 +6297,7 @@ export class DatabaseStorage implements IStorage {
       FROM blog_posts bp
       INNER JOIN blog_post_tags bpt ON bpt.post_id = bp.id
       INNER JOIN blog_tags bt ON bt.id = bpt.tag_id
-      WHERE bp.status = 'published' AND bt.slug = ANY(${sql.array(tagSlugs)})
+      WHERE bp.status = 'published' AND bt.slug = ANY(${tagSlugs})
     `);
     const total = (countRes.rows[0] as any)?.count || 0;
     return { posts: posts.rows as any[], total };
@@ -6296,13 +6307,14 @@ export class DatabaseStorage implements IStorage {
     const base = await this.getBlogPostBySlug(slug);
     if (!base) return [];
     const tagBased = await db.execute(sql`
-      SELECT DISTINCT bp.*
+      SELECT bp.*
       FROM blog_posts bp
       INNER JOIN blog_post_tags bpt ON bpt.post_id = bp.id
       WHERE bp.status = 'published' AND bp.slug <> ${slug}
         AND bpt.tag_id IN (
-          SELECT tag_id FROM blog_post_tags WHERE post_id = ${sql.literal((base as any).id)}
+          SELECT tag_id FROM blog_post_tags WHERE post_id = ${(base as any).id}
         )
+      GROUP BY bp.id
       ORDER BY COALESCE(bp.published_at, bp.created_at) DESC
       LIMIT ${limit}
     `);
@@ -6361,7 +6373,7 @@ export class DatabaseStorage implements IStorage {
       FROM blog_posts bp
       INNER JOIN blog_post_tags bpt ON bpt.post_id = bp.id
       INNER JOIN blog_tags bt ON bt.id = bpt.tag_id
-      WHERE bp.status = 'published' AND bt.slug = ANY(${sql.array(tagSlugs)})
+      WHERE bp.status = 'published' AND bt.slug = ANY(${tagSlugs})
         ${after ? sql`AND COALESCE(bp.published_at, bp.created_at) < ${after}` : sql``}
       GROUP BY bp.id
       ORDER BY COALESCE(bp.published_at, bp.created_at) DESC
@@ -6546,6 +6558,91 @@ export class DatabaseStorage implements IStorage {
       LIMIT ${limit}
     `);
     return result.rows as any[];
+  }
+
+  // ============================================================================
+  // BLOG POST REVISIONS
+  // ============================================================================
+
+  async createBlogPostRevision(postId: number): Promise<BlogPostRevision | undefined> {
+    // Get current post
+    const post = await this.getBlogPostById(postId);
+    if (!post) return undefined;
+
+    // Get current revision count
+    const countResult = await db.select({ count: sql<number>`count(*)` })
+      .from(blogPostRevisions)
+      .where(eq(blogPostRevisions.postId, postId));
+    const revisionNumber = (countResult[0]?.count || 0) + 1;
+
+    // Create revision from current post state
+    const [revision] = await db.insert(blogPostRevisions).values({
+      postId,
+      title: post.title,
+      contentMd: post.contentMd,
+      excerpt: post.excerpt,
+      coverImageUrl: post.coverImageUrl,
+      authorId: post.authorId,
+      authorName: post.authorName,
+      revisionNumber,
+    }).returning();
+
+    // Limit to 20 revisions per post - delete oldest if over limit
+    const allRevisions = await db.select({ id: blogPostRevisions.id })
+      .from(blogPostRevisions)
+      .where(eq(blogPostRevisions.postId, postId))
+      .orderBy(desc(blogPostRevisions.createdAt));
+
+    if (allRevisions.length > 20) {
+      const toDelete = allRevisions.slice(20).map(r => r.id);
+      await db.delete(blogPostRevisions)
+        .where(inArray(blogPostRevisions.id, toDelete));
+    }
+
+    return revision;
+  }
+
+  async getBlogPostRevisions(postId: number, limit: number = 20): Promise<BlogPostRevision[]> {
+    return await db.select()
+      .from(blogPostRevisions)
+      .where(eq(blogPostRevisions.postId, postId))
+      .orderBy(desc(blogPostRevisions.createdAt))
+      .limit(limit);
+  }
+
+  async getBlogPostRevisionById(id: number): Promise<BlogPostRevision | undefined> {
+    const [revision] = await db.select()
+      .from(blogPostRevisions)
+      .where(eq(blogPostRevisions.id, id))
+      .limit(1);
+    return revision;
+  }
+
+  async restoreBlogPostRevision(revisionId: number): Promise<BlogPost | undefined> {
+    const revision = await this.getBlogPostRevisionById(revisionId);
+    if (!revision) return undefined;
+
+    // Create a revision of current state before restoring
+    await this.createBlogPostRevision(revision.postId);
+
+    // Restore the post to the revision state
+    const [updated] = await db.update(blogPosts)
+      .set({
+        title: revision.title,
+        contentMd: revision.contentMd,
+        excerpt: revision.excerpt,
+        coverImageUrl: revision.coverImageUrl,
+        updatedAt: new Date(),
+      })
+      .where(eq(blogPosts.id, revision.postId))
+      .returning();
+
+    return updated;
+  }
+
+  async deleteBlogPostRevisions(postId: number): Promise<void> {
+    await db.delete(blogPostRevisions)
+      .where(eq(blogPostRevisions.postId, postId));
   }
 }
 

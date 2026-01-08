@@ -8,6 +8,7 @@ import rehypeKatex from "rehype-katex";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Separator } from "@/components/ui/separator";
 import {
   AuthorCard,
   BlogCard,
@@ -16,7 +17,7 @@ import {
   ReadingProgress
 } from "./components";
 import { AuthorBio } from "@/components/author-bio";
-import { ArrowLeft, Calendar, Clock, Eye, Copy, Check } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, Eye, Copy, Check, User } from "lucide-react";
 
 interface BlogPost {
   id: number;
@@ -36,6 +37,7 @@ interface BlogPost {
   viewCount: number;
   wordCount?: number;
   readingTimeMinutes?: number;
+  tags?: string[];
 }
 
 export default function BlogPostPage() {
@@ -151,8 +153,8 @@ export default function BlogPostPage() {
       const code = codeElement?.children || "";
 
       return (
-        <div className="relative group">
-          <pre className="!mt-0">{children}</pre>
+        <div className="relative group my-6">
+          <pre className="!mt-0 !mb-0">{children}</pre>
           <button
             onClick={() => copyCodeToClipboard(code)}
             className="absolute top-2 right-2 p-2 rounded bg-muted/80 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -168,16 +170,16 @@ export default function BlogPostPage() {
       );
     },
     img: ({ src, alt, ...props }: any) => (
-      <figure className="my-8">
+      <figure className="my-10">
         <img
           src={src}
           alt={alt || ""}
-          className="rounded-lg w-full cursor-pointer"
+          className="rounded-xl w-full cursor-pointer shadow-sm"
           loading="lazy"
           {...props}
         />
         {alt && (
-          <figcaption className="text-center text-sm text-muted-foreground mt-2">
+          <figcaption className="text-center text-sm text-muted-foreground mt-3 italic">
             {alt}
           </figcaption>
         )}
@@ -187,11 +189,11 @@ export default function BlogPostPage() {
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto px-4 py-8">
         <Skeleton className="h-8 w-32 mb-6" />
         <Skeleton className="h-12 w-3/4 mb-4" />
         <Skeleton className="h-6 w-1/2 mb-8" />
-        <Skeleton className="aspect-[2/1] w-full rounded-lg mb-8" />
+        <Skeleton className="aspect-[2/1] w-full rounded-xl mb-8" />
         <div className="space-y-4">
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-4 w-full" />
@@ -203,7 +205,7 @@ export default function BlogPostPage() {
 
   if (!post) {
     return (
-      <div className="max-w-4xl mx-auto py-20 text-center">
+      <div className="max-w-4xl mx-auto py-20 text-center px-4">
         <div className="text-6xl mb-4">🔍</div>
         <h1 className="text-2xl font-bold mb-2">Article Not Found</h1>
         <p className="text-muted-foreground mb-6">
@@ -223,55 +225,76 @@ export default function BlogPostPage() {
     <>
       <ReadingProgress contentRef={contentRef} />
 
-      <article className="max-w-4xl mx-auto">
-        {/* Back link */}
-        <Link href="/blog">
-          <Button variant="ghost" size="sm" className="mb-6 -ml-2">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Blog
-          </Button>
-        </Link>
+      <article className="max-w-5xl mx-auto px-4 py-8 lg:py-12">
+        {/* Navigation */}
+        <div className="mb-8">
+          <Link href="/blog">
+            <Button variant="ghost" size="sm" className="-ml-2">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Blog
+            </Button>
+          </Link>
+        </div>
 
         {/* Header */}
-        <header className="mb-8">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-4">
+        <header className="mb-10 max-w-3xl mx-auto text-center">
+          {post.tags && post.tags.length > 0 && (
+            <div className="flex flex-wrap justify-center gap-2 mb-6">
+              {post.tags.map(tag => (
+                <Badge key={tag} variant="secondary" className="text-xs px-3 py-1">
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+          )}
+
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6 tracking-tight">
             {post.title}
           </h1>
 
           {post.excerpt && (
-            <p className="text-xl text-muted-foreground leading-relaxed">
+            <p className="text-xl sm:text-2xl text-muted-foreground leading-relaxed mb-8 font-serif">
               {post.excerpt}
             </p>
           )}
 
           {/* Meta */}
-          <div className="flex flex-wrap items-center gap-4 mt-6 text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">{post.authorName}</span>
+          <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2">
+              {post.authorAvatarUrl ? (
+                <img src={post.authorAvatarUrl} alt={post.authorName} className="w-8 h-8 rounded-full" />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <User className="w-4 h-4 text-primary" />
+                </div>
+              )}
+              <span className="font-medium text-foreground">{post.authorName}</span>
+            </div>
+            <Separator orientation="vertical" className="h-4" />
             <span className="flex items-center gap-1">
               <Calendar className="h-4 w-4" />
               {formatDate(post.publishedAt)}
             </span>
             {post.readingTimeMinutes && (
-              <span className="flex items-center gap-1">
-                <Clock className="h-4 w-4" />
-                {post.readingTimeMinutes} min read
-              </span>
+              <>
+                <Separator orientation="vertical" className="h-4" />
+                <span className="flex items-center gap-1">
+                  <Clock className="h-4 w-4" />
+                  {post.readingTimeMinutes} min read
+                </span>
+              </>
             )}
+            <Separator orientation="vertical" className="h-4" />
             <span className="flex items-center gap-1">
               <Eye className="h-4 w-4" />
               {post.viewCount.toLocaleString()} views
             </span>
           </div>
-
-          {/* Share */}
-          <div className="mt-6">
-            <ShareButtons url={`/blog/${slug}`} title={post.title} />
-          </div>
         </header>
 
         {/* Cover Image */}
         {post.coverImageUrl && (
-          <div className="aspect-[2/1] rounded-xl overflow-hidden mb-10">
+          <div className="max-w-4xl mx-auto aspect-[2/1] rounded-2xl overflow-hidden mb-12 bg-muted shadow-md">
             <img
               src={post.coverImageUrl}
               alt={post.title}
@@ -282,18 +305,14 @@ export default function BlogPostPage() {
         )}
 
         {/* Content with TOC */}
-        <div className="lg:grid lg:grid-cols-[1fr_200px] lg:gap-8">
+        <div className="lg:grid lg:grid-cols-[1fr_200px] lg:gap-12 max-w-5xl mx-auto">
           {/* Main content */}
           <section
             ref={contentRef}
-            className="prose prose-lg dark:prose-invert max-w-none
-              prose-headings:scroll-mt-20
-              prose-a:text-primary prose-a:no-underline hover:prose-a:underline
-              prose-code:before:content-none prose-code:after:content-none
-              prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
-              prose-pre:bg-muted/50 prose-pre:border
-              prose-img:rounded-lg
-              prose-blockquote:border-l-primary
+            className="prose prose-lg dark:prose-invert max-w-[68ch] mx-auto
+              prose-headings:scroll-mt-24
+              prose-a:text-primary prose-a:font-medium prose-a:no-underline hover:prose-a:underline
+              prose-img:rounded-xl prose-img:shadow-md
             "
           >
             <ReactMarkdown
@@ -306,15 +325,23 @@ export default function BlogPostPage() {
           </section>
 
           {/* Sticky TOC - desktop only */}
-          <aside className="hidden lg:block">
+          <aside className="hidden lg:block h-full">
             <div className="sticky top-24">
+              <div className="text-sm font-semibold text-muted-foreground mb-4 tracking-wider uppercase">
+                Contents
+              </div>
               <TableOfContents content={post.contentMd} />
             </div>
           </aside>
         </div>
 
-        {/* Author Card */}
-        <div className="mt-12">
+        {/* Footer Actions */}
+        <div className="max-w-3xl mx-auto mt-16 pt-8 border-t space-y-8">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-muted-foreground font-medium">Share this article</span>
+            <ShareButtons url={`/blog/${slug}`} title={post.title} />
+          </div>
+
           <AuthorCard
             author={{
               name: post.authorName,
@@ -323,24 +350,17 @@ export default function BlogPostPage() {
             }}
             publishedAt={post.publishedAt}
           />
-        </div>
-
-        {/* Global Editorial Bio for E-E-A-T */}
-        <div className="mt-8">
-          <AuthorBio />
-        </div>
-
-        {/* Share again at bottom */}
-        <div className="mt-8 pt-8 border-t flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">Enjoyed this article?</span>
-          <ShareButtons url={`/blog/${slug}`} title={post.title} />
+          
+          <div className="mt-8">
+             <AuthorBio />
+          </div>
         </div>
 
         {/* Related Posts */}
         {related.length > 0 && (
-          <section className="mt-16">
-            <h2 className="text-2xl font-bold mb-6">Related Articles</h2>
-            <div className="grid sm:grid-cols-2 gap-6">
+          <section className="mt-20 pt-10 border-t">
+            <h2 className="text-2xl font-bold mb-8 text-center">Related Articles</h2>
+            <div className="grid sm:grid-cols-2 gap-8 max-w-4xl mx-auto">
               {related.map(r => (
                 <BlogCard key={r.id} post={r} variant="horizontal" />
               ))}

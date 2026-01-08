@@ -16,7 +16,6 @@ const viewLimiter = rateLimit({
   max: 10, // 10 views per minute per IP
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => ipKeyGenerator(req),
 });
 
 // ============================================================================
@@ -322,7 +321,13 @@ ${entries}
     try {
       const parsed = insertBlogPostSchema.safeParse(req.body);
       if (!parsed.success) {
-        return res.status(400).json({ message: "Invalid data", error: fromError(parsed.error).toString() });
+        const errorDetails = fromError(parsed.error).toString();
+        console.error('[Blog] Validation error on create:', errorDetails);
+        return res.status(400).json({ 
+          message: "Validation failed", 
+          error: errorDetails,
+          fields: parsed.error.errors.map(e => ({ field: e.path.join('.'), message: e.message }))
+        });
       }
       const sanitized = {
         ...parsed.data,
@@ -330,6 +335,17 @@ ${entries}
         excerpt: parsed.data.excerpt ? DOMPurify.sanitize(parsed.data.excerpt) : null,
       };
       const tags = Array.isArray((req.body as any).tags) ? (req.body as any).tags : [];
+      
+      // Check for duplicate slug
+      const existing = await storage.getBlogPostBySlug(sanitized.slug);
+      if (existing) {
+        return res.status(409).json({ 
+          message: "A post with this URL slug already exists",
+          error: "duplicate_slug",
+          field: "slug"
+        });
+      }
+      
       const created = await storage.createBlogPost({ ...sanitized, tags });
       cache.clear();
       const device = extractDeviceInfo(req);
@@ -345,8 +361,10 @@ ${entries}
         metadata: { id: (created as any).id, slug: created.slug },
       });
       res.json({ post: created });
-    } catch {
-      res.status(500).json({ message: "Failed to create post" });
+    } catch (err) {
+      console.error('[Blog] Error creating post:', err);
+      const message = err instanceof Error ? err.message : "Failed to create post";
+      res.status(500).json({ message, error: "server_error" });
     }
   });
 
@@ -357,17 +375,72 @@ ${entries}
   app.put("/api/admin/blog/post/:id", adminBlogLimiter, requireAdmin, async (req, res) => {
     try {
       const id = parseInt(req.params.id, 10);
+      if (isNaN(id) || id <= 0) {
+        return res.status(400).json({ message: "Invalid post ID", error: "invalid_id" });
+      }
+      
+      // Check post exists
+      const existingPost = await storage.getBlogPostById(id);
+      if (!existingPost) {
+        return res.status(404).json({ message: "Post not found", error: "not_found" });
+      }
+      
       const updates: any = {};
-      if (typeof req.body.title === "string") updates.title = DOMPurify.sanitize(req.body.title);
-      if (typeof req.body.slug === "string") updates.slug = req.body.slug;
-      if (typeof req.body.excerpt === "string") updates.excerpt = DOMPurify.sanitize(req.body.excerpt);
-      if (typeof req.body.contentMd === "string") updates.contentMd = req.body.contentMd;
-      if (typeof req.body.coverImageUrl === "string") updates.coverImageUrl = req.body.coverImageUrl;
-      if (typeof req.body.status === "string") updates.status = req.body.status;
-      if (req.body.publishedAt) updates.publishedAt = new Date(req.body.publishedAt);
+      if (typeof req.body.title === "string") {
+        const title = req.body.title.trim();
+        if (title.length < 3) {
+          return res.status(400).json({ message: "Title must be at least 3 characters", error: "validation", field: "title" });
+        }
+        updates.title = DOMPurify.sanitize(title);
+      }
+      if (typeof req.body.slug === "string") {
+        const slug = req.body.slug.toLowerCase().trim();
+        if (slug.length < 3) {
+          return res.status(400).json({ message: "Slug must be at least 3 characters", error: "validation", field: "slug" });
+        }
+        // Check for duplicate slug (but allow same slug for same post)
+        const slugExists = await storage.getBlogPostBySlug(slug);
+        if (slugExists && slugExists.id !== id) {
+          return res.status(409).json({ message: "A post with this URL slug already exists", error: "duplicate_slug", field: "slug" });
+        }
+        updates.slug = slug;
+      }
+      if (typeof req.body.excerpt === "string") updates.excerpt = DOMPurify.sanitize(req.body.excerpt) || null;
+      if (typeof req.body.contentMd === "string") {
+        if (req.body.contentMd.length < 20) {
+          return res.status(400).json({ message: "Content must be at least 20 characters", error: "validation", field: "contentMd" });
+        }
+        updates.contentMd = req.body.contentMd;
+      }
+      if (typeof req.body.coverImageUrl === "string") updates.coverImageUrl = req.body.coverImageUrl || null;
+      if (typeof req.body.authorName === "string") updates.authorName = DOMPurify.sanitize(req.body.authorName);
+      if (typeof req.body.authorBio === "string") updates.authorBio = DOMPurify.sanitize(req.body.authorBio) || null;
+      if (typeof req.body.authorAvatarUrl === "string") updates.authorAvatarUrl = req.body.authorAvatarUrl || null;
+      if (typeof req.body.metaTitle === "string") updates.metaTitle = DOMPurify.sanitize(req.body.metaTitle) || null;
+      if (typeof req.body.metaDescription === "string") updates.metaDescription = DOMPurify.sanitize(req.body.metaDescription) || null;
+      if (typeof req.body.categoryId === "number" || req.body.categoryId === null) updates.categoryId = req.body.categoryId;
+      if (typeof req.body.status === "string") {
+        const validStatuses = ["draft", "review", "scheduled", "published"];
+        if (!validStatuses.includes(req.body.status)) {
+          return res.status(400).json({ message: "Invalid status", error: "validation", field: "status" });
+        }
+        updates.status = req.body.status;
+      }
+      if (req.body.publishedAt !== undefined) {
+        updates.publishedAt = req.body.publishedAt ? new Date(req.body.publishedAt) : null;
+      }
+      if (req.body.scheduledAt !== undefined) {
+        updates.scheduledAt = req.body.scheduledAt ? new Date(req.body.scheduledAt) : null;
+      }
+      if (typeof req.body.isFeatured === "boolean") updates.isFeatured = req.body.isFeatured;
+      if (typeof req.body.featuredOrder === "number" || req.body.featuredOrder === null) updates.featuredOrder = req.body.featuredOrder;
+      
       const tags = Array.isArray(req.body.tags) ? req.body.tags : undefined;
       const updated = await storage.updateBlogPost(id, { ...updates, tags });
-      if (!updated) return res.status(404).json({ message: "Not found" });
+      if (!updated) {
+        return res.status(500).json({ message: "Failed to update post", error: "update_failed" });
+      }
+      
       cache.clear();
       const device = extractDeviceInfo(req);
       await storage.createAuditLog({
@@ -382,8 +455,10 @@ ${entries}
         metadata: { id, slug: updated.slug },
       });
       res.json({ post: updated });
-    } catch {
-      res.status(500).json({ message: "Failed to update post" });
+    } catch (err) {
+      console.error('[Blog] Error updating post:', err);
+      const message = err instanceof Error ? err.message : "Failed to update post";
+      res.status(500).json({ message, error: "server_error" });
     }
   });
 
@@ -761,6 +836,129 @@ ${entries}
       res.json({ success: true, message: "Cache warmed up" });
     } catch {
       res.status(500).json({ message: "Failed to warmup cache" });
+    }
+  });
+
+  // ============================================================================
+  // ADMIN ENDPOINTS: Revision History
+  // ============================================================================
+
+  app.get("/api/admin/blog/post/:id/revisions", requireAdmin, async (req, res) => {
+    try {
+      const postId = parseInt(req.params.id, 10);
+      if (isNaN(postId) || postId <= 0) {
+        return res.status(400).json({ message: "Invalid post ID", error: "invalid_id" });
+      }
+      
+      const limit = Math.min(50, parseInt(String(req.query.limit || "20"), 10) || 20);
+      const revisions = await storage.getBlogPostRevisions(postId, limit);
+      res.json({ revisions });
+    } catch (err) {
+      console.error('[Blog] Error fetching revisions:', err);
+      res.status(500).json({ message: "Failed to load revisions" });
+    }
+  });
+
+  app.post("/api/admin/blog/post/:id/revision", adminBlogLimiter, requireAdmin, async (req, res) => {
+    try {
+      const postId = parseInt(req.params.id, 10);
+      if (isNaN(postId) || postId <= 0) {
+        return res.status(400).json({ message: "Invalid post ID", error: "invalid_id" });
+      }
+      
+      const revision = await storage.createBlogPostRevision(postId);
+      if (!revision) {
+        return res.status(404).json({ message: "Post not found" });
+      }
+      
+      res.json({ revision });
+    } catch (err) {
+      console.error('[Blog] Error creating revision:', err);
+      res.status(500).json({ message: "Failed to create revision" });
+    }
+  });
+
+  app.get("/api/admin/blog/revision/:id", requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id, 10);
+      if (isNaN(id) || id <= 0) {
+        return res.status(400).json({ message: "Invalid revision ID", error: "invalid_id" });
+      }
+      
+      const revision = await storage.getBlogPostRevisionById(id);
+      if (!revision) {
+        return res.status(404).json({ message: "Revision not found" });
+      }
+      
+      res.json({ revision });
+    } catch (err) {
+      console.error('[Blog] Error fetching revision:', err);
+      res.status(500).json({ message: "Failed to load revision" });
+    }
+  });
+
+  app.post("/api/admin/blog/revision/:id/restore", adminBlogLimiter, requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id, 10);
+      if (isNaN(id) || id <= 0) {
+        return res.status(400).json({ message: "Invalid revision ID", error: "invalid_id" });
+      }
+      
+      const post = await storage.restoreBlogPostRevision(id);
+      if (!post) {
+        return res.status(404).json({ message: "Revision not found" });
+      }
+      
+      cache.clear();
+      const device = extractDeviceInfo(req);
+      await storage.createAuditLog({
+        eventType: 'blog_post_revision_restore',
+        userId: (req.user as any)?.id || null,
+        ipAddress: device.ipAddress,
+        userAgent: device.userAgent,
+        deviceFingerprint: device.fingerprint,
+        provider: null,
+        success: true,
+        failureReason: null,
+        metadata: { revisionId: id, postId: post.id },
+      });
+      
+      res.json({ post });
+    } catch (err) {
+      console.error('[Blog] Error restoring revision:', err);
+      res.status(500).json({ message: "Failed to restore revision" });
+    }
+  });
+
+  // ============================================================================
+  // ADMIN ENDPOINTS: Blog Settings
+  // ============================================================================
+
+  app.get("/api/admin/blog/settings", requireAdmin, async (_req, res) => {
+    try {
+      res.json({
+        settings: {
+          siteUrl: blogConfig.siteUrl,
+          siteName: blogConfig.siteName,
+          defaultAuthorName: blogConfig.defaultAuthorName,
+          defaultAuthorBio: blogConfig.defaultAuthorBio,
+          postsPerPage: blogConfig.postsPerPage,
+          maxFeaturedPosts: blogConfig.maxFeaturedPosts,
+          cacheTtlMs: blogConfig.cacheTtlMs,
+          wordsPerMinute: blogConfig.wordsPerMinute,
+          enableComments: blogConfig.enableComments,
+          enableNewsletterCta: blogConfig.enableNewsletterCta,
+          enableViewTracking: blogConfig.enableViewTracking,
+          enableScheduledPublishing: blogConfig.enableScheduledPublishing,
+          defaultMetaDescription: blogConfig.defaultMetaDescription,
+          defaultKeywords: blogConfig.defaultKeywords,
+          rssMaxItems: blogConfig.rssMaxItems,
+          popularPostsDays: blogConfig.popularPostsDays,
+        }
+      });
+    } catch (err) {
+      console.error('[Blog] Error fetching settings:', err);
+      res.status(500).json({ message: "Failed to load settings" });
     }
   });
 }

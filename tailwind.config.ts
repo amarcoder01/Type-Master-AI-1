@@ -101,6 +101,59 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            maxWidth: '65ch',
+            color: 'hsl(var(--foreground))',
+            lineHeight: '1.8',
+            p: {
+              marginTop: '1.5em',
+              marginBottom: '1.5em',
+              lineHeight: '1.8',
+            },
+            'h1, h2, h3, h4': {
+              color: 'hsl(var(--foreground))',
+              fontWeight: '700',
+              lineHeight: '1.3',
+              marginTop: '2.5em',
+              marginBottom: '1em',
+            },
+            li: {
+              marginTop: '0.5em',
+              marginBottom: '0.5em',
+            },
+            strong: {
+              color: 'hsl(var(--foreground))',
+              fontWeight: '600',
+            },
+            blockquote: {
+              borderLeftColor: 'hsl(var(--primary))',
+              color: 'hsl(var(--muted-foreground))',
+              fontStyle: 'italic',
+            },
+            'code::before': {
+              content: '""',
+            },
+            'code::after': {
+              content: '""',
+            },
+          },
+        },
+        lg: {
+          css: {
+            p: {
+              lineHeight: '1.9',
+              marginTop: '1.75em',
+              marginBottom: '1.75em',
+            },
+            'h1, h2, h3': {
+              marginTop: '3em',
+              marginBottom: '1.25em',
+            },
+          }
+        }
+      },
     },
   },
   plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],

@@ -15,6 +15,13 @@
       "when": 1765332054981,
       "tag": "0001_next_marvel_boy",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1767853089403,
+      "tag": "0002_init_blog",
+      "breakpoints": true
     }
   ]
 }

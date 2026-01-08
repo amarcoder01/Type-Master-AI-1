@@ -14,7 +14,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { FileText, FolderOpen, BarChart3 } from "lucide-react";
+import { FileText, BarChart3, Settings, FolderOpen } from "lucide-react";
+import { CategoryManager } from "./components/CategoryManager";
+import { BlogAnalytics } from "./components/BlogAnalytics";
+import { BlogSettings } from "./components/BlogSettings";
 
 interface BlogPost {
   id: number;
@@ -211,7 +214,7 @@ export default function BlogAdmin() {
     }
   };
 
-  const handleSavePost = async (post: any) => {
+  const handleSavePost = async (post: any): Promise<{ success: boolean; error?: string; post?: any }> => {
     setSaving(true);
     try {
       const isNew = !post.id;
@@ -225,16 +228,23 @@ export default function BlogAdmin() {
         body: JSON.stringify(post),
       });
       
+      const data = await res.json();
+      
       if (res.ok) {
-        const data = await res.json();
         if (isNew && data.post?.id) {
           setLocation(`/admin/blog/edit/${data.post.id}`);
         }
+        setSaving(false);
+        return { success: true, post: data.post };
+      } else {
+        setSaving(false);
+        return { success: false, error: data.message || data.error || "Failed to save post" };
       }
     } catch (err) {
       console.error("Failed to save post:", err);
+      setSaving(false);
+      return { success: false, error: err instanceof Error ? err.message : "Network error" };
     }
-    setSaving(false);
   };
 
   const handleBack = () => {
@@ -300,6 +310,10 @@ export default function BlogAdmin() {
             <BarChart3 className="h-4 w-4" />
             Analytics
           </TabsTrigger>
+          <TabsTrigger value="settings" className="gap-2">
+            <Settings className="h-4 w-4" />
+            Settings
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="posts">
@@ -319,21 +333,15 @@ export default function BlogAdmin() {
         </TabsContent>
 
         <TabsContent value="categories">
-          <div className="border rounded-lg p-8 text-center text-muted-foreground">
-            <FolderOpen className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <h3 className="font-medium mb-2">Category Management</h3>
-            <p className="text-sm">Create and organize categories for your blog posts.</p>
-            {/* TODO: Add category management UI */}
-          </div>
+          <CategoryManager />
         </TabsContent>
 
         <TabsContent value="analytics">
-          <div className="border rounded-lg p-8 text-center text-muted-foreground">
-            <BarChart3 className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <h3 className="font-medium mb-2">Blog Analytics</h3>
-            <p className="text-sm">View traffic, engagement, and content performance.</p>
-            {/* TODO: Add analytics dashboard */}
-          </div>
+          <BlogAnalytics />
+        </TabsContent>
+
+        <TabsContent value="settings">
+          <BlogSettings />
         </TabsContent>
       </Tabs>
 

@@ -139,7 +139,7 @@ function escapeHtml(text: string): string {
   return text.replace(/[&<>"']/g, (m) => map[m]);
 }
 
-function generateStructuredDataScript(path: string, config: ReturnType<typeof getSEOConfig> | null): string {
+async function generateStructuredDataScript(path: string, config: ReturnType<typeof getSEOConfig> | null): Promise<string> {
   if (!config) return '';
 
   const base = BASE_URL;
@@ -419,7 +419,7 @@ export function createSEOPrerender(distPath: string) {
 
       // Generate and inject meta tags (and JSON-LD structured data)
       const metaTags = generateMetaTags(finalConfig, req.path);
-      const structured = generateStructuredDataScript(req.path, finalConfig);
+      const structured = await generateStructuredDataScript(req.path, finalConfig);
       const html = injectMetaTags(htmlTemplate, metaTags + (structured ? `\n    ${structured}` : ''));
 
       res.set('Content-Type', 'text/html');

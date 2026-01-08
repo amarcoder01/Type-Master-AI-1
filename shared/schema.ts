@@ -2045,6 +2045,23 @@ export const blogPostViews = pgTable("blog_post_views", {
   sessionPostIdx: index("blog_post_views_session_post_idx").on(table.sessionId, table.postId),
 }));
 
+// Blog Post Revisions - for version history
+export const blogPostRevisions = pgTable("blog_post_revisions", {
+  id: serial("id").primaryKey(),
+  postId: integer("post_id").notNull().references(() => blogPosts.id, { onDelete: "cascade" }),
+  title: varchar("title", { length: 200 }).notNull(),
+  contentMd: text("content_md").notNull(),
+  excerpt: text("excerpt"),
+  coverImageUrl: text("cover_image_url"),
+  authorId: varchar("author_id").references(() => users.id, { onDelete: "set null" }),
+  authorName: varchar("author_name", { length: 120 }),
+  revisionNumber: integer("revision_number").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+}, (table) => ({
+  postIdIdx: index("blog_post_revisions_post_id_idx").on(table.postId),
+  createdAtIdx: index("blog_post_revisions_created_at_idx").on(table.createdAt),
+}));
+
 // Insert schemas
 export const insertBlogCategorySchema = createInsertSchema(blogCategories, {
   name: z.string().min(2).max(100),
@@ -2057,22 +2074,29 @@ export const insertBlogCategorySchema = createInsertSchema(blogCategories, {
   isActive: z.boolean().optional(),
 }).omit({ id: true, createdAt: true });
 
+// Helper to accept both Date and ISO string
+const dateOrString = z.union([
+  z.date(),
+  z.string().datetime().transform(s => new Date(s)),
+  z.string().transform(s => s ? new Date(s) : null),
+]).optional().nullable();
+
 export const insertBlogPostSchema = createInsertSchema(blogPosts, {
-  slug: z.string().min(3).max(200).regex(/^[a-z0-9-]+$/),
-  title: z.string().min(3).max(200),
-  excerpt: z.string().max(300).optional().nullable(),
-  contentMd: z.string().min(20),
-  coverImageUrl: z.string().url().optional().nullable(),
+  slug: z.string().min(3).max(200).regex(/^[a-z0-9-]+$/, "Slug can only contain lowercase letters, numbers, and hyphens"),
+  title: z.string().min(3, "Title must be at least 3 characters").max(200, "Title must be less than 200 characters"),
+  excerpt: z.string().max(300, "Excerpt must be less than 300 characters").optional().nullable(),
+  contentMd: z.string().min(20, "Content must be at least 20 characters"),
+  coverImageUrl: z.string().url("Invalid URL").optional().nullable().or(z.literal("")),
   authorId: z.string().optional().nullable(),
-  authorName: z.string().min(2).max(120).default("TypeMasterAI").optional(),
-  authorBio: z.string().max(500).optional().nullable(),
-  authorAvatarUrl: z.string().url().optional().nullable(),
-  metaTitle: z.string().max(70).optional().nullable(),
-  metaDescription: z.string().max(160).optional().nullable(),
+  authorName: z.string().min(2, "Author name must be at least 2 characters").max(120).default("TypeMasterAI").optional(),
+  authorBio: z.string().max(500, "Bio must be less than 500 characters").optional().nullable(),
+  authorAvatarUrl: z.string().url("Invalid URL").optional().nullable().or(z.literal("")),
+  metaTitle: z.string().max(70, "Meta title must be less than 70 characters").optional().nullable(),
+  metaDescription: z.string().max(160, "Meta description must be less than 160 characters").optional().nullable(),
   categoryId: z.number().int().positive().optional().nullable(),
   status: z.enum(["draft", "review", "scheduled", "published"]).default("draft").optional(),
-  scheduledAt: z.date().optional().nullable(),
-  publishedAt: z.date().optional().nullable(),
+  scheduledAt: dateOrString,
+  publishedAt: dateOrString,
   isFeatured: z.boolean().optional(),
   featuredOrder: z.number().int().min(0).optional().nullable(),
 }).omit({ id: true, createdAt: true, updatedAt: true, viewCount: true });
@@ -2093,6 +2117,17 @@ export const insertBlogPostViewSchema = createInsertSchema(blogPostViews, {
   referrer: z.string().optional().nullable(),
 }).omit({ id: true, viewedAt: true });
 
+export const insertBlogPostRevisionSchema = createInsertSchema(blogPostRevisions, {
+  postId: z.number().int().positive(),
+  title: z.string().min(1).max(200),
+  contentMd: z.string().min(1),
+  excerpt: z.string().max(300).optional().nullable(),
+  coverImageUrl: z.string().url().optional().nullable(),
+  authorId: z.string().optional().nullable(),
+  authorName: z.string().max(120).optional().nullable(),
+  revisionNumber: z.number().int().min(1),
+}).omit({ id: true, createdAt: true });
+
 // Types
 export type BlogCategory = typeof blogCategories.$inferSelect;
 export type InsertBlogCategory = z.infer<typeof insertBlogCategorySchema>;
@@ -2104,3 +2139,5 @@ export type BlogPostTag = typeof blogPostTags.$inferSelect;
 export type InsertBlogPostTag = z.infer<typeof insertBlogPostTagSchema>;
 export type BlogPostView = typeof blogPostViews.$inferSelect;
 export type InsertBlogPostView = z.infer<typeof insertBlogPostViewSchema>;
+export type BlogPostRevision = typeof blogPostRevisions.$inferSelect;
+export type InsertBlogPostRevision = z.infer<typeof insertBlogPostRevisionSchema>;

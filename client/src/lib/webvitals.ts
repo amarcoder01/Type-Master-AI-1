@@ -39,15 +39,15 @@ export function initWebVitals() {
     const po = new PerformanceObserver((list) => {
       for (const entry of list.getEntries()) {
         if (entry.entryType === "largest-contentful-paint") {
-          send({ name: "LCP", value: entry.startTime, id: entry.id || "lcp" });
+          send({ name: "LCP", value: entry.startTime, id: (entry as any).id || "lcp" });
         } else if (entry.entryType === "layout-shift") {
           const shifted = (entry as any).value || 0;
           if (!(entry as any).hadRecentInput) {
-            send({ name: "CLS", value: shifted, id: entry.id || "cls" });
+            send({ name: "CLS", value: shifted, id: (entry as any).id || "cls" });
           }
         } else if (entry.entryType === "first-input") {
           const fi = entry as PerformanceEventTiming;
-          send({ name: "FID", value: fi.processingStart - fi.startTime, id: entry.id || "fid" });
+          send({ name: "FID", value: fi.processingStart - fi.startTime, id: (entry as any).id || "fid" });
         }
       }
     });
