@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useMemo } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useRoute, Link } from "wouter";
 import { useSEO } from "@/lib/seo";
 import ReactMarkdown from "react-markdown";
@@ -136,21 +136,22 @@ export default function BlogPostPage() {
 
   // Custom components for ReactMarkdown
   const markdownComponents = useMemo(() => ({
-    h1: ({ children, ...props }: any) => {
+    h1: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement> & { children?: React.ReactNode }) => {
       const id = String(children).toLowerCase().replace(/[^\w\s-]/g, "").replace(/\s+/g, "-");
       return <h1 id={id} {...props}>{children}</h1>;
     },
-    h2: ({ children, ...props }: any) => {
+    h2: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement> & { children?: React.ReactNode }) => {
       const id = String(children).toLowerCase().replace(/[^\w\s-]/g, "").replace(/\s+/g, "-");
       return <h2 id={id} {...props}>{children}</h2>;
     },
-    h3: ({ children, ...props }: any) => {
+    h3: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement> & { children?: React.ReactNode }) => {
       const id = String(children).toLowerCase().replace(/[^\w\s-]/g, "").replace(/\s+/g, "-");
       return <h3 id={id} {...props}>{children}</h3>;
     },
-    pre: ({ children }: any) => {
-      const codeElement = children?.props;
-      const code = codeElement?.children || "";
+    pre: ({ children }: { children?: React.ReactNode }) => {
+      const code = React.isValidElement(children) && typeof children.props?.children === 'string'
+        ? children.props.children
+        : "";
 
       return (
         <div className="relative group my-6">
@@ -169,7 +170,7 @@ export default function BlogPostPage() {
         </div>
       );
     },
-    img: ({ src, alt, ...props }: any) => (
+    img: ({ src, alt, ...props }: React.ImgHTMLAttributes<HTMLImageElement>) => (
       <figure className="my-10">
         <img
           src={src}
@@ -350,9 +351,9 @@ export default function BlogPostPage() {
             }}
             publishedAt={post.publishedAt}
           />
-          
+
           <div className="mt-8">
-             <AuthorBio />
+            <AuthorBio />
           </div>
         </div>
 

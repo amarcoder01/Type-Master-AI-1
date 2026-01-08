@@ -89,30 +89,30 @@ export default function BlogIndex() {
     const fetchPosts = async () => {
       if (page === 1) setLoading(true);
       else setLoadingMore(true);
-      
+
       try {
         const params = new URLSearchParams();
         params.set("page", String(page));
         params.set("limit", "9");
         if (categoryFilter) params.set("category", categoryFilter);
-        
+
         const res = await fetch(`/api/blog/posts?${params}`, { signal: controller.signal });
         if (res.ok) {
           const data = await res.json();
           const newPosts = (data.posts || []).filter((p: BlogPost) => p.status === "published");
-          
+
           if (page === 1) {
             // Filter out featured post from regular list
-            setPosts(featuredPost 
+            setPosts(featuredPost
               ? newPosts.filter((p: BlogPost) => p.id !== featuredPost.id)
               : newPosts
             );
           } else {
-            setPosts(prev => [...prev, ...newPosts.filter((p: BlogPost) => 
+            setPosts(prev => [...prev, ...newPosts.filter((p: BlogPost) =>
               !prev.find(existing => existing.id === p.id) && p.id !== featuredPost?.id
             )]);
           }
-          
+
           setTotalPages(data.pagination?.totalPages || 1);
           setHasMore(page < (data.pagination?.totalPages || 1));
         }
@@ -121,11 +121,11 @@ export default function BlogIndex() {
           console.error("Failed to fetch posts:", err);
         }
       }
-      
+
       setLoading(false);
       setLoadingMore(false);
     };
-    
+
     fetchPosts();
     return () => controller.abort();
   }, [page, categoryFilter, featuredPost]);
@@ -133,13 +133,13 @@ export default function BlogIndex() {
   // Infinite scroll
   useEffect(() => {
     if (!sentinelRef.current || !hasMore || loadingMore) return;
-    
+
     const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting && hasMore && !loadingMore) {
         setPage(prev => prev + 1);
       }
     }, { rootMargin: "200px" });
-    
+
     observer.observe(sentinelRef.current);
     return () => observer.disconnect();
   }, [hasMore, loadingMore]);
@@ -246,8 +246,8 @@ export default function BlogIndex() {
           {/* Load more button (fallback) */}
           {hasMore && !loadingMore && (
             <div className="flex justify-center mt-10">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="lg"
                 onClick={() => setPage(prev => prev + 1)}
                 className="group"
@@ -263,8 +263,6 @@ export default function BlogIndex() {
         </>
       )}
 
-      {/* Popular Posts Sidebar (on larger screens) */}
-      {/* TODO: Add sidebar with popular posts */}
     </div>
   );
 }
