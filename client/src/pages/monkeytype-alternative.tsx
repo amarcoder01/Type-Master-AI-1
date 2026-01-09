@@ -123,6 +123,7 @@ export default function MonkeytypeAlternativePage() {
               </tbody>
             </table>
           </div>
+          </div>
         </section>
 
         {/* Why Choose TypeMasterAI */}
