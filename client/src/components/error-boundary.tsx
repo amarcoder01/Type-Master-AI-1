@@ -1,7 +1,8 @@
 import React, { Component, ReactNode, useEffect, useState } from "react";
-import { AlertTriangle, RefreshCw, Home, Bug, ChevronDown, ChevronUp, Copy, Check } from "lucide-react";
+import { AlertTriangle, RefreshCw, Home, Bug, ChevronDown, ChevronUp, Copy, Check, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { isCacheRelatedError, forceCompleteReset } from "@/lib/version-manager";
 
 interface ComponentErrorInfo {
   componentStack: string;
@@ -34,6 +35,8 @@ interface ErrorBoundaryState {
   isRetrying: boolean;
   copied: boolean;
   showDetails: boolean;
+  isCacheError: boolean;
+  isClearingCache: boolean;
 }
 
 function generateErrorReport(error: Error, errorInfo?: ComponentErrorInfo | null): ErrorReport {
@@ -66,22 +69,35 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       isRetrying: false,
       copied: false,
       showDetails: false,
+      isCacheError: false,
+      isClearingCache: false,
     };
   }
 
   static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
-    return { hasError: true, error };
+    // Check if this is a cache-related error
+    const cacheError = isCacheRelatedError(error);
+    return { hasError: true, error, isCacheError: cacheError };
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error("ErrorBoundary caught an error:", error, errorInfo);
     
-    this.setState({ errorInfo: errorInfo as unknown as ComponentErrorInfo });
+    const cacheError = isCacheRelatedError(error);
+    this.setState({ 
+      errorInfo: errorInfo as unknown as ComponentErrorInfo,
+      isCacheError: cacheError,
+    });
     
     this.props.onError?.(error, errorInfo as unknown as ComponentErrorInfo);
     
     if (process.env.NODE_ENV === "production") {
       this.reportError(error, errorInfo as unknown as ComponentErrorInfo);
+    }
+    
+    // If this looks like a cache-related error, attempt automatic recovery
+    if (cacheError && this.state.retryCount === 0) {
+      console.log("[ErrorBoundary] Cache-related error detected, will offer cache clear option");
     }
   }
 
@@ -177,8 +193,41 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     this.setState((prev) => ({ showDetails: !prev.showDetails }));
   };
 
+  private handleClearCache = async () => {
+    this.setState({ isClearingCache: true });
+    
+    try {
+      console.log("[ErrorBoundary] Clearing all caches for recovery...");
+      
+      // Use the version manager's complete reset function
+      await forceCompleteReset();
+      
+      // Clear service worker cache via global function
+      if (typeof window.__clearServiceWorkerCache === 'function') {
+        await window.__clearServiceWorkerCache();
+      }
+      
+      // Force update service worker
+      if (typeof window.__forceServiceWorkerUpdate === 'function') {
+        await window.__forceServiceWorkerUpdate();
+      }
+      
+      console.log("[ErrorBoundary] Cache cleared, reloading...");
+      
+      // Small delay to ensure cleanup completes
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
+      // Hard reload to bypass all caches
+      window.location.href = window.location.href.split('#')[0] + '?cache_bust=' + Date.now();
+    } catch (e) {
+      console.error("[ErrorBoundary] Failed to clear cache:", e);
+      // Fall back to simple reload
+      window.location.reload();
+    }
+  };
+
   render() {
-    const { hasError, error, errorInfo, retryCount, isRetrying, copied, showDetails } = this.state;
+    const { hasError, error, errorInfo, retryCount, isRetrying, copied, showDetails, isCacheError, isClearingCache } = this.state;
     const { children, fallback, maxRetries = 2 } = this.props;
 
     if (!hasError) {
@@ -203,12 +252,23 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             </div>
             <CardTitle className="text-2xl">Something went wrong</CardTitle>
             <CardDescription>
-              We encountered an unexpected error. Don't worry, your data is safe.
+              {isCacheError 
+                ? "This looks like a cache issue. Clearing your browser cache should fix it."
+                : "We encountered an unexpected error. Don't worry, your data is safe."
+              }
             </CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-4">
-            {retryCount > 0 && (
+            {isCacheError && (
+              <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
+                <p className="text-sm text-amber-600 dark:text-amber-400">
+                  This error is likely caused by outdated cached files. Click "Clear Cache & Reload" to fix it automatically.
+                </p>
+              </div>
+            )}
+            
+            {retryCount > 0 && !isCacheError && (
               <p className="text-sm text-muted-foreground text-center">
                 Retry attempt {retryCount} of {maxRetries}
               </p>
@@ -265,45 +325,91 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
           </CardContent>
 
           <CardFooter className="flex flex-col gap-3">
-            <div className="flex gap-3 w-full">
-              {canRetry && (
+            {isCacheError ? (
+              <>
                 <Button
-                  onClick={this.handleRetry}
-                  disabled={isRetrying}
-                  className="flex-1"
-                  data-testid="button-retry"
+                  onClick={this.handleClearCache}
+                  disabled={isClearingCache}
+                  className="w-full"
+                  data-testid="button-clear-cache"
                 >
-                  {isRetrying ? (
+                  {isClearingCache ? (
                     <>
                       <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                      Retrying...
+                      Clearing Cache...
                     </>
                   ) : (
                     <>
-                      <RefreshCw className="h-4 w-4 mr-2" />
-                      Try Again
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Clear Cache & Reload
                     </>
                   )}
                 </Button>
-              )}
-              <Button
-                variant="outline"
-                onClick={this.handleReload}
-                className="flex-1"
-                data-testid="button-reload"
-              >
-                Reload Page
-              </Button>
-            </div>
-            <Button
-              variant="ghost"
-              onClick={this.handleGoHome}
-              className="w-full"
-              data-testid="button-go-home"
-            >
-              <Home className="h-4 w-4 mr-2" />
-              Go to Home
-            </Button>
+                <div className="flex gap-3 w-full">
+                  <Button
+                    variant="outline"
+                    onClick={this.handleReload}
+                    className="flex-1"
+                    data-testid="button-reload"
+                    disabled={isClearingCache}
+                  >
+                    Reload Page
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    onClick={this.handleGoHome}
+                    className="flex-1"
+                    data-testid="button-go-home"
+                    disabled={isClearingCache}
+                  >
+                    <Home className="h-4 w-4 mr-2" />
+                    Go Home
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex gap-3 w-full">
+                  {canRetry && (
+                    <Button
+                      onClick={this.handleRetry}
+                      disabled={isRetrying}
+                      className="flex-1"
+                      data-testid="button-retry"
+                    >
+                      {isRetrying ? (
+                        <>
+                          <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                          Retrying...
+                        </>
+                      ) : (
+                        <>
+                          <RefreshCw className="h-4 w-4 mr-2" />
+                          Try Again
+                        </>
+                      )}
+                    </Button>
+                  )}
+                  <Button
+                    variant="outline"
+                    onClick={this.handleReload}
+                    className="flex-1"
+                    data-testid="button-reload"
+                  >
+                    Reload Page
+                  </Button>
+                </div>
+                <Button
+                  variant="ghost"
+                  onClick={this.handleGoHome}
+                  className="w-full"
+                  data-testid="button-go-home"
+                >
+                  <Home className="h-4 w-4 mr-2" />
+                  Go to Home
+                </Button>
+              </>
+            )}
           </CardFooter>
         </Card>
       </div>
@@ -321,20 +427,47 @@ export function AsyncErrorBoundary({ children, fallback, onError }: AsyncErrorBo
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+    const handleUnhandledRejection = async (event: PromiseRejectionEvent) => {
       const error = event.reason instanceof Error 
         ? event.reason 
         : new Error(String(event.reason));
       
       console.error("Unhandled promise rejection:", error);
+      
+      // Check if it's a cache-related error and attempt auto-recovery
+      if (isCacheRelatedError(error)) {
+        console.log("[AsyncErrorBoundary] Cache-related error detected, attempting recovery...");
+        try {
+          await forceCompleteReset();
+          window.location.reload();
+          return; // Don't set error state, we're reloading
+        } catch (e) {
+          console.error("[AsyncErrorBoundary] Auto-recovery failed:", e);
+        }
+      }
+      
       setError(error);
       onError?.(error);
     };
 
-    const handleError = (event: ErrorEvent) => {
-      console.error("Unhandled error:", event.error);
-      setError(event.error || new Error(event.message));
-      onError?.(event.error || new Error(event.message));
+    const handleError = async (event: ErrorEvent) => {
+      const err = event.error || new Error(event.message);
+      console.error("Unhandled error:", err);
+      
+      // Check if it's a cache-related error and attempt auto-recovery
+      if (isCacheRelatedError(err)) {
+        console.log("[AsyncErrorBoundary] Cache-related error detected, attempting recovery...");
+        try {
+          await forceCompleteReset();
+          window.location.reload();
+          return; // Don't set error state, we're reloading
+        } catch (e) {
+          console.error("[AsyncErrorBoundary] Auto-recovery failed:", e);
+        }
+      }
+      
+      setError(err);
+      onError?.(err);
     };
 
     window.addEventListener("unhandledrejection", handleUnhandledRejection);

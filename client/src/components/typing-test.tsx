@@ -3094,10 +3094,40 @@ Test yourself: `,
 
           {/* Inline loading indicator when text exists (regenerating) */}
           {!freestyleMode && isGenerating && text && (
-            <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full z-10">
-              <Loader2 className="w-4 h-4 animate-spin text-primary" />
-              <span className="text-xs text-primary">Loading new content...</span>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="absolute top-1 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-2.5 py-1 z-20 rounded-full backdrop-blur-sm border border-primary/20 shadow-lg"
+              style={{
+                background: "linear-gradient(135deg, hsl(var(--primary) / 0.15) 0%, hsl(var(--primary) / 0.08) 100%)",
+                boxShadow: "0 2px 8px hsl(var(--primary) / 0.15), 0 0 0 1px hsl(var(--primary) / 0.1) inset"
+              }}
+            >
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              >
+                <Loader2 className="w-3 h-3 text-primary" />
+              </motion.div>
+              <span className="text-[10px] font-medium text-primary">Loading new content...</span>
+              <motion.div
+                className="absolute inset-0 rounded-full pointer-events-none"
+                style={{
+                  background: "radial-gradient(circle at center, hsl(var(--primary) / 0.2) 0%, transparent 70%)",
+                }}
+                animate={{
+                  opacity: [0.3, 0.6, 0.3],
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+            </motion.div>
           )}
 
           {/* Hidden Textarea */}

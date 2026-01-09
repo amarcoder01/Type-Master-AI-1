@@ -1,4 +1,8 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { getStoredVersion, getCurrentVersion } from "./version-manager";
+
+// Storage key for tracking the query cache version
+const QUERY_CACHE_VERSION_KEY = 'typemasterai_query_cache_version';
 
 export class NetworkError extends Error {
   constructor(message: string = "Network connection lost") {
@@ -130,7 +134,11 @@ export const queryClient = new QueryClient({
       queryFn: getQueryFn({ on401: "throw" }),
       refetchInterval: false,
       refetchOnWindowFocus: false,
-      staleTime: Infinity,
+      // Use 5 minutes stale time instead of Infinity to balance freshness with performance
+      // This ensures data is refreshed periodically while still benefiting from cache
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      // Keep unused query data for 30 minutes before garbage collection
+      gcTime: 30 * 60 * 1000, // 30 minutes (formerly cacheTime)
       retry: (failureCount, error) => {
         if (failureCount >= 2) return false;
         return shouldRetryOnError(error);
@@ -148,5 +156,64 @@ export const queryClient = new QueryClient({
     },
   },
 });
+
+/**
+ * Check if the query cache needs to be cleared due to version mismatch
+ * Call this on app startup
+ */
+export function checkQueryCacheVersion(): boolean {
+  try {
+    const storedCacheVersion = localStorage.getItem(QUERY_CACHE_VERSION_KEY);
+    const currentVersion = getCurrentVersion().buildId;
+    
+    if (storedCacheVersion !== currentVersion) {
+      console.log('[QueryClient] Version mismatch, clearing query cache');
+      clearQueryCache();
+      localStorage.setItem(QUERY_CACHE_VERSION_KEY, currentVersion);
+      return true; // Cache was cleared
+    }
+    
+    return false; // No action needed
+  } catch (e) {
+    console.warn('[QueryClient] Error checking cache version:', e);
+    return false;
+  }
+}
+
+/**
+ * Clear all cached query data
+ */
+export function clearQueryCache(): void {
+  queryClient.clear();
+  console.log('[QueryClient] Query cache cleared');
+}
+
+/**
+ * Invalidate all queries (marks them as stale, will refetch on next access)
+ */
+export function invalidateAllQueries(): void {
+  queryClient.invalidateQueries();
+  console.log('[QueryClient] All queries invalidated');
+}
+
+/**
+ * Force refetch all active queries
+ */
+export async function refetchAllQueries(): Promise<void> {
+  await queryClient.refetchQueries();
+  console.log('[QueryClient] All queries refetched');
+}
+
+/**
+ * Reset the query cache version (for cache recovery)
+ */
+export function resetQueryCacheVersion(): void {
+  try {
+    localStorage.removeItem(QUERY_CACHE_VERSION_KEY);
+    clearQueryCache();
+  } catch (e) {
+    console.warn('[QueryClient] Error resetting cache version:', e);
+  }
+}
 
 export { isNetworkError };

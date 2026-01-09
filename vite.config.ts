@@ -2,8 +2,32 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
+import fs from "fs";
+import crypto from "crypto";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 import { metaImagesPlugin } from "./vite-plugin-meta-images";
+
+// Generate a unique BUILD_ID for cache busting
+// Uses timestamp + random hash for uniqueness per deployment
+const BUILD_ID = Date.now().toString(36) + crypto.randomBytes(4).toString('hex');
+const BUILD_TIME = new Date().toISOString();
+
+// Plugin to inject BUILD_ID into service worker at build time
+function serviceWorkerVersionPlugin() {
+  return {
+    name: 'service-worker-version',
+    writeBundle() {
+      const swPath = path.resolve(import.meta.dirname, 'dist/public/service-worker.js');
+      if (fs.existsSync(swPath)) {
+        let content = fs.readFileSync(swPath, 'utf-8');
+        content = content.replace(/__BUILD_ID__/g, BUILD_ID);
+        content = content.replace(/__BUILD_TIME__/g, BUILD_TIME);
+        fs.writeFileSync(swPath, content);
+        console.log(`[Build] Injected BUILD_ID ${BUILD_ID} into service-worker.js`);
+      }
+    }
+  };
+}
 
 export default defineConfig({
   plugins: [
@@ -11,6 +35,7 @@ export default defineConfig({
     runtimeErrorOverlay(),
     tailwindcss(),
     metaImagesPlugin(),
+    serviceWorkerVersionPlugin(),
     ...(process.env.NODE_ENV !== "production" &&
     process.env.REPL_ID !== undefined
       ? [
@@ -23,6 +48,11 @@ export default defineConfig({
         ]
       : []),
   ],
+  // Inject build-time constants for version tracking and cache management
+  define: {
+    __BUILD_ID__: JSON.stringify(BUILD_ID),
+    __BUILD_TIME__: JSON.stringify(BUILD_TIME),
+  },
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),

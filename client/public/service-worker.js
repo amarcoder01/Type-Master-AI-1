@@ -1,41 +1,210 @@
 // TypeMasterAI Service Worker - PWA & Push Notifications
-const CACHE_NAME = 'typemaster-v1';
+// Version info injected at build time by Vite
+const BUILD_ID = '__BUILD_ID__';
+const BUILD_TIME = '__BUILD_TIME__';
+const CACHE_NAME = `typemaster-${BUILD_ID}`;
 const urlsToCache = [
   '/',
   '/offline.html'
 ];
 
+// Export version info for client detection
+self.BUILD_ID = BUILD_ID;
+self.BUILD_TIME = BUILD_TIME;
+
 // Install Service Worker and cache resources
 self.addEventListener('install', event => {
-  console.log('[Service Worker] Installing...');
+  console.log('[Service Worker] Installing version:', BUILD_ID);
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
         console.log('[Service Worker] Caching app shell');
         return cache.addAll(urlsToCache);
       })
-      .then(() => self.skipWaiting())
+      // Don't auto-skipWaiting - let the client control this
   );
 });
 
 // Activate Service Worker and clean up old caches
 self.addEventListener('activate', event => {
-  console.log('[Service Worker] Activating...');
+  console.log('[Service Worker] Activating version:', BUILD_ID);
   event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('[Service Worker] Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
+    Promise.all([
+      // Clean up old caches
+      caches.keys().then(cacheNames => {
+        return Promise.all(
+          cacheNames.map(cacheName => {
+            // Delete all caches that don't match current version
+            if (cacheName.startsWith('typemaster-') && cacheName !== CACHE_NAME) {
+              console.log('[Service Worker] Deleting old cache:', cacheName);
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      }),
+      // Enable navigation preload if supported
+      (async () => {
+        if ('navigationPreload' in self.registration) {
+          try {
+            await self.registration.navigationPreload.enable();
+            console.log('[Service Worker] Navigation preload enabled');
+          } catch (e) {
+            console.warn('[Service Worker] Navigation preload not available:', e);
           }
-        })
-      );
-    }).then(() => self.clients.claim())
+        }
+      })()
+    ]).then(() => self.clients.claim())
   );
 });
 
-// Fetch Strategy: Network First, fallback to Cache
+// Message handler for client communication
+self.addEventListener('message', event => {
+  console.log('[Service Worker] Message received:', event.data);
+  
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    console.log('[Service Worker] Skip waiting triggered by client');
+    self.skipWaiting();
+  }
+  
+  if (event.data && event.data.type === 'GET_VERSION') {
+    event.ports[0].postMessage({
+      buildId: BUILD_ID,
+      buildTime: BUILD_TIME,
+      cacheName: CACHE_NAME
+    });
+  }
+  
+  if (event.data && event.data.type === 'CLEAR_CACHE') {
+    console.log('[Service Worker] Clearing all caches...');
+    event.waitUntil(
+      caches.keys().then(cacheNames => {
+        return Promise.all(
+          cacheNames.map(cacheName => caches.delete(cacheName))
+        );
+      }).then(() => {
+        console.log('[Service Worker] All caches cleared');
+        if (event.ports[0]) {
+          event.ports[0].postMessage({ success: true });
+        }
+      })
+    );
+  }
+});
+
+// Determine caching strategy based on request type
+function getCacheStrategy(request) {
+  const url = new URL(request.url);
+  const pathname = url.pathname;
+  
+  // Navigation requests - Network First (always get fresh HTML)
+  if (request.mode === 'navigate') {
+    return 'network-first';
+  }
+  
+  // Hashed assets (JS/CSS with hash in filename) - Cache First (immutable)
+  if (pathname.match(/\.[a-f0-9]{8,}\.(js|css)$/i)) {
+    return 'cache-first';
+  }
+  
+  // Static assets (images, fonts) - Stale While Revalidate
+  if (pathname.match(/\.(png|jpg|jpeg|gif|webp|svg|ico|woff|woff2|ttf|eot)$/i)) {
+    return 'stale-while-revalidate';
+  }
+  
+  // Default - Network First
+  return 'network-first';
+}
+
+// Cache First Strategy - for immutable assets
+async function cacheFirst(request) {
+  const cached = await caches.match(request);
+  if (cached) {
+    return cached;
+  }
+  
+  try {
+    const response = await fetch(request);
+    if (response && response.status === 200) {
+      const cache = await caches.open(CACHE_NAME);
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch (error) {
+    return new Response('Asset not available', { 
+      status: 503, 
+      statusText: 'Service Unavailable' 
+    });
+  }
+}
+
+// Stale While Revalidate Strategy - serve cached, update in background
+async function staleWhileRevalidate(request) {
+  const cached = await caches.match(request);
+  
+  const fetchPromise = fetch(request).then(response => {
+    if (response && response.status === 200) {
+      const cache = caches.open(CACHE_NAME);
+      cache.then(c => c.put(request, response.clone()));
+    }
+    return response;
+  }).catch(() => null);
+  
+  // Return cached response immediately if available
+  if (cached) {
+    // Revalidate in background
+    fetchPromise;
+    return cached;
+  }
+  
+  // If no cache, wait for network
+  const response = await fetchPromise;
+  if (response) {
+    return response;
+  }
+  
+  return new Response('Asset not available', { 
+    status: 503, 
+    statusText: 'Service Unavailable' 
+  });
+}
+
+// Network First Strategy - for dynamic content
+// Supports navigation preload for faster page loads
+async function networkFirst(request, preloadResponse) {
+  try {
+    // Use preload response if available (for navigation requests)
+    const response = preloadResponse 
+      ? await preloadResponse 
+      : await fetch(request);
+      
+    if (response && response.status === 200) {
+      const cache = await caches.open(CACHE_NAME);
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch (error) {
+    const cached = await caches.match(request);
+    if (cached) {
+      return cached;
+    }
+    
+    // Return offline page for navigation requests
+    if (request.mode === 'navigate') {
+      const offlinePage = await caches.match('/offline.html');
+      if (offlinePage) {
+        return offlinePage;
+      }
+    }
+    
+    return new Response('Network error', { 
+      status: 503, 
+      statusText: 'Service Unavailable',
+      headers: { 'Content-Type': 'text/plain' }
+    });
+  }
+}
+
+// Fetch handler with strategy selection
 self.addEventListener('fetch', event => {
   // Skip non-GET requests
   if (event.request.method !== 'GET') return;
@@ -45,40 +214,25 @@ self.addEventListener('fetch', event => {
   
   // Skip API requests - let them fail naturally without service worker interference
   if (event.request.url.includes('/api/')) return;
+  
+  // Skip WebSocket requests
+  if (event.request.url.includes('/ws')) return;
 
-  event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        // Only cache successful responses
-        if (response && response.status === 200) {
-          const responseToCache = response.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, responseToCache);
-          });
-        }
-        return response;
-      })
-      .catch(async () => {
-        // If network fails, try cache
-        const cachedResponse = await caches.match(event.request);
-        if (cachedResponse) {
-          return cachedResponse;
-        }
-        // Return offline page for navigation requests
-        if (event.request.mode === 'navigate') {
-          const offlinePage = await caches.match('/offline.html');
-          if (offlinePage) {
-            return offlinePage;
-          }
-        }
-        // Return a proper error response instead of undefined
-        return new Response('Network error', { 
-          status: 503, 
-          statusText: 'Service Unavailable',
-          headers: { 'Content-Type': 'text/plain' }
-        });
-      })
-  );
+  const strategy = getCacheStrategy(event.request);
+  
+  switch (strategy) {
+    case 'cache-first':
+      event.respondWith(cacheFirst(event.request));
+      break;
+    case 'stale-while-revalidate':
+      event.respondWith(staleWhileRevalidate(event.request));
+      break;
+    case 'network-first':
+    default:
+      // Use navigation preload response if available
+      event.respondWith(networkFirst(event.request, event.preloadResponse));
+      break;
+  }
 });
 
 // Push Notification Handler
@@ -279,4 +433,4 @@ function urlBase64ToUint8Array(base64String) {
   return Uint8Array.from([...rawData].map(char => char.charCodeAt(0)));
 }
 
-console.log('[Service Worker] Loaded successfully');
+console.log('[Service Worker] Loaded successfully, version:', BUILD_ID);

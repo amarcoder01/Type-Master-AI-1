@@ -184,21 +184,193 @@
       </div>
     </noscript>
   </div>
+  
+  <!-- Global Error Handler for Chunk Loading Errors (before React mounts) -->
+  <script>
+    (function() {
+      var hasAttemptedRecovery = false;
+      var RECOVERY_KEY = 'typemasterai_chunk_recovery';
+      var RECOVERY_COOLDOWN = 10000; // 10 seconds
+      
+      // Check if we recently attempted recovery
+      function isInRecoveryCooldown() {
+        try {
+          var lastRecovery = localStorage.getItem(RECOVERY_KEY);
+          if (!lastRecovery) return false;
+          return Date.now() - parseInt(lastRecovery, 10) < RECOVERY_COOLDOWN;
+        } catch (e) { return false; }
+      }
+      
+      function markRecoveryAttempt() {
+        try { localStorage.setItem(RECOVERY_KEY, Date.now().toString()); } catch (e) {}
+      }
+      
+      function isChunkError(error) {
+        if (!error) return false;
+        var msg = (error.message || '').toLowerCase();
+        var name = (error.name || '').toLowerCase();
+        return name === 'chunkloaderror' ||
+               msg.includes('loading chunk') ||
+               msg.includes('loading css chunk') ||
+               msg.includes('failed to fetch dynamically imported module') ||
+               msg.includes('failed to load module script') ||
+               (msg.includes('failed to fetch') && msg.includes('module'));
+      }
+      
+      async function handleChunkError() {
+        if (hasAttemptedRecovery || isInRecoveryCooldown()) return;
+        hasAttemptedRecovery = true;
+        markRecoveryAttempt();
+        
+        console.log('[ChunkRecovery] Chunk loading error detected, clearing caches...');
+        
+        // Clear Cache API
+        if ('caches' in window) {
+          try {
+            var names = await caches.keys();
+            await Promise.all(names.map(function(n) { return caches.delete(n); }));
+          } catch (e) {}
+        }
+        
+        // Clear SW cache
+        if (window.__clearServiceWorkerCache) {
+          try { await window.__clearServiceWorkerCache(); } catch (e) {}
+        }
+        
+        // Hard reload
+        console.log('[ChunkRecovery] Reloading page...');
+        window.location.href = window.location.href.split('?')[0] + '?_cb=' + Date.now();
+      }
+      
+      // Global error handler
+      window.addEventListener('error', function(event) {
+        if (isChunkError(event.error)) {
+          event.preventDefault();
+          handleChunkError();
+        }
+      });
+      
+      // Unhandled promise rejections (for dynamic imports)
+      window.addEventListener('unhandledrejection', function(event) {
+        var error = event.reason;
+        if (isChunkError(error)) {
+          event.preventDefault();
+          handleChunkError();
+        }
+      });
+    })();
+  </script>
+  
   <script type="module" src="/src/main.tsx"></script>
 
-  <!-- Service Worker Registration -->
+  <!-- Service Worker Registration with Update Detection -->
   <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function () {
+    (function() {
+      if (!('serviceWorker' in navigator)) return;
+
+      // Track if we're refreshing to avoid infinite loops
+      var refreshing = false;
+      
+      // Listen for controller changes (new SW activated)
+      navigator.serviceWorker.addEventListener('controllerchange', function() {
+        if (refreshing) return;
+        refreshing = true;
+        console.log('[SW] New service worker activated, reloading...');
+        window.location.reload();
+      });
+
+      window.addEventListener('load', function() {
         navigator.serviceWorker.register('/service-worker.js')
-          .then(function (registration) {
-            console.log('SW registered:', registration.scope);
+          .then(function(registration) {
+            console.log('[SW] Registered:', registration.scope);
+
+            // Check for updates immediately
+            registration.update();
+
+            // Check for updates periodically (every 60 seconds)
+            setInterval(function() {
+              registration.update();
+            }, 60000);
+
+            // Handle waiting service worker
+            function handleWaiting(worker) {
+              console.log('[SW] New version waiting to activate');
+              // Automatically activate the new service worker
+              worker.postMessage({ type: 'SKIP_WAITING' });
+            }
+
+            // If there's already a waiting worker, handle it
+            if (registration.waiting) {
+              handleWaiting(registration.waiting);
+            }
+
+            // Listen for new service workers
+            registration.addEventListener('updatefound', function() {
+              var newWorker = registration.installing;
+              if (!newWorker) return;
+
+              console.log('[SW] Update found, installing...');
+
+              newWorker.addEventListener('statechange', function() {
+                if (newWorker.state === 'installed') {
+                  if (navigator.serviceWorker.controller) {
+                    // New update available
+                    handleWaiting(newWorker);
+                  } else {
+                    // First install
+                    console.log('[SW] First install complete');
+                  }
+                }
+              });
+            });
           })
-          .catch(function (error) {
-            console.log('SW registration failed:', error);
+          .catch(function(error) {
+            console.error('[SW] Registration failed:', error);
           });
       });
-    }
+
+      // Expose a global function to force SW update (for recovery)
+      window.__forceServiceWorkerUpdate = function() {
+        if (!navigator.serviceWorker.controller) return Promise.resolve();
+        
+        return navigator.serviceWorker.getRegistration()
+          .then(function(registration) {
+            if (!registration) return;
+            return registration.update();
+          })
+          .then(function() {
+            return navigator.serviceWorker.getRegistration();
+          })
+          .then(function(registration) {
+            if (registration && registration.waiting) {
+              registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+            }
+          });
+      };
+
+      // Expose function to clear SW cache (for recovery)
+      window.__clearServiceWorkerCache = function() {
+        return new Promise(function(resolve) {
+          if (!navigator.serviceWorker.controller) {
+            resolve(false);
+            return;
+          }
+          
+          var messageChannel = new MessageChannel();
+          messageChannel.port1.onmessage = function(event) {
+            resolve(event.data && event.data.success);
+          };
+          
+          navigator.serviceWorker.controller.postMessage(
+            { type: 'CLEAR_CACHE' },
+            [messageChannel.port2]
+          );
+          
+          // Timeout after 5 seconds
+          setTimeout(function() { resolve(false); }, 5000);
+        });
+      };
+    })();
   </script>
 </body>
 
