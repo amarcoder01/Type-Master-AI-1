@@ -48,33 +48,33 @@ export default function ProfessionalTypingTestPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-      <div className="container mx-auto px-4 pt-20 pb-16">
+      <div className="container mx-auto px-4 pt-16 md:pt-20 pb-12 md:pb-16">
         <Breadcrumbs items={[{ label: 'Professional Typing Test', href: '/professional-typing-test' }]} />
 
         {/* Hero Section */}
-        <section className="max-w-4xl mx-auto text-center pt-8 pb-16">
+        <section className="max-w-4xl mx-auto text-center pt-8 pb-12 md:pb-16">
           <div className="inline-flex items-center justify-center p-2 bg-amber-500/10 rounded-full mb-6 border border-amber-500/30">
             <Briefcase className="w-4 h-4 text-amber-400 mr-2" />
             <span className="text-sm text-amber-300">Employment Ready</span>
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
             Professional <span className="text-amber-400">Typing Test</span>
           </h1>
-          <p className="text-xl text-slate-300 mb-4 max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl text-slate-300 mb-4 max-w-3xl mx-auto">
             Employment-grade typing assessment with verified certification
           </p>
-          <p className="text-lg text-slate-400 mb-8">
+          <p className="text-base md:text-lg text-slate-400 mb-8">
             Prove your typing skills to employers with a trusted certificate
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/">
-              <Button size="lg" className="text-lg px-8 py-6 bg-amber-600 hover:bg-amber-700">
+              <Button size="lg" className="w-full sm:w-auto text-lg px-8 py-6 bg-amber-600 hover:bg-amber-700">
                 <Keyboard className="mr-2 h-5 w-5" />
                 Start Professional Test
               </Button>
             </Link>
             <Link href="/typing-certificate">
-              <Button size="lg" variant="outline" className="text-lg px-8 py-6">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg px-8 py-6">
                 Get Certificate
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -83,11 +83,11 @@ export default function ProfessionalTypingTestPage() {
         </section>
 
         {/* Features Grid */}
-        <section className="max-w-5xl mx-auto py-16">
-          <h2 className="text-3xl font-bold text-white text-center mb-12">
+        <section className="max-w-5xl mx-auto py-12 md:py-16">
+          <h2 className="text-2xl md:text-3xl font-bold text-white text-center mb-12">
             Professional Assessment Features
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, i) => (
               <Card key={i} className="bg-slate-800/50 border-slate-700">
                 <CardHeader>
@@ -103,11 +103,11 @@ export default function ProfessionalTypingTestPage() {
         </section>
 
         {/* Why Professional Test */}
-        <section className="max-w-4xl mx-auto py-16">
-          <h2 className="text-3xl font-bold text-white text-center mb-8">
+        <section className="max-w-4xl mx-auto py-12 md:py-16">
+          <h2 className="text-2xl md:text-3xl font-bold text-white text-center mb-8">
             Why Take a Professional Typing Test?
           </h2>
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-4">
               <h3 className="text-xl font-bold text-white">For Job Seekers</h3>
               {[
@@ -140,11 +140,11 @@ export default function ProfessionalTypingTestPage() {
         </section>
 
         {/* Test Standards */}
-        <section className="max-w-4xl mx-auto py-16">
-          <h2 className="text-3xl font-bold text-white text-center mb-8">
+        <section className="max-w-4xl mx-auto py-12 md:py-16">
+          <h2 className="text-2xl md:text-3xl font-bold text-white text-center mb-8">
             Professional Test Standards
           </h2>
-          <div className="grid sm:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <Card className="bg-amber-900/20 border-amber-500/30 text-center">
               <CardContent className="pt-6">
                 <p className="text-4xl font-bold text-amber-400">5 min</p>
@@ -170,22 +170,22 @@ export default function ProfessionalTypingTestPage() {
         </section>
 
         {/* CTA */}
-        <section className="max-w-3xl mx-auto text-center py-16">
-          <h2 className="text-3xl font-bold text-white mb-4">
+        <section className="max-w-3xl mx-auto text-center py-12 md:py-16">
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
             Ready for Your Professional Assessment?
           </h2>
-          <p className="text-xl text-slate-300 mb-8">
+          <p className="text-lg md:text-xl text-slate-300 mb-8">
             Take the test and get your verified certificate today
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/">
-              <Button size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700">
+              <Button size="lg" className="w-full sm:w-auto text-lg px-8 py-6 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700">
                 <Keyboard className="mr-2 h-5 w-5" />
                 Start Professional Test
               </Button>
             </Link>
             <Link href="/typing-speed-requirements">
-              <Button size="lg" variant="outline" className="text-lg px-8 py-6">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg px-8 py-6">
                 View Job Requirements
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>

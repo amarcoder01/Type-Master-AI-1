@@ -54,29 +54,29 @@ export default function AverageTypingSpeed() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
             {/* Hero Section */}
-            <section className="container mx-auto px-4 pt-24 pb-16">
+            <section className="container mx-auto px-4 pt-12 sm:pt-16 md:pt-24 pb-8 sm:pb-12 md:pb-16">
                 <div className="max-w-4xl mx-auto text-center">
-                    <div className="inline-flex items-center justify-center p-2 bg-slate-800/50 rounded-full mb-6 border border-slate-700">
-                        <BarChart className="w-4 h-4 text-cyan-400 mr-2" />
-                        <span className="text-sm text-slate-300">Global Typing Statistics 2026</span>
+                    <div className="inline-flex items-center justify-center p-2 bg-slate-800/50 rounded-full mb-4 sm:mb-6 border border-slate-700">
+                        <BarChart className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-400 mr-1.5 sm:mr-2" />
+                        <span className="text-xs sm:text-sm text-slate-300">Global Typing Statistics 2026</span>
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 px-2">
                         What is the Average <span className="text-cyan-400">Typing Speed</span>?
                     </h1>
-                    <p className="text-xl md:text-2xl text-slate-300 mb-8 max-w-3xl mx-auto">
+                    <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-slate-300 mb-6 sm:mb-8 max-w-3xl mx-auto px-2">
                         The global average typing speed is <strong className="text-white">41 WPM</strong> (Words Per Minute) with <strong className="text-white">92% accuracy</strong>. How do you stack up against the rest of the world?
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-8 sm:mb-12">
                         <Link href="/">
-                            <Button size="lg" className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white text-lg px-8 py-6 shadow-lg shadow-cyan-500/20" data-testid="button-test-speed-hero">
-                                <Zap className="mr-2 h-5 w-5" />
+                            <Button size="lg" className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white text-sm sm:text-base md:text-lg px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 shadow-lg shadow-cyan-500/20 w-full sm:w-auto" data-testid="button-test-speed-hero">
+                                <Zap className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                                 Test My Speed Now
                             </Button>
                         </Link>
                         <Link href="/leaderboard">
-                            <Button size="lg" variant="outline" className="border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white text-lg px-8 py-6" data-testid="button-view-stats">
+                            <Button size="lg" variant="outline" className="border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white text-sm sm:text-base md:text-lg px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 w-full sm:w-auto" data-testid="button-view-stats">
                                 View Global Stats
-                                <ArrowRight className="ml-2 h-5 w-5" />
+                                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
                             </Button>
                         </Link>
                     </div>
@@ -84,52 +84,52 @@ export default function AverageTypingSpeed() {
             </section>
 
             {/* Speed Levels Section */}
-            <section className="container mx-auto px-4 py-12">
+            <section className="container mx-auto px-4 py-8 sm:py-12">
                 <div className="max-w-6xl mx-auto">
-                    <div className="grid md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
                         <Card className="bg-slate-800/50 border-slate-700 hover:border-blue-500/50 transition-colors">
-                            <CardHeader>
-                                <div className="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center mb-4">
-                                    <Users className="h-6 w-6 text-blue-400" />
+                            <CardHeader className="p-4 sm:p-6">
+                                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-500/10 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
+                                    <Users className="h-5 w-5 sm:h-6 sm:w-6 text-blue-400" />
                                 </div>
-                                <CardTitle className="text-white">Beginner</CardTitle>
-                                <CardDescription className="text-2xl font-bold text-blue-400">0 - 30 WPM</CardDescription>
+                                <CardTitle className="text-white text-base sm:text-lg">Beginner</CardTitle>
+                                <CardDescription className="text-xl sm:text-2xl font-bold text-blue-400">0 - 30 WPM</CardDescription>
                             </CardHeader>
-                            <CardContent>
-                                <p className="text-slate-400">
+                            <CardContent className="p-4 sm:p-6 pt-0">
+                                <p className="text-sm sm:text-base text-slate-400">
                                     Just starting out with touch typing. At this stage, you're likely "hunting and pecking" for keys. Focus on accuracy over speed.
                                 </p>
                             </CardContent>
                         </Card>
 
                         <Card className="bg-slate-800/50 border-slate-700 hover:border-cyan-500/50 transition-colors relative overflow-hidden">
-                            <div className="absolute top-0 right-0 p-3 bg-cyan-500/10 rounded-bl-xl border-b border-l border-cyan-500/20">
-                                <span className="text-xs font-bold text-cyan-400 uppercase">Average</span>
+                            <div className="absolute top-0 right-0 p-2 sm:p-3 bg-cyan-500/10 rounded-bl-xl border-b border-l border-cyan-500/20">
+                                <span className="text-[10px] sm:text-xs font-bold text-cyan-400 uppercase">Average</span>
                             </div>
-                            <CardHeader>
-                                <div className="w-12 h-12 bg-cyan-500/10 rounded-lg flex items-center justify-center mb-4">
-                                    <Keyboard className="h-6 w-6 text-cyan-400" />
+                            <CardHeader className="p-4 sm:p-6">
+                                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-cyan-500/10 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
+                                    <Keyboard className="h-5 w-5 sm:h-6 sm:w-6 text-cyan-400" />
                                 </div>
-                                <CardTitle className="text-white">Intermediate</CardTitle>
-                                <CardDescription className="text-2xl font-bold text-cyan-400">30 - 60 WPM</CardDescription>
+                                <CardTitle className="text-white text-base sm:text-lg">Intermediate</CardTitle>
+                                <CardDescription className="text-xl sm:text-2xl font-bold text-cyan-400">30 - 60 WPM</CardDescription>
                             </CardHeader>
-                            <CardContent>
-                                <p className="text-slate-400">
+                            <CardContent className="p-4 sm:p-6 pt-0">
+                                <p className="text-sm sm:text-base text-slate-400">
                                     The most common speed range. You can type without looking at the keyboard most of the time, but may slow down for symbols or numbers.
                                 </p>
                             </CardContent>
                         </Card>
 
-                        <Card className="bg-slate-800/50 border-slate-700 hover:border-purple-500/50 transition-colors">
-                            <CardHeader>
-                                <div className="w-12 h-12 bg-purple-500/10 rounded-lg flex items-center justify-center mb-4">
-                                    <Zap className="h-6 w-6 text-purple-400" />
+                        <Card className="bg-slate-800/50 border-slate-700 hover:border-purple-500/50 transition-colors sm:col-span-2 md:col-span-1">
+                            <CardHeader className="p-4 sm:p-6">
+                                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-500/10 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
+                                    <Zap className="h-5 w-5 sm:h-6 sm:w-6 text-purple-400" />
                                 </div>
-                                <CardTitle className="text-white">Pro / Expert</CardTitle>
-                                <CardDescription className="text-2xl font-bold text-purple-400">60 - 100+ WPM</CardDescription>
+                                <CardTitle className="text-white text-base sm:text-lg">Pro / Expert</CardTitle>
+                                <CardDescription className="text-xl sm:text-2xl font-bold text-purple-400">60 - 100+ WPM</CardDescription>
                             </CardHeader>
-                            <CardContent>
-                                <p className="text-slate-400">
+                            <CardContent className="p-4 sm:p-6 pt-0">
+                                <p className="text-sm sm:text-base text-slate-400">
                                     Professional speed. You utilize all 10 fingers efficiently with high accuracy. Essential for programmers, writers, and transcriptionists.
                                 </p>
                             </CardContent>
@@ -220,31 +220,31 @@ export default function AverageTypingSpeed() {
                         </div>
                     </div>
 
-                    <div className="mt-16 prose prose-invert prose-lg max-w-none">
-                        <h2 className="text-3xl font-bold text-white mb-6">How to Increase Your Average Speed</h2>
-                        <div className="bg-slate-800/30 rounded-xl p-8 border border-slate-700">
-                            <div className="grid md:grid-cols-2 gap-8">
+                    <div className="mt-8 sm:mt-12 md:mt-16 prose prose-invert prose-sm sm:prose-base md:prose-lg max-w-none">
+                        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-4 sm:mb-6">How to Increase Your Average Speed</h2>
+                        <div className="bg-slate-800/30 rounded-xl p-4 sm:p-6 md:p-8 border border-slate-700">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
                                 <div>
-                                    <h3 className="text-xl font-bold text-cyan-400 mb-2">1. Master Touch Typing</h3>
-                                    <p className="text-slate-300 text-base">
+                                    <h3 className="text-base sm:text-lg md:text-xl font-bold text-cyan-400 mb-1.5 sm:mb-2">1. Master Touch Typing</h3>
+                                    <p className="text-sm sm:text-base text-slate-300">
                                         Stop looking at the keyboard. Train your fingers to know exactly where each key is. This muscle memory is the only way to break past 50 WPM.
                                     </p>
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-bold text-cyan-400 mb-2">2. Prioritize Accuracy</h3>
-                                    <p className="text-slate-300 text-base">
+                                    <h3 className="text-base sm:text-lg md:text-xl font-bold text-cyan-400 mb-1.5 sm:mb-2">2. Prioritize Accuracy</h3>
+                                    <p className="text-sm sm:text-base text-slate-300">
                                         Speed comes from confidence. If you constantly backspace, your WPM plummets. Aim for 98% accuracy, and speed will follow naturally.
                                     </p>
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-bold text-cyan-400 mb-2">3. Consistency is Key</h3>
-                                    <p className="text-slate-300 text-base">
+                                    <h3 className="text-base sm:text-lg md:text-xl font-bold text-cyan-400 mb-1.5 sm:mb-2">3. Consistency is Key</h3>
+                                    <p className="text-sm sm:text-base text-slate-300">
                                         Practice for 10-15 minutes every day. Burst practice is less effective than daily, consistent reinforcement of neural pathways.
                                     </p>
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-bold text-cyan-400 mb-2">4. Use Proper Posture</h3>
-                                    <p className="text-slate-300 text-base">
+                                    <h3 className="text-base sm:text-lg md:text-xl font-bold text-cyan-400 mb-1.5 sm:mb-2">4. Use Proper Posture</h3>
+                                    <p className="text-sm sm:text-base text-slate-300">
                                         Sit straight, keep your wrists elevated (not resting heavily), and ensure your elbows are at a 90-degree angle to reduce fatigue.
                                     </p>
                                 </div>
@@ -258,23 +258,23 @@ export default function AverageTypingSpeed() {
             </section>
 
             {/* CTA Section */}
-            <section className="container mx-auto px-4 py-16 border-t border-slate-800">
+            <section className="container mx-auto px-4 py-8 sm:py-12 md:py-16 border-t border-slate-800">
                 <div className="max-w-4xl mx-auto text-center">
-                    <Brain className="w-16 h-16 text-cyan-400 mx-auto mb-6" />
-                    <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
+                    <Brain className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 text-cyan-400 mx-auto mb-4 sm:mb-6" />
+                    <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold text-white mb-4 sm:mb-6 px-2">
                         Ready to Beat the Average?
                     </h2>
-                    <p className="text-xl text-slate-300 mb-8 max-w-2xl mx-auto">
+                    <p className="text-sm sm:text-base md:text-xl text-slate-300 mb-6 sm:mb-8 max-w-2xl mx-auto px-2">
                         Take our free, advanced typing test now to get your certified WPM score and detailed performance analytics.
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                         <Link href="/">
-                            <Button size="lg" className="bg-cyan-500 hover:bg-cyan-600 text-white text-lg px-12 py-6 rounded-full shadow-lg shadow-cyan-500/20" data-testid="button-cta-bottom">
+                            <Button size="lg" className="bg-cyan-500 hover:bg-cyan-600 text-white text-sm sm:text-base md:text-lg px-6 sm:px-8 md:px-12 py-3 sm:py-4 md:py-6 rounded-full shadow-lg shadow-cyan-500/20 w-full sm:w-auto" data-testid="button-cta-bottom">
                                 Start Typing Test
                             </Button>
                         </Link>
                         <Link href="/learn">
-                            <Button size="lg" variant="ghost" className="text-slate-300 hover:text-white text-lg px-8 py-6" data-testid="button-learn-more">
+                            <Button size="lg" variant="ghost" className="text-slate-300 hover:text-white text-sm sm:text-base md:text-lg px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 w-full sm:w-auto" data-testid="button-learn-more">
                                 Learn Touch Typing
                             </Button>
                         </Link>

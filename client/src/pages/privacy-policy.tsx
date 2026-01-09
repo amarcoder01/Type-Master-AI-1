@@ -272,6 +272,19 @@ export default function PrivacyPolicy() {
           </p>
         </section>
 
+        <section>
+          <h2 className="text-2xl font-bold text-foreground mb-4 pb-2 border-b border-primary/20">14. Trademark Disclaimer</h2>
+          <p className="text-muted-foreground mb-4">
+            All product names, trademarks, registered trademarks, service marks, and logos referenced or mentioned on this platform are the property of their respective owners. Any third-party product names, company names, brand names, or trademarks that may appear on our website, in our content, or in our communications are used solely for identification and descriptive purposes.
+          </p>
+          <p className="text-muted-foreground mb-4">
+            TypeMasterAI is an independent platform and is not affiliated with, endorsed by, sponsored by, or otherwise associated with any third-party service, product, or company whose trademarks or names may be referenced on our platform. Any reference to third-party products, services, or companies does not imply any form of endorsement, partnership, or business relationship.
+          </p>
+          <p className="text-muted-foreground">
+            The use of any third-party trademark or name on this platform is not intended to suggest that such third party has authorized, sponsored, or endorsed our services, nor does it indicate any affiliation between TypeMasterAI and the trademark owner. All rights in such trademarks and names remain with their respective owners.
+          </p>
+        </section>
+
         <section className="bg-card/30 p-8 rounded-xl border border-border">
           <h2 className="text-2xl font-bold text-foreground mb-6">Contact Us</h2>
           <p className="text-muted-foreground mb-6">

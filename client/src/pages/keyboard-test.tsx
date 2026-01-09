@@ -108,70 +108,70 @@ export default function KeyboardTestPage() {
         <Breadcrumbs items={[{ label: 'Keyboard Test', href: '/keyboard-test' }]} />
 
         {/* Hero Section */}
-        <section className="max-w-4xl mx-auto text-center pt-8 pb-8">
-          <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60 mb-6">
+        <section className="max-w-4xl mx-auto text-center pt-8 sm:pt-12 md:pt-16 pb-6 sm:pb-8">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60 mb-4 sm:mb-6">
             Online Keyboard Tester
           </h1>
-          <p className="text-xl text-muted-foreground mb-4">
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-3 sm:mb-4 px-2">
             Test if all your keyboard keys are working properly
           </p>
-          <p className="text-muted-foreground/80 mb-8">
+          <p className="text-sm sm:text-base text-muted-foreground/80 mb-6 sm:mb-8 px-2">
             Press any key to test it. Keys turn green when successfully detected.
           </p>
         </section>
 
         {/* Keyboard Test Area */}
-        <section className="max-w-4xl mx-auto py-8">
+        <section className="max-w-4xl mx-auto py-6 sm:py-8">
           <Card className="bg-card/50 border-border/50">
-            <CardHeader>
-              <div className="flex items-center justify-between">
+            <CardHeader className="p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
                 <div>
-                  <CardTitle>Keyboard Test</CardTitle>
-                  <CardDescription>
+                  <CardTitle className="text-base sm:text-lg">Keyboard Test</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm">
                     {isActive
                       ? `Press any key to test. ${testedKeys.size} keys tested.`
                       : 'Click Start to begin testing your keyboard'}
                   </CardDescription>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 w-full sm:w-auto">
                   {isActive ? (
                     <>
-                      <Button variant="outline" size="sm" onClick={resetTest}>
-                        <RotateCcw className="h-4 w-4 mr-2" />
+                      <Button variant="outline" size="sm" onClick={resetTest} className="flex-1 sm:flex-none text-xs sm:text-sm">
+                        <RotateCcw className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
                         Reset
                       </Button>
-                      <Button variant="outline" size="sm" onClick={() => setIsActive(false)}>
+                      <Button variant="outline" size="sm" onClick={() => setIsActive(false)} className="flex-1 sm:flex-none text-xs sm:text-sm">
                         Stop
                       </Button>
                     </>
                   ) : (
-                    <Button onClick={() => setIsActive(true)}>
-                      <Keyboard className="h-4 w-4 mr-2" />
+                    <Button onClick={() => setIsActive(true)} className="w-full sm:w-auto text-xs sm:text-sm">
+                      <Keyboard className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
                       Start Test
                     </Button>
                   )}
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4 sm:p-6 pt-0">
               {/* Last Key Display */}
               {lastKey && (
-                <div className="text-center mb-6">
-                  <p className="text-sm text-muted-foreground">Last key pressed:</p>
-                  <p className="text-4xl font-mono text-primary">
+                <div className="text-center mb-4 sm:mb-6">
+                  <p className="text-xs sm:text-sm text-muted-foreground">Last key pressed:</p>
+                  <p className="text-2xl sm:text-3xl md:text-4xl font-mono text-primary">
                     {KEY_DISPLAY_MAP[lastKey] || lastKey}
                   </p>
                 </div>
               )}
 
               {/* Virtual Keyboard */}
-              <div className="flex flex-col items-center gap-1 p-4 bg-muted/20 rounded-lg overflow-x-auto">
+              <div className="flex flex-col items-center gap-0.5 sm:gap-1 p-2 sm:p-4 bg-muted/20 rounded-lg overflow-x-auto">
                 {KEYBOARD_LAYOUT.map((row, rowIndex) => (
-                  <div key={rowIndex} className="flex gap-1">
+                  <div key={rowIndex} className="flex gap-0.5 sm:gap-1">
                     {row.map((key, keyIndex) => (
                       <div
                         key={`${rowIndex}-${keyIndex}`}
-                        className={cn(getKeyClass(key), "h-10 px-2 min-w-[40px]")}
+                        className={cn(getKeyClass(key), "h-8 sm:h-10 px-1.5 sm:px-2 min-w-[30px] sm:min-w-[40px] text-xs sm:text-sm")}
                       >
                         {KEY_DISPLAY_MAP[key] || key}
                       </div>
@@ -181,17 +181,17 @@ export default function KeyboardTestPage() {
               </div>
 
               {/* Legend */}
-              <div className="flex justify-center gap-6 mt-6 text-sm">
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded bg-card/50 border border-border/50" />
+              <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mt-4 sm:mt-6 text-xs sm:text-sm">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <div className="w-3 h-3 sm:w-4 sm:h-4 rounded bg-card/50 border border-border/50" />
                   <span className="text-muted-foreground">Not tested</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded bg-green-500/20 border border-green-500" />
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <div className="w-3 h-3 sm:w-4 sm:h-4 rounded bg-green-500/20 border border-green-500" />
                   <span className="text-muted-foreground">Working</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded bg-primary" />
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <div className="w-3 h-3 sm:w-4 sm:h-4 rounded bg-primary" />
                   <span className="text-muted-foreground">Currently pressed</span>
                 </div>
               </div>
@@ -200,23 +200,23 @@ export default function KeyboardTestPage() {
         </section>
 
         {/* Features */}
-        <section className="max-w-4xl mx-auto py-16">
-          <h2 className="text-2xl font-bold text-center mb-8">Why Use Our Keyboard Tester?</h2>
-          <div className="grid sm:grid-cols-2 gap-4">
+        <section className="max-w-4xl mx-auto py-8 sm:py-12 md:py-16">
+          <h2 className="text-xl sm:text-2xl font-bold text-center mb-6 sm:mb-8">Why Use Our Keyboard Tester?</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <Card className="bg-card/50 border-border/50">
-              <CardContent className="pt-6">
-                <CheckCircle className="h-8 w-8 text-green-500 mb-2" />
-                <h3 className="font-semibold mb-2">Test All Keys</h3>
-                <p className="text-sm text-muted-foreground">
+              <CardContent className="pt-4 sm:pt-6 p-4 sm:p-6">
+                <CheckCircle className="h-7 w-7 sm:h-8 sm:w-8 text-green-500 mb-2" />
+                <h3 className="font-semibold mb-1.5 sm:mb-2 text-base sm:text-lg">Test All Keys</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Verify every key on your keyboard works correctly before gaming or important work.
                 </p>
               </CardContent>
             </Card>
             <Card className="bg-card/50 border-border/50">
-              <CardContent className="pt-6">
-                <Info className="h-8 w-8 text-primary mb-2" />
-                <h3 className="font-semibold mb-2">Detect Ghosting</h3>
-                <p className="text-sm text-muted-foreground">
+              <CardContent className="pt-4 sm:pt-6 p-4 sm:p-6">
+                <Info className="h-7 w-7 sm:h-8 sm:w-8 text-primary mb-2" />
+                <h3 className="font-semibold mb-1.5 sm:mb-2 text-base sm:text-lg">Detect Ghosting</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Test multiple keys at once to check for keyboard ghosting issues.
                 </p>
               </CardContent>
@@ -225,8 +225,8 @@ export default function KeyboardTestPage() {
         </section>
 
         {/* SEO Content */}
-        <section className="max-w-4xl mx-auto py-16">
-          <article className="prose prose-lg dark:prose-invert max-w-none">
+        <section className="max-w-4xl mx-auto py-8 sm:py-12 md:py-16">
+          <article className="prose prose-sm sm:prose-base md:prose-lg dark:prose-invert max-w-none">
             <h2>Free Online Keyboard Test</h2>
             <p>
               Use our free <strong>keyboard tester</strong> to check if all your keyboard keys are working properly. This tool is useful for:
@@ -262,14 +262,14 @@ export default function KeyboardTestPage() {
         </section>
 
         {/* CTA */}
-        <section className="max-w-2xl mx-auto text-center py-16">
-          <h2 className="text-3xl font-bold mb-4">Ready to Type?</h2>
-          <p className="text-muted-foreground mb-8">
+        <section className="max-w-2xl mx-auto text-center py-8 sm:py-12 md:py-16">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">Ready to Type?</h2>
+          <p className="text-sm sm:text-base text-muted-foreground mb-6 sm:mb-8 px-2">
             Now that your keyboard works, test your typing speed!
           </p>
           <Link href="/">
-            <Button size="lg" className="text-lg px-12 py-6">
-              <Keyboard className="mr-2 h-6 w-6" />
+            <Button size="lg" className="text-sm sm:text-base md:text-lg px-6 sm:px-8 md:px-12 py-3 sm:py-4 md:py-6 w-full sm:w-auto">
+              <Keyboard className="mr-2 h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
               Take Typing Test
             </Button>
           </Link>

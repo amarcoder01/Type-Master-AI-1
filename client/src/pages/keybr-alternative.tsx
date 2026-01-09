@@ -37,23 +37,23 @@ export default function KeybrAlternativePage() {
                 <Breadcrumbs items={[{ label: 'Keybr Alternative', href: '/keybr-alternative' }]} />
 
                 {/* Hero Section */}
-                <section className="max-w-4xl mx-auto text-center pt-8 pb-16">
-                    <div className="inline-flex items-center justify-center p-2 bg-slate-800/50 rounded-full mb-6 border border-slate-700">
-                        <Keyboard className="w-4 h-4 text-cyan-400 mr-2" />
-                        <span className="text-sm text-slate-300">Modern Touch Typing Practice</span>
+                <section className="max-w-4xl mx-auto text-center pt-8 sm:pt-12 md:pt-16 pb-8 sm:pb-12 md:pb-16">
+                    <div className="inline-flex items-center justify-center p-2 bg-slate-800/50 rounded-full mb-4 sm:mb-6 border border-slate-700">
+                        <Keyboard className="w-3 h-3 sm:w-4 sm:h-4 text-cyan-400 mr-2" />
+                        <span className="text-xs sm:text-sm text-slate-300">Modern Touch Typing Practice</span>
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 px-2">
                         The Modern <span className="text-cyan-400">Keybr Alternative</span>
                     </h1>
-                    <p className="text-xl md:text-2xl text-slate-300 mb-4">
+                    <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-slate-300 mb-3 sm:mb-4 px-2">
                         Adaptive AI learning with a interface from this decade.
                     </p>
-                    <p className="text-lg text-slate-400 mb-8 max-w-2xl mx-auto">
+                    <p className="text-sm sm:text-base md:text-lg text-slate-400 mb-6 sm:mb-8 max-w-2xl mx-auto px-2">
                         TypeMasterAI improves on Keybr's core concept with advanced analytics, code modes, and a community-driven multiplayer experience.
                     </p>
                     <Link href="/learn">
-                        <Button size="lg" className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white text-lg px-12 py-6 shadow-lg shadow-cyan-500/20" data-testid="button-try-typemaster-hero">
-                            <Brain className="mr-2 h-6 w-6" />
+                        <Button size="lg" className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white text-sm sm:text-base md:text-lg px-6 sm:px-8 md:px-12 py-3 sm:py-4 md:py-6 w-full sm:w-auto shadow-lg shadow-cyan-500/20" data-testid="button-try-typemaster-hero">
+                            <Brain className="mr-2 h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
                             Start Adaptive Practice
                         </Button>
                     </Link>

@@ -74,26 +74,26 @@ export default function FreeOnlineTypingTestPage() {
         <Breadcrumbs items={[{ label: 'Free Online Typing Test', href: '/free-online-typing-test' }]} />
 
         {/* Hero Section */}
-        <section className="max-w-4xl mx-auto text-center pt-8 pb-8">
-          <div className="inline-flex items-center justify-center p-2 bg-green-500/10 rounded-full mb-6 border border-green-500/30">
-            <CheckCircle className="w-4 h-4 text-green-400 mr-2" />
-            <span className="text-sm text-green-300">100% Free Forever</span>
+        <section className="max-w-4xl mx-auto text-center pt-8 sm:pt-12 md:pt-16 pb-6 sm:pb-8">
+          <div className="inline-flex items-center justify-center p-2 bg-green-500/10 rounded-full mb-4 sm:mb-6 border border-green-500/30">
+            <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-400 mr-1.5 sm:mr-2" />
+            <span className="text-xs sm:text-sm text-green-300">100% Free Forever</span>
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 px-2">
             Master the Flow
           </h1>
-          <p className="text-xl text-slate-300 mb-4 max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-slate-300 mb-3 sm:mb-4 max-w-3xl mx-auto px-2">
             Test your typing speed, track your progress, and compete with others in a distraction-free environment.
           </p>
-          <p className="text-lg text-slate-400 mb-8 font-medium">
+          <p className="text-sm sm:text-base md:text-lg text-slate-400 mb-6 sm:mb-8 font-medium px-2">
             Join millions of users who have tested their WPM with TypeMasterAI
           </p>
         </section>
 
         {/* Typing Test Area */}
-        <div className="max-w-6xl mx-auto mb-12">
+        <div className="max-w-6xl mx-auto mb-8 sm:mb-12 px-2 sm:px-4">
           <TypingTest />
-          <div className="max-w-4xl mx-auto px-4 mt-8">
+          <div className="max-w-4xl mx-auto px-2 sm:px-4 mt-6 sm:mt-8">
             <AuthPrompt />
           </div>
         </div>

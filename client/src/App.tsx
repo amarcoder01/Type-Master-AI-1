@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, Router } from "wouter";
 import { lazy, Suspense } from "react";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -118,10 +118,11 @@ function PageLoader() {
   );
 }
 
-function Router() {
+function AppRouter() {
   return (
-    <Suspense fallback={<PageLoader />}>
-      <Switch>
+    <Router>
+      <Suspense fallback={<PageLoader />}>
+        <Switch>
         <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />
         <Route path="/forgot-password" component={ForgotPassword} />
@@ -215,8 +216,9 @@ function Router() {
             </Suspense>
           </Layout>
         </Route>
-      </Switch>
-    </Suspense>
+        </Switch>
+      </Suspense>
+    </Router>
   );
 }
 
@@ -242,7 +244,7 @@ function App() {
                       }}
                     />
                     <NotificationSync />
-                    <Router />
+                    <AppRouter />
                     <CookieConsentBanner />
                   </TooltipProvider>
                 </AchievementCelebrationProvider>

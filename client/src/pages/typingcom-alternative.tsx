@@ -20,19 +20,19 @@ export default function TypingComAlternativePage() {
         <Breadcrumbs items={[{ label: 'Typing.com Alternative', href: '/typingcom-alternative' }]} />
         
         {/* Hero Section */}
-        <section className="max-w-4xl mx-auto text-center pt-8 pb-16">
-          <h1 className="text-4xl md:text-6xl font-bold text-cyan-400 mb-6">
+        <section className="max-w-4xl mx-auto text-center pt-8 sm:pt-12 md:pt-16 pb-8 sm:pb-12 md:pb-16">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-cyan-400 mb-4 sm:mb-6 px-2">
             The Best Free Typing.com Alternative
           </h1>
-          <p className="text-xl md:text-2xl text-slate-300 mb-4">
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-slate-300 mb-3 sm:mb-4 px-2">
             Everything you need to master typing, without the subscription fees
           </p>
-          <p className="text-lg text-slate-400 mb-8">
+          <p className="text-sm sm:text-base md:text-lg text-slate-400 mb-6 sm:mb-8 px-2">
             Free typing tests, AI-powered analytics, and engaging features for students and self-learners
           </p>
           <Link href="/">
-            <Button size="lg" className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white text-lg px-12 py-6" data-testid="button-try-typemaster">
-              <Zap className="mr-2 h-6 w-6" />
+            <Button size="lg" className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white text-sm sm:text-base md:text-lg px-6 sm:px-8 md:px-12 py-3 sm:py-4 md:py-6 w-full sm:w-auto" data-testid="button-try-typemaster">
+              <Zap className="mr-2 h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
               Start Free Typing Test - No Signup Required
             </Button>
           </Link>

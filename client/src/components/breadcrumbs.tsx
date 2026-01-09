@@ -12,7 +12,7 @@ interface BreadcrumbsProps {
 export function Breadcrumbs({ items }: BreadcrumbsProps) {
   return (
     <nav aria-label="Breadcrumb" className="py-4">
-      <ol className="flex items-center space-x-2 text-sm text-slate-400" itemScope itemType="https://schema.org/BreadcrumbList">
+      <ol className="flex flex-wrap items-center gap-2 text-sm text-slate-400" itemScope itemType="https://schema.org/BreadcrumbList">
         <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
           <a
             href="/"

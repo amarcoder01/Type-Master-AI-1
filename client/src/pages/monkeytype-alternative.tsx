@@ -20,45 +20,46 @@ export default function MonkeytypeAlternativePage() {
         <Breadcrumbs items={[{ label: 'Monkeytype Alternative', href: '/monkeytype-alternative' }]} />
         
         {/* Hero Section */}
-        <section className="max-w-4xl mx-auto text-center pt-8 pb-16">
-          <h1 className="text-4xl md:text-6xl font-bold text-cyan-400 mb-6">
+        <section className="max-w-4xl mx-auto text-center pt-8 sm:pt-12 md:pt-16 pb-8 sm:pb-12 md:pb-16">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-cyan-400 mb-4 sm:mb-6 px-2">
             The Best Monkeytype Alternative
           </h1>
-          <p className="text-xl md:text-2xl text-slate-300 mb-4">
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-slate-300 mb-3 sm:mb-4 px-2">
             Everything you love about Monkeytype, plus AI-powered features
           </p>
-          <p className="text-lg text-slate-400 mb-8">
+          <p className="text-sm sm:text-base md:text-lg text-slate-400 mb-6 sm:mb-8 px-2">
             Free typing test with advanced analytics, code typing mode, multiplayer racing, and more
           </p>
           <Link href="/">
-            <Button size="lg" className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white text-lg px-12 py-6" data-testid="button-try-typemaster">
-              <Zap className="mr-2 h-6 w-6" />
+            <Button size="lg" className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white text-sm sm:text-base md:text-lg px-6 sm:px-8 md:px-12 py-3 sm:py-4 md:py-6 w-full sm:w-auto" data-testid="button-try-typemaster">
+              <Zap className="mr-2 h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
               Try TypeMasterAI Free - No Signup Required
             </Button>
           </Link>
         </section>
 
         {/* Comparison Table */}
-        <section className="max-w-6xl mx-auto py-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-12">
+        <section className="max-w-6xl mx-auto py-8 sm:py-12 md:py-16">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-center text-white mb-8 sm:mb-12 px-2">
             TypeMasterAI vs Monkeytype - Feature Comparison
           </h2>
           
-          <div className="bg-slate-800/50 rounded-lg border border-slate-700 overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-slate-900/50">
-                <tr>
-                  <th className="text-left p-6 text-white font-semibold">Feature</th>
-                  <th className="text-center p-6 text-cyan-400 font-semibold">TypeMasterAI</th>
-                  <th className="text-center p-6 text-slate-400 font-semibold">Monkeytype</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-700">
-                <tr>
-                  <td className="p-6 text-white">Free to Use</td>
-                  <td className="text-center p-6"><Check className="h-6 w-6 text-green-500 mx-auto" /></td>
-                  <td className="text-center p-6"><Check className="h-6 w-6 text-green-500 mx-auto" /></td>
-                </tr>
+          <div className="bg-slate-800/50 rounded-lg border border-slate-700 overflow-hidden -mx-4 sm:mx-0">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[600px]">
+                <thead className="bg-slate-900/50">
+                  <tr>
+                    <th className="text-left p-3 sm:p-4 md:p-6 text-white font-semibold text-xs sm:text-sm md:text-base">Feature</th>
+                    <th className="text-center p-3 sm:p-4 md:p-6 text-cyan-400 font-semibold text-xs sm:text-sm md:text-base">TypeMasterAI</th>
+                    <th className="text-center p-3 sm:p-4 md:p-6 text-slate-400 font-semibold text-xs sm:text-sm md:text-base">Monkeytype</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-700">
+                  <tr>
+                    <td className="p-3 sm:p-4 md:p-6 text-white text-xs sm:text-sm md:text-base">Free to Use</td>
+                    <td className="text-center p-3 sm:p-4 md:p-6"><Check className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-green-500 mx-auto" /></td>
+                    <td className="text-center p-3 sm:p-4 md:p-6"><Check className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-green-500 mx-auto" /></td>
+                  </tr>
                 <tr className="bg-slate-800/30">
                   <td className="p-6 text-white">No Signup Required</td>
                   <td className="text-center p-6"><Check className="h-6 w-6 text-green-500 mx-auto" /></td>
@@ -125,19 +126,19 @@ export default function MonkeytypeAlternativePage() {
         </section>
 
         {/* Why Choose TypeMasterAI */}
-        <section className="max-w-6xl mx-auto py-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-12">
+        <section className="max-w-6xl mx-auto py-8 sm:py-12 md:py-16">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-center text-white mb-8 sm:mb-12 px-2">
             Why Choose TypeMasterAI Over Monkeytype?
           </h2>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             <Card className="bg-slate-800/50 border-slate-700">
-              <CardHeader>
-                <Brain className="h-12 w-12 text-cyan-400 mb-4" />
-                <CardTitle className="text-white">AI-Powered Insights</CardTitle>
+              <CardHeader className="p-4 sm:p-6">
+                <Brain className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 text-cyan-400 mb-2 sm:mb-4" />
+                <CardTitle className="text-white text-base sm:text-lg">AI-Powered Insights</CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-slate-400">
+              <CardContent className="p-4 sm:p-6 pt-0">
+                <p className="text-slate-400 text-sm sm:text-base">
                   Get personalized AI recommendations based on your typing patterns. Our AI analyzes your weaknesses and suggests targeted practice exercises.
                 </p>
               </CardContent>
@@ -270,10 +271,10 @@ export default function MonkeytypeAlternativePage() {
               TypeMasterAI offers everything Monkeytype has plus AI-powered analytics, code typing mode for developers, multiplayer racing, keystroke heatmaps, finger usage statistics, daily challenges, achievements, and push notifications.
             </p>
 
-            <div className="text-center mt-12">
+            <div className="text-center mt-8 sm:mt-12">
               <Link href="/">
-                <Button size="lg" className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white text-lg px-12 py-6" data-testid="button-start-test-bottom">
-                  <Zap className="mr-2 h-6 w-6" />
+                <Button size="lg" className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white text-sm sm:text-base md:text-lg px-6 sm:px-8 md:px-12 py-3 sm:py-4 md:py-6 w-full sm:w-auto" data-testid="button-start-test-bottom">
+                  <Zap className="mr-2 h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
                   Try the Best Monkeytype Alternative Now
                 </Button>
               </Link>
@@ -282,16 +283,16 @@ export default function MonkeytypeAlternativePage() {
         </section>
 
         {/* Related Pages */}
-        <section className="max-w-6xl mx-auto py-16">
-          <h2 className="text-3xl font-bold text-center text-white mb-12">Compare More Typing Test Platforms</h2>
-          <div className="grid md:grid-cols-3 gap-6">
+        <section className="max-w-6xl mx-auto py-8 sm:py-12 md:py-16">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-white mb-8 sm:mb-12 px-2">Compare More Typing Test Platforms</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
             <Link href="/typeracer-alternative">
               <Card className="bg-slate-800/50 border-slate-700 hover:border-cyan-500 transition-colors cursor-pointer" data-testid="card-typeracer">
-                <CardHeader>
-                  <CardTitle className="text-white">Typeracer Alternative</CardTitle>
+                <CardHeader className="p-4 sm:p-6">
+                  <CardTitle className="text-white text-base sm:text-lg">Typeracer Alternative</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-slate-400">
+                <CardContent className="p-4 sm:p-6 pt-0">
+                  <p className="text-slate-400 text-sm sm:text-base">
                     Discover multiplayer racing with instant matchmaking
                   </p>
                 </CardContent>
@@ -300,11 +301,11 @@ export default function MonkeytypeAlternativePage() {
 
             <Link href="/10fastfingers-alternative">
               <Card className="bg-slate-800/50 border-slate-700 hover:border-cyan-500 transition-colors cursor-pointer" data-testid="card-10fastfingers">
-                <CardHeader>
-                  <CardTitle className="text-white">10FastFingers Alternative</CardTitle>
+                <CardHeader className="p-4 sm:p-6">
+                  <CardTitle className="text-white text-base sm:text-lg">10FastFingers Alternative</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-slate-400">
+                <CardContent className="p-4 sm:p-6 pt-0">
+                  <p className="text-slate-400 text-sm sm:text-base">
                     Compare our features to 10FastFingers' word-based tests
                   </p>
                 </CardContent>
@@ -313,11 +314,11 @@ export default function MonkeytypeAlternativePage() {
 
             <Link href="/typingcom-alternative">
               <Card className="bg-slate-800/50 border-slate-700 hover:border-cyan-500 transition-colors cursor-pointer" data-testid="card-typingcom">
-                <CardHeader>
-                  <CardTitle className="text-white">Typing.com Alternative</CardTitle>
+                <CardHeader className="p-4 sm:p-6">
+                  <CardTitle className="text-white text-base sm:text-lg">Typing.com Alternative</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-slate-400">
+                <CardContent className="p-4 sm:p-6 pt-0">
+                  <p className="text-slate-400 text-sm sm:text-base">
                     100% free with premium features included
                   </p>
                 </CardContent>
