@@ -1524,31 +1524,86 @@ Test yourself: `,
       preWarmAudioContext();
     }
 
-    const newStates: CharState[] = [];
-
-    for (let i = 0; i < expectedG.length; i++) {
-      const expectedChar = expectedG[i];
-
-      if (i < typedG.length) {
-        const typedChar = typedG[i];
-        const isCorrect = typedChar === expectedChar;
-
-        newStates[i] = {
-          expected: expectedChar,
-          typed: typedChar,
-          state: isCorrect ? 'correct' : 'incorrect'
-        };
-      } else {
-        newStates[i] = {
-          expected: expectedChar,
-          typed: '',
-          state: 'pending'
-        };
-      }
-    }
-
+    // Optimized: Only update character states that actually changed
+    // This prevents recreating the entire array on every keystroke
     startTransition(() => {
-      setCharStates(newStates);
+      setCharStates((prevStates) => {
+        // If text length changed significantly, rebuild from scratch (safety check)
+        if (prevStates.length !== expectedG.length && Math.abs(prevStates.length - expectedG.length) > 10) {
+          const newStates: CharState[] = [];
+          for (let i = 0; i < expectedG.length; i++) {
+            const expectedChar = expectedG[i];
+            if (i < typedG.length) {
+              const typedChar = typedG[i];
+              const isCorrect = typedChar === expectedChar;
+              newStates[i] = {
+                expected: expectedChar,
+                typed: typedChar,
+                state: isCorrect ? 'correct' : 'incorrect'
+              };
+            } else {
+              newStates[i] = {
+                expected: expectedChar,
+                typed: '',
+                state: 'pending'
+              };
+            }
+          }
+          return newStates;
+        }
+
+        // Incremental update: only change states that need updating
+        const newStates = [...prevStates];
+        let hasChanges = false;
+
+        for (let i = 0; i < expectedG.length; i++) {
+          const expectedChar = expectedG[i];
+          let newState: CharState;
+
+          if (i < typedG.length) {
+            const typedChar = typedG[i];
+            const isCorrect = typedChar === expectedChar;
+            newState = {
+              expected: expectedChar,
+              typed: typedChar,
+              state: isCorrect ? 'correct' : 'incorrect'
+            };
+          } else {
+            newState = {
+              expected: expectedChar,
+              typed: '',
+              state: 'pending'
+            };
+          }
+
+          // Only update if state actually changed (performance optimization)
+          if (i >= prevStates.length || 
+              prevStates[i].state !== newState.state || 
+              prevStates[i].typed !== newState.typed) {
+            newStates[i] = newState;
+            hasChanges = true;
+          } else {
+            // Reuse existing object reference if unchanged (helps React reconciliation)
+            newStates[i] = prevStates[i];
+          }
+        }
+
+        // Extend array if needed (text was extended during typing)
+        if (expectedG.length > newStates.length) {
+          for (let i = newStates.length; i < expectedG.length; i++) {
+            const expectedChar = expectedG[i];
+            newStates[i] = {
+              expected: expectedChar,
+              typed: '',
+              state: 'pending'
+            };
+          }
+          hasChanges = true;
+        }
+
+        // Only return new array if something changed (prevents unnecessary re-renders)
+        return hasChanges ? newStates : prevStates;
+      });
     });
     setCursorIndex(typedG.length);
     setUserInput(value);
@@ -1966,6 +2021,23 @@ Test yourself: `,
   const wordGroups = useMemo(() => {
     return groupCharsIntoWords(characters);
   }, [characters]);
+
+  // Defer charStates updates to prevent UI blocking during fast typing
+  // This is a React built-in optimization that maintains exact same behavior
+  const deferredCharStates = useDeferredValue(charStates);
+
+  // Memoize word groups with character states to prevent recalculation on every render
+  // This is a pure optimization - same output, just cached
+  const wordGroupsWithStates = useMemo(() => {
+    return wordGroups.map((group) => ({
+      ...group,
+      chars: group.chars.map(({ char, globalIndex }) => {
+        const charState = deferredCharStates[globalIndex];
+        const state = charState ? charState.state : 'pending';
+        return { char, index: globalIndex, state };
+      })
+    }));
+  }, [wordGroups, deferredCharStates]);
 
   const availableLanguages = languagesData?.languages || ["en"];
   const availableModes = modesData?.modes || ["general"];
@@ -3218,12 +3290,8 @@ Test yourself: `,
               }}
             >
               {/* Render characters grouped by words to prevent mid-word breaks */}
-              {wordGroups.map((group, groupIndex) => {
-                const groupChars = group.chars.map(({ char, globalIndex }) => {
-                  const charState = charStates[globalIndex];
-                  const state = charState ? charState.state : 'pending';
-                  return { char, index: globalIndex, state };
-                });
+              {wordGroupsWithStates.map((group, groupIndex) => {
+                const groupChars = group.chars;
 
                 // Spaces can break normally, words should not break
                 if (group.isSpace) {

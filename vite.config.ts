@@ -29,25 +29,28 @@ function serviceWorkerVersionPlugin() {
   };
 }
 
+const plugins = [
+  react(),
+  runtimeErrorOverlay(),
+  tailwindcss(),
+  metaImagesPlugin(),
+  serviceWorkerVersionPlugin(),
+];
+
+if (process.env.NODE_ENV !== "production" && process.env.REPL_ID !== undefined) {
+  (async () => {
+    try {
+      const { cartographer } = await import("@replit/vite-plugin-cartographer");
+      const { devBanner } = await import("@replit/vite-plugin-dev-banner");
+      plugins.push(cartographer(), devBanner());
+    } catch (error) {
+      // Replit plugins not available, skip
+    }
+  })();
+}
+
 export default defineConfig({
-  plugins: [
-    react(),
-    runtimeErrorOverlay(),
-    tailwindcss(),
-    metaImagesPlugin(),
-    serviceWorkerVersionPlugin(),
-    ...(process.env.NODE_ENV !== "production" &&
-    process.env.REPL_ID !== undefined
-      ? [
-          await import("@replit/vite-plugin-cartographer").then((m) =>
-            m.cartographer(),
-          ),
-          await import("@replit/vite-plugin-dev-banner").then((m) =>
-            m.devBanner(),
-          ),
-        ]
-      : []),
-  ],
+  plugins,
   // Inject build-time constants for version tracking and cache management
   define: {
     __BUILD_ID__: JSON.stringify(BUILD_ID),
