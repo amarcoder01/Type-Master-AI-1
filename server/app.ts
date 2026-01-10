@@ -132,6 +132,19 @@ export default async function runApp(
   if (process.platform !== 'win32') {
     listenOptions.reusePort = true;
   }
+  
+  server.on('error', (error: NodeJS.ErrnoException) => {
+    if (error.code === 'EADDRINUSE') {
+      log(`❌ Port ${port} is already in use`, 'error');
+      log(`💡 Solution: Run 'npm run dev:safe' to automatically free the port`, 'error');
+      log(`   Or manually kill the process: Get-NetTCPConnection -LocalPort ${port} | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }`, 'error');
+      process.exit(1);
+    } else {
+      log(`❌ Server error: ${error.message}`, 'error');
+      throw error;
+    }
+  });
+  
   server.listen(listenOptions, () => {
     log(`serving on port ${port}`);
   });

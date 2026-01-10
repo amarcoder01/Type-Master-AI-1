@@ -2,7 +2,49 @@ import React, { Component, ReactNode, useEffect, useState } from "react";
 import { AlertTriangle, RefreshCw, Home, Bug, ChevronDown, ChevronUp, Copy, Check, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { isCacheRelatedError, forceCompleteReset } from "@/lib/version-manager";
+
+// Self-contained cache error detection to avoid circular imports
+function isCacheRelatedError(error: Error): boolean {
+  if (!error) return false;
+  
+  // Check for ChunkLoadError by name
+  if (error.name === 'ChunkLoadError') return true;
+  
+  const message = error.message.toLowerCase();
+  const stack = error.stack?.toLowerCase() || '';
+  
+  const cacheErrorPatterns = [
+    'chunkloaderror',
+    'loading chunk',
+    'loading css chunk',
+    'failed to fetch dynamically imported module',
+    'dynamically imported module',
+    'unable to preload',
+    'failed to load module script',
+    'unexpected token \'<\'',
+    'typeerror: failed to fetch',
+  ];
+  
+  return cacheErrorPatterns.some(pattern => 
+    message.includes(pattern) || stack.includes(pattern)
+  );
+}
+
+// Lazy import for forceCompleteReset to avoid circular deps
+async function performCacheReset(): Promise<void> {
+  try {
+    const { forceCompleteReset } = await import("@/lib/version-manager");
+    await forceCompleteReset();
+  } catch (e) {
+    console.warn('[ErrorBoundary] Could not import version-manager, doing basic cleanup');
+    // Fallback: clear caches manually
+    if ('caches' in window) {
+      const names = await caches.keys();
+      await Promise.all(names.map(n => caches.delete(n)));
+    }
+    localStorage.clear();
+  }
+}
 
 interface ComponentErrorInfo {
   componentStack: string;
@@ -200,7 +242,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       console.log("[ErrorBoundary] Clearing all caches for recovery...");
       
       // Use the version manager's complete reset function
-      await forceCompleteReset();
+      await performCacheReset();
       
       // Clear service worker cache via global function
       if (typeof window.__clearServiceWorkerCache === 'function') {
@@ -438,7 +480,7 @@ export function AsyncErrorBoundary({ children, fallback, onError }: AsyncErrorBo
       if (isCacheRelatedError(error)) {
         console.log("[AsyncErrorBoundary] Cache-related error detected, attempting recovery...");
         try {
-          await forceCompleteReset();
+          await performCacheReset();
           window.location.reload();
           return; // Don't set error state, we're reloading
         } catch (e) {
@@ -458,7 +500,7 @@ export function AsyncErrorBoundary({ children, fallback, onError }: AsyncErrorBo
       if (isCacheRelatedError(err)) {
         console.log("[AsyncErrorBoundary] Cache-related error detected, attempting recovery...");
         try {
-          await forceCompleteReset();
+          await performCacheReset();
           window.location.reload();
           return; // Don't set error state, we're reloading
         } catch (e) {

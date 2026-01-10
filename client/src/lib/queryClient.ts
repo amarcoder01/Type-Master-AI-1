@@ -1,5 +1,4 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
-import { getStoredVersion, getCurrentVersion } from "./version-manager";
 
 // Storage key for tracking the query cache version
 const QUERY_CACHE_VERSION_KEY = 'typemasterai_query_cache_version';
@@ -158,13 +157,24 @@ export const queryClient = new QueryClient({
 });
 
 /**
+ * Get current build ID (self-contained to avoid circular imports)
+ */
+function getBuildId(): string {
+  try {
+    return typeof __BUILD_ID__ !== 'undefined' ? __BUILD_ID__ : 'development';
+  } catch {
+    return 'development';
+  }
+}
+
+/**
  * Check if the query cache needs to be cleared due to version mismatch
  * Call this on app startup
  */
 export function checkQueryCacheVersion(): boolean {
   try {
     const storedCacheVersion = localStorage.getItem(QUERY_CACHE_VERSION_KEY);
-    const currentVersion = getCurrentVersion().buildId;
+    const currentVersion = getBuildId();
     
     if (storedCacheVersion !== currentVersion) {
       console.log('[QueryClient] Version mismatch, clearing query cache');

@@ -1,7 +1,12 @@
 // TypeMasterAI Service Worker - PWA & Push Notifications
 // Version info injected at build time by Vite
-const BUILD_ID = '__BUILD_ID__';
-const BUILD_TIME = '__BUILD_TIME__';
+// In development, use timestamp as fallback
+const BUILD_ID = (typeof __BUILD_ID__ !== 'undefined' && __BUILD_ID__ !== '__BUILD_ID__') 
+  ? __BUILD_ID__ 
+  : 'dev-' + Date.now().toString(36);
+const BUILD_TIME = (typeof __BUILD_TIME__ !== 'undefined' && __BUILD_TIME__ !== '__BUILD_TIME__')
+  ? __BUILD_TIME__
+  : new Date().toISOString();
 const CACHE_NAME = `typemaster-${BUILD_ID}`;
 const urlsToCache = [
   '/',
@@ -20,6 +25,9 @@ self.addEventListener('install', event => {
       .then(cache => {
         console.log('[Service Worker] Caching app shell');
         return cache.addAll(urlsToCache);
+      })
+      .catch(error => {
+        console.error('[Service Worker] Install error:', error);
       })
       // Don't auto-skipWaiting - let the client control this
   );
@@ -117,55 +125,89 @@ function getCacheStrategy(request) {
 
 // Cache First Strategy - for immutable assets
 async function cacheFirst(request) {
-  const cached = await caches.match(request);
-  if (cached) {
-    return cached;
-  }
-  
   try {
-    const response = await fetch(request);
-    if (response && response.status === 200) {
-      const cache = await caches.open(CACHE_NAME);
-      cache.put(request, response.clone());
+    const cached = await caches.match(request);
+    if (cached) {
+      return cached;
     }
-    return response;
+    
+    const response = await fetch(request);
+    if (response && response.ok) {
+      const cache = await caches.open(CACHE_NAME);
+      cache.put(request, response.clone()).catch(() => {});
+      return response;
+    }
+    
+    // If response exists but not ok, return it anyway
+    if (response) {
+      return response;
+    }
+    
+    // Fallback error response
+    return new Response('Asset not available', { 
+      status: 503, 
+      statusText: 'Service Unavailable',
+      headers: { 'Content-Type': 'text/plain' }
+    });
   } catch (error) {
     return new Response('Asset not available', { 
       status: 503, 
-      statusText: 'Service Unavailable' 
+      statusText: 'Service Unavailable',
+      headers: { 'Content-Type': 'text/plain' }
     });
   }
 }
 
 // Stale While Revalidate Strategy - serve cached, update in background
 async function staleWhileRevalidate(request) {
-  const cached = await caches.match(request);
-  
-  const fetchPromise = fetch(request).then(response => {
-    if (response && response.status === 200) {
-      const cache = caches.open(CACHE_NAME);
-      cache.then(c => c.put(request, response.clone()));
+  try {
+    const cached = await caches.match(request);
+    
+    // Start fetch in background (don't await)
+    const fetchPromise = fetch(request).then(response => {
+      if (response && response.ok) {
+        caches.open(CACHE_NAME).then(cache => {
+          cache.put(request, response.clone()).catch(() => {});
+        }).catch(() => {});
+      }
+    }).catch(() => {});
+    
+    // Return cached response immediately if available
+    if (cached) {
+      // Revalidate in background (fire and forget)
+      fetchPromise;
+      return cached;
     }
-    return response;
-  }).catch(() => null);
-  
-  // Return cached response immediately if available
-  if (cached) {
-    // Revalidate in background
-    fetchPromise;
-    return cached;
+    
+    // If no cache, wait for network
+    try {
+      const response = await fetch(request);
+      if (response && response.ok) {
+        const cache = await caches.open(CACHE_NAME);
+        cache.put(request, response.clone()).catch(() => {});
+        return response;
+      }
+      // Return response even if not ok
+      if (response) {
+        return response;
+      }
+    } catch (e) {
+      // Network failed
+    }
+    
+    // Fallback error response
+    return new Response('Asset not available', { 
+      status: 503, 
+      statusText: 'Service Unavailable',
+      headers: { 'Content-Type': 'text/plain' }
+    });
+  } catch (error) {
+    return new Response('Asset not available', { 
+      status: 503, 
+      statusText: 'Service Unavailable',
+      headers: { 'Content-Type': 'text/plain' }
+    });
   }
-  
-  // If no cache, wait for network
-  const response = await fetchPromise;
-  if (response) {
-    return response;
-  }
-  
-  return new Response('Asset not available', { 
-    status: 503, 
-    statusText: 'Service Unavailable' 
-  });
 }
 
 // Network First Strategy - for dynamic content
@@ -173,29 +215,68 @@ async function staleWhileRevalidate(request) {
 async function networkFirst(request, preloadResponse) {
   try {
     // Use preload response if available (for navigation requests)
-    const response = preloadResponse 
-      ? await preloadResponse 
-      : await fetch(request);
-      
-    if (response && response.status === 200) {
-      const cache = await caches.open(CACHE_NAME);
-      cache.put(request, response.clone());
+    let response = null;
+    
+    if (preloadResponse) {
+      try {
+        response = await preloadResponse;
+      } catch (e) {
+        // Preload failed, try regular fetch
+        response = null;
+      }
     }
-    return response;
-  } catch (error) {
-    const cached = await caches.match(request);
-    if (cached) {
-      return cached;
+    
+    if (!response) {
+      try {
+        response = await fetch(request);
+      } catch (e) {
+        response = null;
+      }
+    }
+    
+    // Cache successful responses
+    if (response && response.ok) {
+      caches.open(CACHE_NAME).then(cache => {
+        cache.put(request, response.clone()).catch(() => {});
+      }).catch(() => {});
+      return response;
+    }
+    
+    // Return response even if not ok
+    if (response) {
+      return response;
+    }
+    
+    // Network failed, try cache
+    try {
+      const cached = await caches.match(request);
+      if (cached) {
+        return cached;
+      }
+    } catch (e) {
+      // Cache match failed
     }
     
     // Return offline page for navigation requests
     if (request.mode === 'navigate') {
-      const offlinePage = await caches.match('/offline.html');
-      if (offlinePage) {
-        return offlinePage;
+      try {
+        const offlinePage = await caches.match('/offline.html');
+        if (offlinePage) {
+          return offlinePage;
+        }
+      } catch (e) {
+        // Offline page not available
       }
     }
     
+    // Fallback error response
+    return new Response('Network error', { 
+      status: 503, 
+      statusText: 'Service Unavailable',
+      headers: { 'Content-Type': 'text/plain' }
+    });
+  } catch (error) {
+    // Ultimate fallback
     return new Response('Network error', { 
       status: 503, 
       statusText: 'Service Unavailable',
@@ -217,21 +298,70 @@ self.addEventListener('fetch', event => {
   
   // Skip WebSocket requests
   if (event.request.url.includes('/ws')) return;
+  
+  // Skip Vite HMR requests in development
+  if (event.request.url.includes('/__vite_hmr') || event.request.url.includes('@react-refresh')) {
+    return; // Let these pass through without SW interference
+  }
 
   const strategy = getCacheStrategy(event.request);
   
-  switch (strategy) {
-    case 'cache-first':
-      event.respondWith(cacheFirst(event.request));
-      break;
-    case 'stale-while-revalidate':
-      event.respondWith(staleWhileRevalidate(event.request));
-      break;
-    case 'network-first':
-    default:
-      // Use navigation preload response if available
-      event.respondWith(networkFirst(event.request, event.preloadResponse));
-      break;
+  // Wrap in try-catch to ensure we always respond
+  try {
+    let responsePromise;
+    
+    switch (strategy) {
+      case 'cache-first':
+        responsePromise = cacheFirst(event.request);
+        break;
+      case 'stale-while-revalidate':
+        responsePromise = staleWhileRevalidate(event.request);
+        break;
+      case 'network-first':
+      default:
+        // Use navigation preload response if available
+        responsePromise = networkFirst(event.request, event.preloadResponse);
+        break;
+    }
+    
+    // Ensure we always respond with a valid Response
+    event.respondWith(
+      responsePromise.then(response => {
+        // Ensure response is valid
+        if (!response || !(response instanceof Response)) {
+          return fetch(event.request).catch(() => {
+            return new Response('Service unavailable', {
+              status: 503,
+              statusText: 'Service Unavailable',
+              headers: { 'Content-Type': 'text/plain' }
+            });
+          });
+        }
+        return response;
+      }).catch(error => {
+        console.error('[Service Worker] Fetch error:', error);
+        // Fallback: try to fetch directly without caching
+        return fetch(event.request).catch(() => {
+          return new Response('Service unavailable', {
+            status: 503,
+            statusText: 'Service Unavailable',
+            headers: { 'Content-Type': 'text/plain' }
+          });
+        });
+      })
+    );
+  } catch (error) {
+    console.error('[Service Worker] Fetch handler error:', error);
+    // Ultimate fallback - fetch directly
+    event.respondWith(
+      fetch(event.request).catch(() => {
+        return new Response('Service unavailable', {
+          status: 503,
+          statusText: 'Service Unavailable',
+          headers: { 'Content-Type': 'text/plain' }
+        });
+      })
+    );
   }
 });
 

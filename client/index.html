@@ -280,8 +280,18 @@
       });
 
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/service-worker.js')
-          .then(function(registration) {
+        // First, unregister any broken service workers
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          return Promise.all(registrations.map(function(reg) {
+            return reg.unregister().catch(function() {});
+          }));
+        }).catch(function() {}).then(function() {
+          // Small delay to ensure unregistration completes
+          return new Promise(function(resolve) { setTimeout(resolve, 100); });
+        }).then(function() {
+          // Now register the new service worker
+          return navigator.serviceWorker.register('/service-worker.js');
+        }).then(function(registration) {
             console.log('[SW] Registered:', registration.scope);
 
             // Check for updates immediately

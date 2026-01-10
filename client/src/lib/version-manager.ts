@@ -44,11 +44,16 @@ interface VersionInfo {
 
 /**
  * Get the current build version from compile-time constants
+ * Falls back to 'development' if build constants are not defined
  */
 export function getCurrentVersion(): VersionInfo {
+  // In development mode, these might not be defined
+  const buildId = typeof __BUILD_ID__ !== 'undefined' ? __BUILD_ID__ : 'development';
+  const buildTime = typeof __BUILD_TIME__ !== 'undefined' ? __BUILD_TIME__ : new Date().toISOString();
+  
   return {
-    buildId: __BUILD_ID__,
-    buildTime: __BUILD_TIME__,
+    buildId,
+    buildTime,
     storedAt: Date.now(),
   };
 }
