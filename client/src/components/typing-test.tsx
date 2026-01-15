@@ -1035,15 +1035,38 @@ export default function TypingTest({ initialLanguage = "en", initialMode = 60 }:
     const rating = getPerformanceRating();
     const modeDisplay = mode >= 60 ? `${Math.floor(mode / 60)} minute` : `${mode} second`;
     const siteUrl = "https://typemasterai.com";
+    const isFreestyleShare = freestyleMode || !!lastResultSnapshot?.freestyle;
+    const freestyleWords = freestyleText.trim().split(/\s+/).filter(w => w.length > 0).length;
+    const freestyleChars = freestyleText.length;
 
     const shareTexts: Record<string, string> = {
-      twitter: `${rating.emoji} Just hit ${wpm} WPM with ${accuracy}% accuracy! ${rating.badge} Badge unlocked 🎯
+      twitter: isFreestyleShare
+        ? `${rating.emoji} Just hit ${wpm} WPM in Freestyle mode! 🎯
+
+📈 Consistency: ${consistency}%
+✍️ Words: ${freestyleWords} | 🔤 Chars: ${freestyleChars}
+⏱️ ${modeDisplay} session
+
+Try Freestyle mode: #TypeMasterAI #FreestyleTyping #WPM`
+        : `${rating.emoji} Just hit ${wpm} WPM with ${accuracy}% accuracy! ${rating.badge} Badge unlocked 🎯
 
 Can you beat this?
 
 #TypeMasterAI #TypingSpeed`,
 
-      facebook: `${rating.emoji} Just crushed my typing test!
+      facebook: isFreestyleShare
+        ? `${rating.emoji} Just finished a Freestyle typing session!
+
+I hit ${wpm} WPM on TypeMasterAI in Freestyle mode! 🎯
+
+✨ Session stats:
+• Consistency: ${consistency}%
+• Words: ${freestyleWords}
+• Characters: ${freestyleChars}
+• Duration: ${modeDisplay}
+
+Freestyle mode is pure practice—type anything and build your rhythm. Want to try it? 🚀`
+        : `${rating.emoji} Just crushed my typing test!
 
 I hit ${wpm} WPM with ${accuracy}% accuracy on TypeMasterAI! This feels amazing! 🎯
 
@@ -1056,7 +1079,22 @@ Honestly, I never thought I'd get this fast. If you've ever wondered how quick y
 
 Think you can beat my score? I dare you to try! 😏🚀`,
 
-      linkedin: `Achieved ${wpm} WPM | ${accuracy}% Accuracy
+      linkedin: isFreestyleShare
+        ? `Freestyle Typing Session Completed
+
+Just completed a Freestyle typing session on TypeMasterAI.
+
+Results:
+▸ Typing Speed: ${wpm} Words Per Minute
+▸ Consistency: ${consistency}%
+▸ Words Typed: ${freestyleWords}
+▸ Characters Typed: ${freestyleChars}
+▸ Session Duration: ${modeDisplay}
+
+Freestyle mode is a great way to build typing rhythm and endurance without a fixed reference text.
+
+#ProfessionalDevelopment #Productivity`
+        : `Achieved ${wpm} WPM | ${accuracy}% Accuracy
 
 Just completed a typing assessment on TypeMasterAI that highlights the importance of efficient communication skills in today's digital workspace.
 
@@ -1073,7 +1111,17 @@ What's your typing speed? Worth measuring!
 
 #ProfessionalDevelopment #Productivity`,
 
-      whatsapp: `${rating.emoji} *TypeMasterAI Result*
+      whatsapp: isFreestyleShare
+        ? `${rating.emoji} *TypeMasterAI Freestyle Result*
+
+⚡ *${wpm} WPM*
+📈 *${consistency}% Consistent*
+✍️ Words: ${freestyleWords}
+🔤 Chars: ${freestyleChars}
+⏱️ ${modeDisplay} session
+
+Try it: `
+        : `${rating.emoji} *TypeMasterAI Result*
 
 ⚡ *${wpm} WPM* | ✨ *${accuracy}% Accurate*
 🏆 ${rating.title}
@@ -1087,7 +1135,9 @@ Test yourself: `,
     const shareText = shareTexts[platform] || shareTexts.twitter;
     const encodedText = encodeURIComponent(shareText);
     const encodedUrl = encodeURIComponent(siteUrl);
-    const whatsappText = `*TypeMasterAI Result*\n\nSpeed: *${wpm} WPM*\nAccuracy: *${accuracy}%*\nPerformance: ${rating.title}\nBadge: ${rating.badge}\nDuration: ${modeDisplay} test\n\nTry it: ${siteUrl}`;
+    const whatsappText = isFreestyleShare
+      ? `*TypeMasterAI Freestyle Result*\n\nSpeed: *${wpm} WPM*\nConsistency: *${consistency}%*\nWords: ${freestyleWords}\nChars: ${freestyleChars}\nDuration: ${modeDisplay} session\n\nTry it: ${siteUrl}`
+      : `*TypeMasterAI Result*\n\nSpeed: *${wpm} WPM*\nAccuracy: *${accuracy}%*\nPerformance: ${rating.title}\nBadge: ${rating.badge}\nDuration: ${modeDisplay} test\n\nTry it: ${siteUrl}`;
 
     const urls: Record<string, string> = {
       twitter: `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`,
@@ -1105,7 +1155,12 @@ Test yourself: `,
   const handleNativeShare = async () => {
     const rating = getPerformanceRating();
     const modeDisplay = mode >= 60 ? `${Math.floor(mode / 60)} minute` : `${mode} second`;
-    const shareText = `${rating.emoji} Just hit ${wpm} WPM with ${accuracy}% accuracy! ${rating.badge} Badge unlocked 🎯\n\nCan you beat this?`;
+    const isFreestyleShare = freestyleMode || !!lastResultSnapshot?.freestyle;
+    const freestyleWords = freestyleText.trim().split(/\s+/).filter(w => w.length > 0).length;
+    const freestyleChars = freestyleText.length;
+    const shareText = isFreestyleShare
+      ? `${rating.emoji} Freestyle mode session complete!\n\n⚡ ${wpm} WPM\n📈 ${consistency}% consistency\n✍️ ${freestyleWords} words | 🔤 ${freestyleChars} chars\n⏱️ ${modeDisplay}\n\nTry Freestyle mode:`
+      : `${rating.emoji} Just hit ${wpm} WPM with ${accuracy}% accuracy! ${rating.badge} Badge unlocked 🎯\n\nCan you beat this?`;
     const shareUrl = 'https://typemasterai.com';
 
     if ('share' in navigator && typeof navigator.canShare === 'function') {
@@ -3650,10 +3705,17 @@ Test yourself: `,
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-purple-500 to-primary animate-gradient" />
 
                 <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 md:mb-8 text-center">Test Complete!</h2>
+                {freestyleMode && (
+                  <div className="mb-4 text-center">
+                    <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-medium">
+                      Freestyle Mode
+                    </span>
+                  </div>
+                )}
 
                 <div className={cn(
                   "grid gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6 md:mb-8",
-                  freestyleMode ? "grid-cols-1" : "grid-cols-2"
+                  "grid-cols-2"
                 )}>
                   <div className="flex flex-col items-center p-3 sm:p-4 bg-background/50 rounded-lg sm:rounded-xl">
                     <div className="text-muted-foreground text-xs sm:text-sm mb-1 flex items-center gap-1.5 sm:gap-2">
@@ -3661,8 +3723,14 @@ Test yourself: `,
                     </div>
                     <div className="text-3xl sm:text-4xl md:text-5xl font-mono font-bold text-primary">{wpm}</div>
                   </div>
-                  {/* Hide Accuracy in Freestyle mode */}
-                  {!freestyleMode && (
+                  {freestyleMode ? (
+                    <div className="flex flex-col items-center p-3 sm:p-4 bg-background/50 rounded-lg sm:rounded-xl">
+                      <div className="text-muted-foreground text-xs sm:text-sm mb-1 flex items-center gap-1.5 sm:gap-2">
+                        <BarChart3 className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Consistency
+                      </div>
+                      <div className="text-3xl sm:text-4xl md:text-5xl font-mono font-bold">{consistency}%</div>
+                    </div>
+                  ) : (
                     <div className="flex flex-col items-center p-3 sm:p-4 bg-background/50 rounded-lg sm:rounded-xl">
                       <div className="text-muted-foreground text-xs sm:text-sm mb-1 flex items-center gap-1.5 sm:gap-2">
                         <Target className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Accuracy
@@ -3677,25 +3745,28 @@ Test yourself: `,
                     <span>Raw WPM</span>
                     <span className="font-mono text-foreground">{wpm + Math.round((100 - accuracy) / 2)}</span>
                   </div>
-                  {!freestyleMode && (
-                    <>
-                      <div className="flex justify-between text-sm text-muted-foreground">
-                        <span>Errors</span>
-                        <span className="font-mono text-foreground">{errors}</span>
-                      </div>
-                      <div className="flex justify-between text-sm text-muted-foreground">
-                        <span>Consistency</span>
-                        <span className="font-mono text-foreground">{consistency}%</span>
-                      </div>
-                    </>
+                  {freestyleMode ? (
+                    <div className="flex justify-between text-sm text-muted-foreground">
+                      <span>Words</span>
+                      <span className="font-mono text-foreground">{freestyleText.trim().split(/\s+/).filter(w => w.length > 0).length}</span>
+                    </div>
+                  ) : (
+                    <div className="flex justify-between text-sm text-muted-foreground">
+                      <span>Errors</span>
+                      <span className="font-mono text-foreground">{errors}</span>
+                    </div>
                   )}
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>Consistency</span>
+                    <span className="font-mono text-foreground">{consistency}%</span>
+                  </div>
                   <div className="flex justify-between text-sm text-muted-foreground">
                     <span>Characters</span>
                     <span className="font-mono text-foreground">{freestyleMode ? freestyleText.length : userInput.length}</span>
                   </div>
                   <div className="flex justify-between text-sm text-muted-foreground">
                     <span>Time</span>
-                    <span className="font-mono text-foreground">{mode}s</span>
+                    <span className="font-mono text-foreground">{mode >= 60 ? `${Math.floor(mode / 60)} min` : `${mode}s`}</span>
                   </div>
                 </div>
 
@@ -3773,7 +3844,11 @@ Test yourself: `,
           open={showAuthPrompt}
           onOpenChange={setShowAuthPrompt}
           title="Save Your Progress"
-          description={`Great job! You scored ${wpm} WPM with ${accuracy}% accuracy. Create an account to save your results and track your progress over time!`}
+          description={
+            freestyleMode
+              ? `Great job! You scored ${wpm} WPM in Freestyle mode with ${consistency}% consistency. Create an account to save your results and track your progress over time!`
+              : `Great job! You scored ${wpm} WPM with ${accuracy}% accuracy. Create an account to save your results and track your progress over time!`
+          }
         />
 
         {/* Certificate Dialog */}
@@ -3838,14 +3913,28 @@ Test yourself: `,
                   <div className="p-4 bg-gradient-to-br from-slate-900/50 to-slate-800/50 rounded-xl border border-primary/20 text-sm leading-relaxed">
                     <div className="space-y-2">
                       <p className="text-base font-medium">
-                        {getPerformanceRating().emoji} New Record: <span className="text-primary font-bold">{wpm} WPM</span>!
+                        {getPerformanceRating().emoji} {freestyleMode ? "Freestyle Session:" : "New Record:"} <span className="text-primary font-bold">{wpm} WPM</span>!
                       </p>
                       <p className="text-muted-foreground">
                         ⚡ Speed: <span className="text-foreground font-semibold">{wpm} Words Per Minute</span>
                       </p>
+                    {freestyleMode ? (
+                      <>
+                        <p className="text-muted-foreground">
+                          📈 Consistency: <span className="text-foreground font-semibold">{consistency}%</span>
+                        </p>
+                        <p className="text-muted-foreground">
+                          ✍️ Words: <span className="text-foreground font-semibold">{freestyleText.trim().split(/\s+/).filter(w => w.length > 0).length}</span>
+                        </p>
+                        <p className="text-muted-foreground">
+                          🔤 Characters: <span className="text-foreground font-semibold">{freestyleText.length}</span>
+                        </p>
+                      </>
+                    ) : (
                       <p className="text-muted-foreground">
                         ✨ Accuracy: <span className="text-foreground font-semibold">{accuracy}%</span>
                       </p>
+                    )}
                       <p className="text-muted-foreground">
                         🏆 Level: <span className="text-yellow-400 font-semibold">{getPerformanceRating().title}</span>
                       </p>
@@ -3855,17 +3944,19 @@ Test yourself: `,
                       <p className="text-muted-foreground">
                         ⏱️ Time: <span className="text-foreground font-semibold">{mode >= 60 ? `${Math.floor(mode / 60)} minute` : `${mode} second`}</span>
                       </p>
+                    {!freestyleMode && (
                       <p className="text-muted-foreground">
                         🌐 Language: <span className="text-foreground font-semibold">{LANGUAGE_NAMES[language]}</span>
                       </p>
+                    )}
                       <p className="text-primary/80 text-xs mt-3 font-medium">
-                        Can you beat this score? Take the challenge! 🚀
+                      {freestyleMode ? "Try Freestyle mode and build your rhythm! 🚀" : "Can you beat this score? Take the challenge! 🚀"}
                       </p>
                       <p className="text-xs text-primary mt-2 font-medium">
                         👉 https://typemasterai.com
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        #TypingSpeed #TypeMasterAI #ProductivitySkills #WPM
+                      {freestyleMode ? "#FreestyleTyping #TypeMasterAI #PracticeMode #WPM" : "#TypingSpeed #TypeMasterAI #ProductivitySkills #WPM"}
                       </p>
                     </div>
                   </div>
@@ -3873,7 +3964,11 @@ Test yourself: `,
                     onClick={() => {
                       const rating = getPerformanceRating();
                       const modeDisplay = mode >= 60 ? `${Math.floor(mode / 60)} minute` : `${mode} second`;
-                      const text = `${rating.emoji} New Record: ${wpm} WPM!\n\n⚡ Speed: ${wpm} Words Per Minute\n✨ Accuracy: ${accuracy}%\n🏆 Level: ${rating.title}\n🎯 Badge: ${rating.badge}\n⏱️ Time: ${modeDisplay}\n🌐 Language: ${LANGUAGE_NAMES[language]}\n\nCan you beat this score? Take the challenge! 🚀\n\n👉 https://typemasterai.com\n\n#TypingSpeed #TypeMasterAI #ProductivitySkills #WPM`;
+                      const freestyleWords = freestyleText.trim().split(/\s+/).filter(w => w.length > 0).length;
+                      const freestyleChars = freestyleText.length;
+                      const text = freestyleMode
+                        ? `${rating.emoji} Freestyle Session: ${wpm} WPM!\n\n⚡ Speed: ${wpm} Words Per Minute\n📈 Consistency: ${consistency}%\n✍️ Words: ${freestyleWords}\n🔤 Characters: ${freestyleChars}\n🏆 Level: ${rating.title}\n🎯 Badge: ${rating.badge}\n⏱️ Time: ${modeDisplay}\n\nTry Freestyle mode and build your rhythm! 🚀\n\n👉 https://typemasterai.com\n\n#FreestyleTyping #TypeMasterAI #PracticeMode #WPM`
+                        : `${rating.emoji} New Record: ${wpm} WPM!\n\n⚡ Speed: ${wpm} Words Per Minute\n✨ Accuracy: ${accuracy}%\n🏆 Level: ${rating.title}\n🎯 Badge: ${rating.badge}\n⏱️ Time: ${modeDisplay}\n🌐 Language: ${LANGUAGE_NAMES[language]}\n\nCan you beat this score? Take the challenge! 🚀\n\n👉 https://typemasterai.com\n\n#TypingSpeed #TypeMasterAI #ProductivitySkills #WPM`;
                       navigator.clipboard.writeText(text);
                       toast({ title: "Message Copied!", description: "Share message copied to clipboard" });
                     }}
@@ -4040,8 +4135,8 @@ Test yourself: `,
                         <p className="text-2xl font-bold text-primary">{wpm} WPM</p>
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground mb-1">Accuracy</p>
-                        <p className="text-2xl font-bold text-green-400">{accuracy}%</p>
+                        <p className="text-xs text-muted-foreground mb-1">{freestyleMode ? "Consistency" : "Accuracy"}</p>
+                        <p className="text-2xl font-bold text-green-400">{freestyleMode ? `${consistency}%` : `${accuracy}%`}</p>
                       </div>
                       <div>
                         <p className="text-xs text-muted-foreground mb-1">Performance</p>
