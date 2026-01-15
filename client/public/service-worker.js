@@ -406,31 +406,31 @@ self.addEventListener('push', event => {
       if (Array.isArray(payload.actions) && payload.actions.length > 0) {
         notificationData.actions = payload.actions;
       } else {
-        // Add context-specific actions
+      // Add context-specific actions
         if (resolvedType === 'daily_reminder') {
-          notificationData.actions = [
-            { action: 'start_test', title: 'Start Test', icon: '/icon-96x96.png' },
-            { action: 'dismiss', title: 'Later' }
-          ];
+        notificationData.actions = [
+          { action: 'start_test', title: 'Start Test', icon: '/icon-96x96.png' },
+          { action: 'dismiss', title: 'Later' }
+        ];
         } else if (resolvedType === 'streak_warning') {
-          notificationData.actions = [
-            { action: 'save_streak', title: 'Save Streak!', icon: '/icon-96x96.png' },
-            { action: 'dismiss', title: 'Ignore' }
-          ];
+        notificationData.actions = [
+          { action: 'save_streak', title: 'Save Streak!', icon: '/icon-96x96.png' },
+          { action: 'dismiss', title: 'Ignore' }
+        ];
         } else if (resolvedType === 'race_invite') {
-          notificationData.actions = [
-            { action: 'join_race', title: 'Join Race', icon: '/icon-96x96.png' },
-            { action: 'dismiss', title: 'Decline' }
-          ];
+        notificationData.actions = [
+          { action: 'join_race', title: 'Join Race', icon: '/icon-96x96.png' },
+          { action: 'dismiss', title: 'Decline' }
+        ];
         } else if (resolvedType === 'achievement_unlock') {
-          notificationData.actions = [
-            { action: 'view_achievement', title: 'View', icon: '/icon-96x96.png' }
-          ];
-        } else {
-          notificationData.actions = [
-            { action: 'view', title: 'View' },
-            { action: 'dismiss', title: 'Dismiss' }
-          ];
+        notificationData.actions = [
+          { action: 'view_achievement', title: 'View', icon: '/icon-96x96.png' }
+        ];
+      } else {
+        notificationData.actions = [
+          { action: 'view', title: 'View' },
+          { action: 'dismiss', title: 'Dismiss' }
+        ];
         }
       }
     } catch (error) {

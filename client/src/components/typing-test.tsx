@@ -3896,20 +3896,26 @@ Test yourself: `,
             </DialogHeader>
 
             <Tabs defaultValue="quick" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 mb-4 gap-1 sm:gap-0">
-                <TabsTrigger value="quick" data-testid="tab-quick-share" className="text-xs sm:text-sm px-2 sm:px-3">
-                  Quick Share
+              <TabsList className="flex w-full mb-4 h-auto p-1">
+                <TabsTrigger value="quick" data-testid="tab-quick-share" className="flex-1 text-[10px] sm:text-sm py-2 px-1 sm:px-3 gap-0.5 sm:gap-1 flex-col sm:flex-row">
+                  <Share2 className="w-4 h-4" />
+                  <span className="sm:hidden">Share</span>
+                  <span className="hidden sm:inline">Quick Share</span>
                 </TabsTrigger>
-                <TabsTrigger value="card" data-testid="tab-visual-card" className="text-xs sm:text-sm px-2 sm:px-3">
-                  Visual Card
+                <TabsTrigger value="card" data-testid="tab-visual-card" className="flex-1 text-[10px] sm:text-sm py-2 px-1 sm:px-3 gap-0.5 sm:gap-1 flex-col sm:flex-row">
+                  <Sparkles className="w-4 h-4" />
+                  <span className="sm:hidden">Card</span>
+                  <span className="hidden sm:inline">Visual Card</span>
                 </TabsTrigger>
-                {user && (
-                  <TabsTrigger value="certificate" data-testid="tab-certificate" className="text-xs sm:text-sm px-2 sm:px-3">
-                    Certificate
-                  </TabsTrigger>
-                )}
-                <TabsTrigger value="challenge" data-testid="tab-challenge" className="text-xs sm:text-sm px-2 sm:px-3">
-                  Challenge
+                {user && <TabsTrigger value="certificate" data-testid="tab-certificate" className="flex-1 text-[10px] sm:text-sm py-2 px-1 sm:px-3 gap-0.5 sm:gap-1 flex-col sm:flex-row">
+                  <Award className="w-4 h-4" />
+                  <span className="sm:hidden">Cert</span>
+                  <span className="hidden sm:inline">Certificate</span>
+                </TabsTrigger>}
+                <TabsTrigger value="challenge" data-testid="tab-challenge" className="flex-1 text-[10px] sm:text-sm py-2 px-1 sm:px-3 gap-0.5 sm:gap-1 flex-col sm:flex-row">
+                  <Zap className="w-4 h-4" />
+                  <span className="sm:hidden">Dare</span>
+                  <span className="hidden sm:inline">Challenge</span>
                 </TabsTrigger>
               </TabsList>
 

@@ -1,4 +1,4 @@
-﻿trufflehog : usage: trufflehog [-h] [--json] [--regex] [--rules RULES] [--allow ALLOW]
+trufflehog : usage: trufflehog [-h] [--json] [--regex] [--rules RULES] [--allow ALLOW]
 At C:\Users\User\AppData\Local\Temp\ps-script-f2f41a3c-6afa-45cc-9627-161dff068c40.ps1:91 char:32
 + ... Type-Master\Type-Master; trufflehog --repo_path . --json 2>&1 | Out-F ...
 +                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

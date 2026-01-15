@@ -397,7 +397,7 @@ export default function StressResultsComplete(props: Props) {
         <Card className="mb-6">
           <CardContent className="p-4">
             <Tabs value={shareDialogTab} onValueChange={(v) => setShareDialogTab(v as typeof shareDialogTab)} className="w-full">
-              <TabsList className="grid w-full grid-cols-4 mb-4 h-auto p-1">
+              <TabsList className="grid w-full grid-cols-4 mb-4 h-auto p-1 gap-0.5">
                 <TabsTrigger value="quick" className="text-xs sm:text-sm py-2 sm:py-2.5 px-1 sm:px-3 gap-1.5 flex-col sm:flex-row" data-testid="tab-quick-share">
                   <Share2 className="w-4 h-4 sm:w-4 sm:h-4" />
                   <span className="hidden sm:inline">Share</span>
