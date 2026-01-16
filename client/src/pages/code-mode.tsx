@@ -370,6 +370,7 @@ export default function CodeMode() {
   const finishTestRef = useRef<() => void>(() => { });
   const certificateCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const intentionalFocusRef = useRef<number>(0);
 
   // Advanced edge case handling refs
   const lastKeystrokeTimeRef = useRef<number>(0);
@@ -379,6 +380,19 @@ export default function CodeMode() {
   const isOnlineRef = useRef<boolean>(navigator.onLine);
   const testStartedWhileOfflineRef = useRef<boolean>(false);
   const lastFetchTimeRef = useRef<number>(0);
+
+  // Chunk-based scroll handling refs
+  const lastScrollTimeRef = useRef<number>(0);
+  const isUserScrollingRef = useRef<boolean>(false);
+  const userScrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const keystrokeTimestampsRef = useRef<number[]>([]);
+  const scrollDebounceRef = useRef<NodeJS.Timeout | null>(null);
+  const isAutoScrollingRef = useRef<boolean>(false);
+  const caretPosRef = useRef<{ top: number; height: number } | null>(null);
+
+  // Content pre-fetching refs
+  const pendingContentRef = useRef<string | null>(null);
+  const isFetchingNextRef = useRef<boolean>(false);
 
   const [caretAnchor, setCaretAnchor] = useState<{ left: number; top: number; height: number }>({ left: 0, top: 0, height: 18 });
   const syncCaretAnchor = useCallback(() => {
@@ -1179,6 +1193,7 @@ export default function CodeMode() {
     setIsActive(false);
     setIsFinished(false);
     setIsFailed(false);
+    setIsFocused(false);
 
     // Reset stats
     setWpm(0);
@@ -1192,6 +1207,9 @@ export default function CodeMode() {
     wpmHistoryRef.current = [];
     lastElapsedSecondRef.current = -1;
     statsLastUpdateRef.current = 0;
+
+    // Reset intentional focus ref
+    intentionalFocusRef.current = 0;
 
     // Reset anti-cheat counters
     lastKeystrokeTimeRef.current = 0;
@@ -1221,7 +1239,11 @@ export default function CodeMode() {
       });
     }
 
-    setTimeout(() => textareaRef.current?.focus(), 0);
+    // Focus textarea after a tick to ensure state has updated
+    requestAnimationFrame(() => {
+      textareaRef.current?.focus();
+      setIsFocused(true);
+    });
   }, [mode, customCode, fetchCodeSnippet, toast]);
 
   // Keep refs synced for rAF timer loop
@@ -1282,9 +1304,19 @@ export default function CodeMode() {
         resetTest();
       }
 
-      // Any printable key focuses and starts typing (only if test not finished)
-      if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey && !isFinished && !isFailed) {
-        textareaRef.current?.focus();
+      // Any printable key: if test finished/failed, reset and start new; otherwise focus and type
+      if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        if (isFinished || isFailed) {
+          // Reset and start a new test
+          e.preventDefault();
+          if (mode === "ai") {
+            resetTest(false);
+          } else {
+            resetTest(true);
+          }
+        } else {
+          textareaRef.current?.focus();
+        }
       }
     };
 
@@ -1457,41 +1489,264 @@ export default function CodeMode() {
     }
   }, [language, difficulty, testMode, customPrompt, isLoadingMore]);
 
+  // Pre-fetch next content in background (runs at 50% completion)
+  // Queues content so it's ready when user reaches the fetch threshold
+  const prefetchNextContent = useCallback(async () => {
+    // Skip if already fetching, have pending content, or not in AI mode
+    if (isFetchingNextRef.current || pendingContentRef.current || mode !== "ai") return;
+    if (timeLimit === 0) return; // Only for timed tests
+
+    isFetchingNextRef.current = true;
+
+    try {
+      const promptParam = customPrompt ? `&customPrompt=${encodeURIComponent(customPrompt)}` : '';
+      const response = await fetch(
+        `/api/code/snippet?language=${encodeURIComponent(language)}&difficulty=${encodeURIComponent(difficulty)}&timeLimit=0&testMode=${testMode}&generate=true&forceNew=true${promptParam}`,
+        { cache: 'no-store' }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.snippet?.content) {
+          // Queue the content for later appending
+          pendingContentRef.current = normalizeCodeSnippet(data.snippet.content);
+        }
+      }
+    } catch (error: any) {
+      console.error("Error pre-fetching content:", error);
+    } finally {
+      isFetchingNextRef.current = false;
+    }
+  }, [language, difficulty, testMode, customPrompt, mode, timeLimit]);
+
+  // Pre-fetch at 50% completion to have content ready before user reaches end
+  useEffect(() => {
+    if (timeLimit === 0 || !isActive || isFinished || mode !== "ai") return;
+    if (codeSnippet.length === 0) return;
+
+    const completionPercent = userInput.length / codeSnippet.length;
+    // Start pre-fetching when user reaches 50% of current content
+    if (completionPercent >= 0.5 && !pendingContentRef.current && !isFetchingNextRef.current) {
+      prefetchNextContent();
+    }
+  }, [userInput.length, codeSnippet.length, isActive, isFinished, prefetchNextContent, mode, timeLimit]);
+
   // Check if user is near the end of content - fetch more for continuous typing
   // ONLY for timed tests (timeLimit > 0) - keeps content flowing until timer ends
   // For "No Limit" mode (timeLimit === 0), the completion effect handles finishing
   useEffect(() => {
-    // Only fetch more content for timed tests
-    if (timeLimit === 0 || !isActive || isFinished || isLoadingMore) return;
+    // Only fetch more content for timed tests in AI mode
+    if (timeLimit === 0 || !isActive || isFinished || isLoadingMore || mode !== "ai") return;
 
     const remainingChars = codeSnippet.length - userInput.length;
-    // When 100 characters or less remaining, fetch more code for timed tests
-    if (remainingChars <= 100 && codeSnippet.length > 0) {
-      fetchMoreContent();
-    }
-  }, [userInput.length, codeSnippet.length, isActive, isFinished, isLoadingMore, fetchMoreContent, timeLimit]);
-
-  // Auto-scroll to keep current line visible
-  useEffect(() => {
-    if (!codeDisplayRef.current || !codeSnippet) return;
-    // Throttle auto-scroll during rapid input to avoid layout thrash
-    const now = performance.now();
-    if (now - lastCodeScrollTsRef.current < 32) return; // ~30 FPS
-    lastCodeScrollTsRef.current = now;
-
-    const caretEl = codeDisplayRef.current.querySelector('[data-caret="true"]');
-    if (caretEl) {
-      (caretEl as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
-    } else {
-      const textBeforeCursor = codeSnippet.substring(0, userInput.length);
-      const currentLine = textBeforeCursor.split('\n').length;
-      const lineElement = codeDisplayRef.current.querySelector(`[data-line="${currentLine}"]`);
-      if (lineElement) {
-        (lineElement as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Proactive fetching: fetch when 30% of content remains OR less than 300 chars
+    // This ensures fast typists never run out of content
+    const fetchThreshold = Math.max(300, Math.floor(codeSnippet.length * 0.3));
+    
+    if (remainingChars <= fetchThreshold && codeSnippet.length > 0) {
+      // Check if we have pending content to append first
+      if (pendingContentRef.current) {
+        const pendingContent = pendingContentRef.current;
+        pendingContentRef.current = null;
+        setCodeSnippet(prev => prev + "\n\n" + pendingContent);
+      } else {
+        fetchMoreContent();
       }
     }
-    syncCaretAnchor();
-  }, [userInput.length, codeSnippet]);
+  }, [userInput.length, codeSnippet.length, isActive, isFinished, isLoadingMore, fetchMoreContent, timeLimit, mode]);
+
+  // Buffer management: maintain at least 500 chars ahead during timed tests
+  // Runs on interval to ensure continuous content flow
+  useEffect(() => {
+    if (timeLimit === 0 || !isActive || isFinished || mode !== "ai") return;
+
+    const MINIMUM_BUFFER = 500; // Minimum characters to keep ahead
+
+    const checkBuffer = () => {
+      const remainingChars = codeSnippet.length - userInput.length;
+      
+      // If buffer is below minimum and not currently loading
+      if (remainingChars < MINIMUM_BUFFER && !isLoadingMore && !isFetchingNextRef.current) {
+        // Use pending content if available
+        if (pendingContentRef.current) {
+          const pendingContent = pendingContentRef.current;
+          pendingContentRef.current = null;
+          setCodeSnippet(prev => prev + "\n\n" + pendingContent);
+          // Immediately start fetching next
+          prefetchNextContent();
+        } else {
+          // Fetch more content directly
+          fetchMoreContent();
+        }
+      }
+      // Pre-fetch if we don't have pending content and buffer is getting low
+      else if (remainingChars < MINIMUM_BUFFER * 2 && !pendingContentRef.current && !isFetchingNextRef.current) {
+        prefetchNextContent();
+      }
+    };
+
+    // Check buffer every 500ms to ensure we stay ahead
+    const intervalId = setInterval(checkBuffer, 500);
+    
+    // Initial check
+    checkBuffer();
+
+    return () => clearInterval(intervalId);
+  }, [isActive, isFinished, timeLimit, mode, codeSnippet.length, userInput.length, isLoadingMore, fetchMoreContent, prefetchNextContent]);
+
+  // Chunk-based auto-scroll - shows more lines ahead like standard typing test
+  // Triggers when caret enters bottom 45% of container, positions caret at 10% from top
+  useEffect(() => {
+    const container = codeDisplayRef.current;
+    if (!container || !codeSnippet) return;
+    if (isUserScrollingRef.current) return;
+
+    // Chunk scrolling configuration
+    const SCROLL_TRIGGER_ZONE = 0.45;     // Trigger when caret enters bottom 45% of container
+    const SCROLL_TARGET_POSITION = 0.10;  // After scroll, position caret at 10% from top (reveals ~90% below)
+    const TOP_MARGIN = 40;                // Keep small margin for upward scroll
+
+    const now = performance.now();
+
+    // Track keystroke timestamps for speed detection (keep last 10)
+    keystrokeTimestampsRef.current.push(now);
+    if (keystrokeTimestampsRef.current.length > 10) {
+      keystrokeTimestampsRef.current.shift();
+    }
+
+    // Calculate current typing speed from recent keystrokes
+    const timestamps = keystrokeTimestampsRef.current;
+    let avgInterval = 100; // default ~120 WPM
+    if (timestamps.length >= 3) {
+      const recentIntervals: number[] = [];
+      for (let i = 1; i < timestamps.length; i++) {
+        recentIntervals.push(timestamps[i] - timestamps[i - 1]);
+      }
+      avgInterval = recentIntervals.reduce((a, b) => a + b, 0) / recentIntervals.length;
+    }
+
+    // Determine typing speed tier
+    const isUltraFast = avgInterval < 50;  // 250+ WPM
+    const isFast = avgInterval < 80;       // 150-250 WPM
+
+    // Get caret position
+    const caretEl = container.querySelector('[data-caret="true"]') as HTMLElement | null;
+    let caretTop = 0;
+    let caretHeight = 20;
+
+    if (caretEl) {
+      const caretRect = caretEl.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+      caretTop = caretRect.top - containerRect.top + container.scrollTop;
+      caretHeight = caretRect.height || 20;
+    } else {
+      // Fallback: calculate from line number
+      const textBeforeCursor = codeSnippet.substring(0, userInput.length);
+      const currentLine = textBeforeCursor.split('\n').length;
+      const lineElement = container.querySelector(`[data-line="${currentLine}"]`) as HTMLElement | null;
+      if (lineElement) {
+        const lineRect = lineElement.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        caretTop = lineRect.top - containerRect.top + container.scrollTop;
+        caretHeight = lineRect.height || 20;
+      }
+    }
+
+    caretPosRef.current = { top: caretTop, height: caretHeight };
+
+    // For ultra-fast typing, use debounce pattern
+    if (isUltraFast) {
+      if (scrollDebounceRef.current) {
+        clearTimeout(scrollDebounceRef.current);
+      }
+
+      scrollDebounceRef.current = setTimeout(() => {
+        scrollDebounceRef.current = null;
+        if (!container || isUserScrollingRef.current) return;
+
+        const currentCaretPos = caretPosRef.current;
+        if (!currentCaretPos) return;
+
+        const containerHeight = container.clientHeight;
+        const visibleTop = container.scrollTop;
+        const visibleBottom = visibleTop + containerHeight;
+        const caretBottom = currentCaretPos.top + currentCaretPos.height;
+
+        const triggerThreshold = containerHeight * SCROLL_TRIGGER_ZONE;
+        if (caretBottom > visibleBottom - triggerThreshold) {
+          const targetPosition = containerHeight * SCROLL_TARGET_POSITION;
+          const targetTop = Math.max(0, currentCaretPos.top - targetPosition);
+
+          if (Math.abs(targetTop - container.scrollTop) > 10) {
+            lastScrollTimeRef.current = performance.now();
+            isAutoScrollingRef.current = true;
+            container.scrollTo({ top: targetTop, behavior: 'auto' });
+            isAutoScrollingRef.current = false;
+          }
+        }
+      }, 150);
+
+      syncCaretAnchor();
+      return;
+    }
+
+    // For fast/normal typing, use throttle-based approach
+    const MIN_SCROLL_INTERVAL = isFast ? 500 : 300;
+    if (now - lastScrollTimeRef.current < MIN_SCROLL_INTERVAL) {
+      syncCaretAnchor();
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      if (!container || isUserScrollingRef.current) return;
+
+      const containerHeight = container.clientHeight;
+      const visibleTop = container.scrollTop;
+      const visibleBottom = visibleTop + containerHeight;
+      const caretBottom = caretTop + caretHeight;
+
+      let targetTop: number | null = null;
+
+      // Handle upward scroll
+      if (caretTop < visibleTop + TOP_MARGIN) {
+        targetTop = Math.max(0, caretTop - TOP_MARGIN);
+      }
+      // Handle downward scroll with chunk-based approach
+      else {
+        const triggerThreshold = containerHeight * SCROLL_TRIGGER_ZONE;
+
+        // Only scroll when caret enters bottom trigger zone
+        if (caretBottom > visibleBottom - triggerThreshold) {
+          // Position caret at target percentage from top (reveals more lines ahead)
+          const targetPosition = containerHeight * SCROLL_TARGET_POSITION;
+          targetTop = Math.max(0, caretTop - targetPosition);
+        }
+      }
+
+      if (targetTop !== null && Math.abs(targetTop - container.scrollTop) > 10) {
+        lastScrollTimeRef.current = performance.now();
+        isAutoScrollingRef.current = true;
+        container.scrollTo({ top: targetTop, behavior: 'auto' });
+        isAutoScrollingRef.current = false;
+      }
+
+      syncCaretAnchor();
+    });
+  }, [userInput.length, codeSnippet, syncCaretAnchor]);
+
+  // Cleanup scroll refs on unmount
+  useEffect(() => {
+    return () => {
+      if (scrollDebounceRef.current) {
+        clearTimeout(scrollDebounceRef.current);
+        scrollDebounceRef.current = null;
+      }
+      if (userScrollTimeoutRef.current) {
+        clearTimeout(userScrollTimeoutRef.current);
+        userScrollTimeoutRef.current = null;
+      }
+    };
+  }, []);
 
   const applyCustomCode = () => {
     // Validate the custom code
@@ -1792,6 +2047,17 @@ export default function CodeMode() {
   };
 
   const handleContainerClick = () => {
+    // Auto-reset if test is finished and user clicks on the container
+    if (isFinished || isFailed) {
+      if (mode === "ai") {
+        resetTest(false); // Fetch new code
+      } else {
+        resetTest(true); // Keep same custom code
+      }
+      return;
+    }
+    
+    intentionalFocusRef.current = Date.now();
     if (isMobile) {
       syncCaretAnchor();
       requestAnimationFrame(() => textareaRef.current?.focus({ preventScroll: true } as any));
@@ -3262,8 +3528,24 @@ Understanding your baseline code typing speed can help identify opportunities fo
                     onCut={(e) => e.preventDefault()}
                     onCompositionStart={handleCompositionStart}
                     onCompositionEnd={handleCompositionEnd}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
+                    onFocus={() => {
+                      setIsFocused(true);
+                      intentionalFocusRef.current = Date.now();
+                    }}
+                    onBlur={(e) => {
+                      const timeSinceIntentionalFocus = Date.now() - intentionalFocusRef.current;
+                      // Ignore blur events that happen within 100ms of intentional focus (prevents overlay re-render from stealing focus)
+                      if (timeSinceIntentionalFocus > 100) {
+                        setIsFocused(false);
+                      } else {
+                        // Re-focus if blur happened too quickly after intentional focus
+                        setTimeout(() => {
+                          if (textareaRef.current && document.activeElement !== textareaRef.current) {
+                            textareaRef.current.focus();
+                          }
+                        }, 0);
+                      }
+                    }}
                     className="absolute opacity-0 top-0 left-0 resize-none"
                     autoComplete="off"
                     autoCorrect="off"
@@ -3281,12 +3563,27 @@ Understanding your baseline code typing speed can help identify opportunities fo
 
                   {/* Displayed code with highlighting and line numbers */}
                   <div
-                    className="font-mono text-[12px] sm:text-[15px] leading-[1.5] sm:leading-[1.65] select-none overflow-y-auto overflow-x-auto max-h-[280px] sm:max-h-[400px] scroll-smooth scrollbar-thin scrollbar-thumb-muted/30 scrollbar-track-transparent"
+                    className={`font-mono text-[12px] sm:text-[15px] leading-[1.5] sm:leading-[1.65] select-none overflow-y-auto overflow-x-auto max-h-[280px] sm:max-h-[400px] scrollbar-thin scrollbar-thumb-muted/30 scrollbar-track-transparent ${!isActive ? 'scroll-smooth' : ''}`}
                     ref={codeDisplayRef}
                     role="textbox"
                     aria-readonly="true"
                     aria-label="Code display area"
-                    onScroll={() => { if (isMobile) syncCaretAnchor(); }}
+                    onScroll={() => {
+                      if (isMobile) syncCaretAnchor();
+                      // Detect manual user scrolling to pause auto-scroll
+                      if (!isAutoScrollingRef.current) {
+                        isUserScrollingRef.current = true;
+                        // Clear existing timeout
+                        if (userScrollTimeoutRef.current) {
+                          clearTimeout(userScrollTimeoutRef.current);
+                        }
+                        // Resume auto-scroll after user stops scrolling for 150ms
+                        userScrollTimeoutRef.current = setTimeout(() => {
+                          isUserScrollingRef.current = false;
+                          userScrollTimeoutRef.current = null;
+                        }, 150);
+                      }
+                    }}
                     style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(100,100,100,0.3) transparent' }}
                   >
                     {highlightedCode}
@@ -3311,10 +3608,31 @@ Understanding your baseline code typing speed can help identify opportunities fo
                   {/* Click to start overlay */}
                   {!isActive && !isFinished && userInput.length === 0 && !isFocused && (
                     <div
-                      className="absolute inset-0 flex items-center justify-center bg-background/40 backdrop-blur-[2px] cursor-text transition-opacity duration-200"
-                      onClick={(e) => {
+                      className="absolute inset-0 flex items-center justify-center bg-background/40 backdrop-blur-[2px] cursor-text transition-opacity duration-200 z-50"
+                      onMouseDown={(e) => {
+                        e.preventDefault();
                         e.stopPropagation();
-                        textareaRef.current?.focus();
+                        intentionalFocusRef.current = Date.now();
+                        if (isMobile) {
+                          syncCaretAnchor();
+                          requestAnimationFrame(() => {
+                            textareaRef.current?.focus({ preventScroll: true } as any);
+                            setIsFocused(true);
+                          });
+                        } else {
+                          textareaRef.current?.focus();
+                          setIsFocused(true);
+                        }
+                      }}
+                      onTouchStart={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        intentionalFocusRef.current = Date.now();
+                        syncCaretAnchor();
+                        requestAnimationFrame(() => {
+                          textareaRef.current?.focus({ preventScroll: true } as any);
+                          setIsFocused(true);
+                        });
                       }}
                     >
                       <div className="text-center pointer-events-none px-4">
@@ -3448,7 +3766,15 @@ Understanding your baseline code typing speed can help identify opportunities fo
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-2 sm:p-4"
-                onClick={() => setCompletionDialogOpen(false)}
+                onClick={() => {
+                  setCompletionDialogOpen(false);
+                  // Reset test and fetch new code when closing via backdrop click
+                  if (mode === "ai") {
+                    resetTest(false);
+                  } else {
+                    resetTest(true);
+                  }
+                }}
               >
                 <motion.div
                   initial={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -3467,7 +3793,15 @@ Understanding your baseline code typing speed can help identify opportunities fo
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => setCompletionDialogOpen(false)}
+                        onClick={() => {
+                          setCompletionDialogOpen(false);
+                          // Reset test and fetch new code when closing via X button
+                          if (mode === "ai") {
+                            resetTest(false);
+                          } else {
+                            resetTest(true);
+                          }
+                        }}
                         className="absolute top-3 right-3 h-8 w-8"
                         aria-label="Close"
                       >
@@ -3475,7 +3809,7 @@ Understanding your baseline code typing speed can help identify opportunities fo
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p className="text-xs">Close Results</p>
+                      <p className="text-xs">Close & New Test</p>
                     </TooltipContent>
                   </Tooltip>
 
